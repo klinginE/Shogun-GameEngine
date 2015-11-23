@@ -1,5 +1,5 @@
-#ifndef GAME_HPP
-#define GAME_HPP
+#ifndef GAMELOOP_HPP
+#define GAMELOOP_HPP
 
 #include <stack>
 #include <SFML/Graphics.hpp>
