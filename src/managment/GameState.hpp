@@ -1,5 +1,4 @@
-#ifndef GAMESTATE_HPP
-#define GAMESTATE_HPP
+#pragma once
 
 #include <list>
 
@@ -7,21 +6,23 @@
 #include "GameWindow.hpp"
 #include "InputManager.hpp"
 
-class GameState {
+namespace sg {
 
-    list<GameWorld*> gameWorlds;
-    list<GameWindow*> gameWindows;
-    InputManager inputManager;
-
-    public:
-        GameState();
-
-        void render();
-        void update(const sf::Time &tslu);
-
-        list<GameWorld*>  & accessGameWorlds();
-        list<GameWindow*> & accessGameWindows();
-        InputManager      & accessInputManager();
-};
-
-#endif
+    class GameState {
+    
+        list<GameWorld*> gameWorlds;
+        list<GameWindow*> gameWindows;
+        InputManager inputManager;
+    
+        public:
+            GameState();
+    
+            void render();
+            void update(const sf::Time &tslu);
+    
+            list<GameWorld*>  & accessGameWorlds();
+            list<GameWindow*> & accessGameWindows();
+            InputManager      & accessInputManager();
+    };
+    
+}
