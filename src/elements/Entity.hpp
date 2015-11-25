@@ -26,6 +26,8 @@ namespace sg {
             /*virtual*/ void handleCollision(std::string, const sf::Vector2f &, const std::vector<sf::Vector2f> &) {};
             bool getIsCollidable();
             void setIsCollidable(bool);
+            std::vector<sf::Sprite *>::size_type getNumOfSprites();
+            const sf::Sprite *getSprite(uint32_t);
             void move(const sf::Vector2f &);
             void moveSprite(uint32_t, const sf::Vector2f &);
             void translate(const sf::Vector2f &);

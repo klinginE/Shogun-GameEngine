@@ -50,6 +50,20 @@ namespace sg {
 
     }
 
+    std::vector<sf::Sprite *>::size_type Entity::getNumOfSprites() {
+
+        return this->sprites.size();
+
+    }
+
+    const sf::Sprite *Entity::getSprite(uint32_t idx) {
+
+        if (idx >= this->sprites.size() || idx < 0)
+            return NULL;
+        return this->sprites[idx];
+
+    }
+
     void Entity::move(const sf::Vector2f &v) {
 
         this->pos.x = v.x;
