@@ -38,7 +38,7 @@ namespace sg {
 
     }
 
-    bool Entity::getIsCollidable() {
+    bool Entity::getIsCollidable() const {
 
         return this->isCollidable;
 
@@ -50,13 +50,13 @@ namespace sg {
 
     }
 
-    std::vector<sf::Sprite *>::size_type Entity::getNumOfSprites() {
+    std::vector<sf::Sprite *>::size_type Entity::getNumOfSprites() const {
 
         return this->sprites.size();
 
     }
 
-    const sf::Sprite *Entity::getSprite(uint32_t idx) {
+    const sf::Sprite *Entity::getSprite(uint32_t idx) const {
 
         if (idx >= this->sprites.size() || idx < 0)
             return NULL;
@@ -126,28 +126,23 @@ namespace sg {
 
     }
 
-    const sf::Vector2f &Entity::getPos() {
+    const sf::Vector2f &Entity::getPos() const {
 
         return this->pos;
 
     }
 
-    const sf::Vector2f &Entity::getPosSprite(uint32_t idx) {
+    const sf::Vector2f &Entity::getPosSprite(uint32_t idx) const {
 
-        if (idx >= this->sprites.size() || idx < 0) {
-
-            //TODO: come up with a better way to return
-            sf::Vector2f rPos;
-            return rPos;
-
-        }
+        if (idx >= this->sprites.size() || idx < 0)
+            throw std::out_of_range ("getPosSprite(): Not a vaild sprite index.");
         return this->sprites[idx]->getPosition();
 
     }
 
-    std::vector<sf::Sprite *>::size_type Entity::addSprite(sf::Sprite *newSprite) {
+    std::vector<sf::Sprite *>::size_type Entity::addSprite(sf::Sprite &newSprite) {
 
-        this->sprites.push_back(newSprite);
+        this->sprites.push_back(&newSprite);
         return (this->sprites.size() - 1);
 
     }
@@ -159,25 +154,6 @@ namespace sg {
         sf::Sprite *r = this->sprites[idx];
         this->sprites.erase(sprites.begin() + idx);
         return r;
-
-    }
-
-    sf::Sprite *Entity::removeSprite(sf::Sprite *s) {
-
-        std::vector<sf::Sprite *>::iterator it = this->sprites.begin();
-        while (it != this->sprites.end()) {
-
-            if ((*it) == s) {
-
-                this->sprites.erase(it);
-                return (*it);
-
-            }
-            ++it;
-
-        }
-
-        return NULL;
 
     }
 

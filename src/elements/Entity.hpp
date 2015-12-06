@@ -24,10 +24,10 @@ namespace sg {
             ~Entity();
             bool collides(const sg::Entity &);// calls handleCollision
             /*virtual*/ void handleCollision(std::string, const sf::Vector2f &, const std::vector<sf::Vector2f> &) {};
-            bool getIsCollidable();
+            bool getIsCollidable() const;
             void setIsCollidable(bool);
-            std::vector<sf::Sprite *>::size_type getNumOfSprites();
-            const sf::Sprite *getSprite(uint32_t);
+            std::vector<sf::Sprite *>::size_type getNumOfSprites() const;
+            const sf::Sprite *getSprite(uint32_t) const;
             void move(const sf::Vector2f &);
             void moveSprite(uint32_t, const sf::Vector2f &);
             void translate(const sf::Vector2f &);
@@ -36,11 +36,10 @@ namespace sg {
             void rotateSprite(uint32_t, float, bool=true);
             void scale(const sf::Vector2f &);
             void scaleSprite(uint32_t, const sf::Vector2f &);
-            const sf::Vector2f &getPos();
-            const sf::Vector2f &getPosSprite(uint32_t);
-            std::vector<sf::Sprite *>::size_type addSprite(sf::Sprite *);
+            const sf::Vector2f &getPos() const;
+            const sf::Vector2f &getPosSprite(uint32_t) const;
+            std::vector<sf::Sprite *>::size_type addSprite(sf::Sprite &);
             sf::Sprite *removeSprite(uint32_t);
-            sf::Sprite *removeSprite(sf::Sprite *);
             /*virtual*/ void update(float) /*= 0;*/ {}
             void draw();
 
