@@ -91,21 +91,57 @@ namespace sg {
     
         this->updateView();
     }
-    
+
     void GameWindow::render() {
-    
-        auto entities = world->getEntitiesToRender();
-    
-        GameLoop.inst().getRenderWindow().setView(this->view);
+
+        auto entities = world->getEntities();
+        
+        std::priority_queue<Entity, std::vector<Entity>,
+                            verticalSort> renderQueue;
     
         for (auto entityIter=entities.begin();
-             entityIter!=entities.end(); ++entityIter) {
-    
-            Entity *entity = *entityIter;
-            entity->draw();
-    
+            entityIter!=entities.end(); ++entityIter) {
+
+            Entity *e = *entityIter;
+
+            // TODO: check this logic with Eric
+
+            auto left = e->getPos().x
+                      + e->getSprite()->getGlobalBounds().left;
+            auto top = e->getPos().y
+                     + e->getSprite()->getGlobalBounds().top;
+            auto width = e->getSprite()->getGlobalBounds().width;
+            auto height = e->getSprite()->getGlobalBounds().height;
+
+            if ((right
+                 <= this->positionInWorld.x + this->sizeInWorld.x)
+            &&  (top
+                 <= this->positionInWorld.y + this->sizeInWorld.y)
+            &&  (left
+                 >= this->positionInWorld.x)
+            &&  (top + height
+                 >= this->positionInWorld.y)) {
+
+                // add to render queue
+                renderQueue.push(e);
+
+            }
+
         }
+        
+        GameLoop.inst().getRenderWindow().setView(this->view);
+
+        while (!renderQueue.empty()) {
     
+            // fetch entity
+            Entity *entity = entityQueue.top();
+            entityQueue.pop();
+
+            // draw entity
+            entity->draw();
+
+        }
+
         GameLoop.inst().getRenderWindow().setView(
                 GameLoop.inst().getRenderWindow().getDefaultView());
     
@@ -178,6 +214,13 @@ namespace sg {
         view.setSize(sizeInWorld);
         view.setRotation(rotationInWorld);
     
+    }
+    
+    bool GameWindow::verticalSort(Entity *e1, Entity *e2) {
+        if (e1->getPos().y < e2->getPos().y)
+            return true;
+        else
+            return false;
     }
 
 }
