@@ -56,20 +56,20 @@ namespace sg {
             scanline();
     }
 
-    float getMinX(Entity *e) {
+    float GameWorld::getMinX(Entity *e) {
         return e->getPos().x + e->getSprite()->getGlobalBounds().left;
     }
-    float getMaxX(Entity *e) {
+    float GameWorld::getMaxX(Entity *e) {
         return e->getPos().x
              + e->getSprite()->getGlobalBounds().left
              + e->getSprite()->getGlobalBounds().width;
     }
-    float getMinY(Entity *e) {
+    float GameWorld::getMinY(Entity *e) {
         return e->getPos().y
              + e->getSprite()->getGlobalBounds().top
              + e->getSprite()->getGlobalBounds().height;
     }
-    float getMaxY(Entity *e) {
+    float GameWorld::getMaxY(Entity *e) {
         return e->getPos().y
              + e->getSprite()->getGlobalBounds().top
              + e->getSprite()->getGlobalBounds().height;

@@ -134,13 +134,13 @@ namespace sg {
 
     const sf::Vector2f &Entity::getPosSprite(uint32_t idx) {
 
-        if (idx >= this->sprites.size() || idx < 0) {
+        /*if (idx >= this->sprites.size() || idx < 0) {
 
             //TODO: come up with a better way to return
             sf::Vector2f rPos;
             return rPos;
 
-        }
+        }*/
         return this->sprites[idx]->getPosition();
 
     }

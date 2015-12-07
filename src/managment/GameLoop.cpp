@@ -11,7 +11,7 @@ namespace sg {
     
     GameLoop & GameLoop::inst() {
     
-        static Game instance;
+        static GameLoop instance;
         
         return instance;
     
@@ -36,11 +36,10 @@ namespace sg {
             sf::Time elapsed = clock.restart();
     
             // process current state
-            if (peekState() == NULL) break;
+            if (StateManager::inst().peekState() == NULL) break;
            
-            StateManager.inst().peekState()->handleInput();
-            StateManager.inst().peekState()->update(elapsed);
-            StateManager.inst().peekState()->draw();
+            StateManager::inst().peekState()->update(elapsed);
+            StateManager::inst().peekState()->render();
     
         }
     

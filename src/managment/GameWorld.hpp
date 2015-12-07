@@ -1,10 +1,11 @@
 #pragma once
 
 #include <vector>
+#include <set>
+#include <SFML/Graphics.hpp>
 
-#include <SFML/Vector2.hpp>
-
-#include "Entity.hpp"
+#include "../elements/Entity.hpp"
+#include "InputManager.hpp"
 
 namespace sg {
 
@@ -57,6 +58,10 @@ namespace sg {
             void sortEntities();
             void removeDeletedEntities();
             void scanline();
+            float getMinX(Entity *e);
+            float getMaxX(Entity *e);
+            float getMinY(Entity *e);
+            float getMaxY(Entity *e);
 
     };
 
