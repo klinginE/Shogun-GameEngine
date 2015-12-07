@@ -112,15 +112,13 @@ namespace sg {
                      + e->getSprite()->getGlobalBounds().top;
             auto width = e->getSprite()->getGlobalBounds().width;
             auto height = e->getSprite()->getGlobalBounds().height;
+            auto right = left + width;
+            auto bottom = top + height;
 
-            if ((right
-                 <= this->positionInWorld.x + this->sizeInWorld.x)
-            &&  (top
-                 <= this->positionInWorld.y + this->sizeInWorld.y)
-            &&  (left
-                 >= this->positionInWorld.x)
-            &&  (top + height
-                 >= this->positionInWorld.y)) {
+            if ((left <= this->positionInWorld.x + this->sizeInWorld.x)
+            &&  (top <= this->positionInWorld.y + this->sizeInWorld.y)
+            &&  (right >= this->positionInWorld.x)
+            &&  (bottom >= this->positionInWorld.y)) {
 
                 // add to render queue
                 renderQueue.push(e);

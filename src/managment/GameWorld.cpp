@@ -56,11 +56,50 @@ namespace sg {
             scanline();
     }
 
+    float getMinX(Entity *e) {
+        return e->getPos().x + e->getSprite()->getGlobalBounds().left;
+    }
+    float getMaxX(Entity *e) {
+        return e->getPos().x
+             + e->getSprite()->getGlobalBounds().left
+             + e->getSprite()->getGlobalBounds().width;
+    }
+    float getMinY(Entity *e) {
+        return e->getPos().y
+             + e->getSprite()->getGlobalBounds().top
+             + e->getSprite()->getGlobalBounds().height;
+    }
+    float getMaxY(Entity *e) {
+        return e->getPos().y
+             + e->getSprite()->getGlobalBounds().top
+             + e->getSprite()->getGlobalBounds().height;
+    }
+
     void GameWorld::scanline() {
         // sort all entities before scanline 
         sortEntities();
         
         // TODO: scanline
+        for (auto i1 = entities.begin();
+             i1 != entities.end(); ++i1) {
+            Entity *e1 = *i1;
+
+            if (!getIsCollidable(e1))
+                continue;
+
+            for (auto i2 = i1;
+                 i2 != entities.end && getMinX(*i2) <= getMaxX(e1);
+                 ++i2) {
+                
+                Entity *e2 = *i2;
+
+                if (!getIsCollidable(e2))
+                    continue;
+
+                e1->collides(*e2);
+
+            }
+        }
     }
 
     void GameWorld::addEntity(Entity *entity) {
