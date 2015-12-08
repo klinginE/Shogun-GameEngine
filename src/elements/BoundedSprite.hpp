@@ -15,15 +15,15 @@ namespace sg {
     class BoundedSprite : public sf::Sprite {
 
         private:
-            BoundingShape *surface;
+            const BoundingShape *surface;
         public:
             BoundedSprite();
-            BoundedSprite(BoundingShape &);
-            BoundedSprite(BoundingShape &, const sf::Texture &);
-            BoundedSprite(BoundingShape &, const sf::Texture &, const sf::IntRect &);
+            BoundedSprite(const BoundingShape &);
+            BoundedSprite(const BoundingShape &, const sf::Texture &);
+            BoundedSprite(const BoundingShape &, const sf::Texture &, const sf::IntRect &);
             ~BoundedSprite();
             const BoundingShape *getSurface() const;
-            void setSurface(BoundingShape &);
+            void setSurface(const BoundingShape &);
 
     };
 

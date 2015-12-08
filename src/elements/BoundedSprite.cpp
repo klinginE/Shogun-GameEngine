@@ -2,25 +2,37 @@
 
 namespace sg {
 
-    BoundedSprite::BoundedSprite() : sf::Sprite() {
+    BoundedSprite::BoundedSprite() :
+    sf::Sprite(),
+    this->surface(NULL)
+    {
 
         this->surface = NULL;
 
     }
 
-    BoundedSprite::BoundedSprite(BoundingShape &bs) : sf::Sprite() {
+    BoundedSprite::BoundedSprite(const BoundingShape &bs) :
+    sf::Sprite(),
+    this->surface(NULL)
+    {
 
         this->setSurface(bs);
 
     }
 
-    BoundedSprite::BoundedSprite(BoundingShape &bs, const sf::Texture &t) : sf::Sprite(t) {
+    BoundedSprite::BoundedSprite(const BoundingShape &bs, const sf::Texture &t) :
+    sf::Sprite(t),
+    this->surface(NULL)
+    {
 
         this->setSurface(bs);
 
     }
 
-    BoundedSprite::BoundedSprite(BoundingShape &bs, const sf::Texture &t, const sf::IntRect &rect) : sf::Sprite(t, rect) {
+    BoundedSprite::BoundedSprite(const BoundingShape &bs, const sf::Texture &t, const sf::IntRect &rect) :
+    sf::Sprite(t, rect),
+    this->surface(NULL)
+    {
 
         this->setSurface(bs);
 
@@ -38,7 +50,7 @@ namespace sg {
 
     }
 
-    void BoundedSprite::setSurface(BoundingShape &bs) {
+    void BoundedSprite::setSurface(const BoundingShape &bs) {
 
         this->surface = &bs;
 

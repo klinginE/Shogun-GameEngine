@@ -58,7 +58,7 @@ namespace sg {
 
     const sf::Sprite *Entity::getSprite(uint32_t idx) const {
 
-        if (idx >= this->sprites.size() || idx < 0)
+        if (idx >= this->getNumOfSprites())
             return NULL;
         return this->sprites[idx];
 
@@ -73,7 +73,7 @@ namespace sg {
 
     void Entity::moveSprite(uint32_t idx, const sf::Vector2f &v) {
 
-        if (idx >= this->sprites.size() || idx < 0)
+        if (idx >= this->getNumOfSprites())
             return;
         this->sprites[idx]->setPosition(v);
 
@@ -88,7 +88,7 @@ namespace sg {
 
     void Entity::translateSprite(uint32_t idx, const sf::Vector2f &v) {
 
-        if (idx >= this->sprites.size() || idx < 0)
+        if (idx >= this->getNumOfSprites())
             return;
         this->sprites[idx]->move(v);
 
@@ -96,14 +96,14 @@ namespace sg {
 
     void Entity::rotate(float angl, bool useDeg) {
 
-        for (uint32_t i = 0; 0 < this->sprites.size(); i++)
+        for (uint32_t i = 0; 0 < this->getNumOfSprites(); i++)
             this->rotateSprite(i, angl, useDeg);
 
     }
 
     void Entity::rotateSprite(uint32_t idx, float angl, bool useDeg) {
 
-        if (idx >= this->sprites.size() || idx < 0)
+        if (idx >= this->getNumOfSprites())
             return;
         if (!useDeg)
             angl *= (180.0f / M_PI);//If angl is not degs then make it degs
@@ -113,14 +113,14 @@ namespace sg {
 
     void Entity::scale(const sf::Vector2f &s) {
 
-        for (uint32_t i = 0; 0 < this->sprites.size(); i++)
+        for (uint32_t i = 0; 0 < this->getNumOfSprites(); i++)
             this->scaleSprite(i, s);
 
     }
 
     void Entity::scaleSprite(uint32_t idx, const sf::Vector2f &s) {
 
-        if (idx >= this->sprites.size() || idx < 0)
+        if (idx >= this->getNumOfSprites())
             return;
         this->sprites[idx]->scale(s); 
 
@@ -134,7 +134,7 @@ namespace sg {
 
     const sf::Vector2f &Entity::getPosSprite(uint32_t idx) const {
 
-        if (idx >= this->sprites.size() || idx < 0)
+        if (idx >= this->getNumOfSprites())
             throw std::out_of_range ("getPosSprite(): Not a vaild sprite index.");
         return this->sprites[idx]->getPosition();
 
@@ -143,16 +143,16 @@ namespace sg {
     std::vector<sf::Sprite *>::size_type Entity::addSprite(sf::Sprite &newSprite) {
 
         this->sprites.push_back(&newSprite);
-        return (this->sprites.size() - 1);
+        return (this->getNumOfSprites() - 1);
 
     }
 
     sf::Sprite *Entity::removeSprite(uint32_t idx) {
 
-        if (idx >= this->sprites.size() || idx < 0)
+        if (idx >= this->getNumOfSprites())
             return NULL;
         sf::Sprite *r = this->sprites[idx];
-        this->sprites.erase(sprites.begin() + idx);
+        this->sprites.erase(this->sprites.begin() + idx);
         return r;
 
     }
