@@ -9,6 +9,9 @@
 //SFML includes
 #include<SFML/Graphics.hpp>
 
+//SHOGUN includes
+#include"AnimatedSprite.hpp"
+
 namespace sg {
 
     class Entity {
@@ -23,7 +26,7 @@ namespace sg {
             Entity(const sf::Vector2f &, bool=true);
             ~Entity();
             bool collides(const sg::Entity &);// calls handleCollision
-            /*virtual*/ void handleCollision(std::string, const sf::Vector2f &, const std::vector<sf::Vector2f> &) {};
+            virtual void handleCollision(std::string, const sf::Vector2f &, const std::vector<sf::Vector2f> &) {}
             bool getIsCollidable() const;
             void setIsCollidable(bool);
             std::vector<sf::Sprite *>::size_type getNumOfSprites() const;
@@ -40,8 +43,20 @@ namespace sg {
             const sf::Vector2f &getPosSprite(uint32_t) const;
             std::vector<sf::Sprite *>::size_type addSprite(sf::Sprite &);
             sf::Sprite *removeSprite(uint32_t);
-            /*virtual*/ void update(float) /*= 0;*/ {}
-            void draw();
+            virtual void update(float tslu) {
+         
+                for (std::vector<sf::Sprite *>::iterator it = this->sprites.begin() ; it != this->sprites.end(); ++it)
+                    if (AnimatedSprite *s = dynamic_cast<AnimatedSprite *>((*it)))
+                        s->update(tslu);
+        
+            }
+            virtual void draw() {
+        
+                //TODO: Uncomment this code once GameLoop is ready.
+                /*for (std::vector<sf::Sprite *>::iterator it = this->sprites.begin() ; it != this->sprites.end(); ++it)
+                    GameLoop.inst().getRenderWindow().draw((*it));*/
+        
+            }
 
     };
 

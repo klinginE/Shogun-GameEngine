@@ -1,4 +1,10 @@
+//C++ includes
+#include<stdexcept>
+
+//SHOGUN includes
 #include"Entity.hpp"
+//TODO: uncomment code once GameLoop is ready.
+//#include"../management/GameLoop.hpp"
 
 namespace sg {
 
@@ -135,7 +141,7 @@ namespace sg {
     const sf::Vector2f &Entity::getPosSprite(uint32_t idx) const {
 
         if (idx >= this->getNumOfSprites())
-            throw std::out_of_range ("getPosSprite(): Not a vaild sprite index.");
+            throw std::out_of_range("getPosSprite(): Not a vaild sprite index.");
         return this->sprites[idx]->getPosition();
 
     }
@@ -154,13 +160,6 @@ namespace sg {
         sf::Sprite *r = this->sprites[idx];
         this->sprites.erase(this->sprites.begin() + idx);
         return r;
-
-    }
-
-    void Entity::draw() {
-
-        //TODO: Add code to get render window and loop through sprites and draw
-        //      them.
 
     }
 

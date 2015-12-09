@@ -1,3 +1,7 @@
+//C++ includes
+#include<stdexcept>
+
+//SHOGUN includes
 #include"AnimatedSprite.hpp"
 
 namespace sg {
@@ -46,7 +50,7 @@ namespace sg {
 
     }
 
-    std::vector<sf::IntRect>::size_type AnimatedSprite::getNumOfFrames() {
+    std::vector<sf::IntRect>::size_type AnimatedSprite::getNumOfFrames() const {
 
         return this->rects.size();
 
@@ -106,13 +110,16 @@ namespace sg {
 
     }
 
-    bool AnimatedSprite::removeFrame(uint32_t idx) {
+    std::pair<sf::IntRect &, const BoundingShape *> AnimatedSprite::removeFrame(uint32_t idx) {
 
         if (idx >= this->getNumOfFrames())
-            return false;
+            throw std::out_of_range("removeFrame(): Not a vaild index.");
+
+        std::pair<sf::IntRect &, const BoundingShape *> p(this->rects[idx], this->surfaces[idx]);
         this->rects.erase(this->rects.begin() + idx);
         this->surfaces.erase(this->surfaces.begin() + idx);
-        return true;
+
+        return p;
 
     }
 

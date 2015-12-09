@@ -2,6 +2,8 @@
 
 //C++ includes
 #include<vector>
+#include<utility>
+#include<stdint.h>
 
 //SFML includes
 #include<SFML/Graphics.hpp>
@@ -14,8 +16,8 @@ namespace sg {
     class AnimatedSprite : public sf::Sprite {
 
         private:
-            std::vector<sf::IntRct> rects;
-            std::vector<const sf::BoundingShape *> surfaces;
+            std::vector<sf::IntRect> rects;
+            std::vector<const BoundingShape *> surfaces;
             float frameDelay;
             uint32_t frameIndex;
             float timePast;
@@ -26,7 +28,7 @@ namespace sg {
             AnimatedSprite(float);
             AnimatedSprite(float, const sf::Texture &);
             ~AnimatedSprite();
-            std::vector<sf::IntRect>::size_type getNumOfFrames();
+            std::vector<sf::IntRect>::size_type getNumOfFrames() const;
             const BoundingShape *getFrameBound(uint32_t) const;
             const sf::IntRect &getFrameRect(uint32_t) const;
             float getFrameDelay() const;
@@ -35,7 +37,7 @@ namespace sg {
             float getTimePast() const;
             bool getIsPlaying() const;
             std::vector<sf::IntRect>::size_type addFrame(const sf::IntRect &, const BoundingShape &);
-            bool removeFrame(uint32_t);
+            std::pair<sf::IntRect &, const BoundingShape *> removeFrame(uint32_t);
             void start();
             void stop();
             void restart();
