@@ -41,11 +41,11 @@ namespace sg {
     
     }
     
-    list<GameWorld*> & GameState::accessGameWorlds() {
+    std::list<GameWorld*> & GameState::accessGameWorlds() {
         return gameWorlds;
     }
     
-    list<GameWindow*> & GameState::accessGameWindows() {
+    std::list<GameWindow*> & GameState::accessGameWindows() {
         return gameWindows;
     }
     

@@ -10,7 +10,7 @@ namespace sg {
     class StateManager {
     
         public:
-            static StateManager & getInst();
+            static StateManager & inst();
             
             void pushState(GameState *state);
             void popState();

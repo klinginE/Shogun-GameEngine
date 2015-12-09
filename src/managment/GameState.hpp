@@ -10,8 +10,8 @@ namespace sg {
 
     class GameState {
     
-        list<GameWorld*> gameWorlds;
-        list<GameWindow*> gameWindows;
+        std::list<GameWorld*> gameWorlds;
+        std::list<GameWindow*> gameWindows;
         InputManager inputManager;
     
         public:
@@ -20,9 +20,9 @@ namespace sg {
             void render();
             void update(const sf::Time &tslu);
     
-            list<GameWorld*>  & accessGameWorlds();
-            list<GameWindow*> & accessGameWindows();
-            InputManager      & accessInputManager();
+            std::list<GameWorld*>  & accessGameWorlds();
+            std::list<GameWindow*> & accessGameWindows();
+            InputManager           & accessInputManager();
     };
     
 }
