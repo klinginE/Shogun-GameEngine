@@ -1,4 +1,4 @@
-#include"BundedSprite.hpp"
+#include"BoundedSprite.hpp"
 
 namespace sg {
 

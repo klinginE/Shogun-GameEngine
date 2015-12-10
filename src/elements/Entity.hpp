@@ -16,6 +16,9 @@ namespace sg {
 
     class Entity {
 
+        private:
+           void expandBounds(sf::FloatRect &, sf::FloatRect);
+
         protected:
             std::vector<sf::Sprite *> sprites;
             bool isCollidable;
@@ -41,6 +44,8 @@ namespace sg {
             void scaleSprite(uint32_t, const sf::Vector2f &);
             const sf::Vector2f &getPos() const;
             const sf::Vector2f &getPosSprite(uint32_t) const;
+            sf::FloatRect getSurfaceBounds();
+            sf::FloatRect getTextureBounds();
             std::vector<sf::Sprite *>::size_type addSprite(sf::Sprite &);
             sf::Sprite *removeSprite(uint32_t);
             virtual void update(float tslu) {

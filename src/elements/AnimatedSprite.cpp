@@ -115,11 +115,12 @@ namespace sg {
         if (idx >= this->getNumOfFrames())
             throw std::out_of_range("removeFrame(): Not a vaild index.");
 
-        std::pair<sf::IntRect &, const BoundingShape *> p(this->rects[idx], this->surfaces[idx]);
+        sf::IntRect *r = &this->rects[idx];
+        const BoundingShape *bs = this->surfaces[idx];
         this->rects.erase(this->rects.begin() + idx);
         this->surfaces.erase(this->surfaces.begin() + idx);
 
-        return p;
+        return std::pair<sf::IntRect &, const BoundingShape *>((*r), bs);
 
     }
 

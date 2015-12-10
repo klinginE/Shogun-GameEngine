@@ -146,6 +146,59 @@ namespace sg {
 
     }
 
+    void Entity::expandTextureBounds(sf::FloatRect &bounds, sf::FloatRect br) {
+
+        if (br.left < bounds.left)
+            bounds.left = br.left;
+        if (br.top < bounds.top)
+            bounds.top = br.top;
+        if ((br.left + br.width) > br.width)
+            bounds.width = (br.left + br.width);
+        if ((br.top + br.height) > br.height)
+            bounds.height = (br.top + br.height);
+
+    }
+
+    const sf::FloatRect &Entity::getSurfaceBounds() {
+
+        //TODO: add code to itterate through animated and bounded sprite for loops and call private expand functions
+        float inf = std::numeric_limits<float>::infinity();
+        sf::FloatRect bounds(inf, inf, -inf, -inf);
+        for (std::vector<sf::Sprite *>::iterator it = this->sprites.begin() ; it != this->sprites.end(); ++it)
+            if (AnimatedSprite *as = dynamic_cast<AnimatedSprite *>((*it))) {}
+                /*for ()
+                    this->expandSurfaceBounds(bounds, );*/
+            else if (BoundedSprite *bs = dynamic_cast<BoundedSprite *>((*it))) {}
+                /*for ()
+                    this->expandSurfaceBounds(bounds, );*/
+            else
+                this->expandBounds(bounds, (*it)->getGlobalBounds());
+
+        bounds.width -= bounds.left;
+        bounds.height -= bounds.top;
+        bounds.left += this->pos.x;
+        bounds.top += this->pos.y;
+
+        return bounds;
+
+    }
+
+    sf::FloatRect Entity::getTextureBounds() {
+
+        float inf = std::numeric_limits<float>::infinity();
+        sf::FloatRect bounds(inf, inf, -inf, -inf);
+        for (std::vector<sf::Sprite *>::iterator it = this->sprites.begin() ; it != this->sprites.end(); ++it)
+            this->expandBounds(bounds, (*it)->getGlobalBounds());
+
+        bounds.width -= bounds.left;
+        bounds.height -= bounds.top;
+        bounds.left += this->pos.x;
+        bounds.top += this->pos.y;
+
+        return bounds;
+
+    }
+
     std::vector<sf::Sprite *>::size_type Entity::addSprite(sf::Sprite &newSprite) {
 
         this->sprites.push_back(&newSprite);
