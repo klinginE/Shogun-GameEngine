@@ -106,7 +106,7 @@ namespace sg {
 
         auto entities = world->getEntities();
         
-        std::priority_queue<Entity, std::vector<Entity>,
+        std::priority_queue<Entity *, std::vector<Entity *>,
                             verticalComparitor> renderQueue;
     
         for (auto entityIter=entities.begin();
@@ -114,21 +114,12 @@ namespace sg {
 
             Entity *e = *entityIter;
 
-            // TODO: check this logic with Eric
+            auto b = e->getTextureBounds();
 
-            auto left = e->getPos().x
-                      + e->getSprite()->getGlobalBounds().left;
-            auto top = e->getPos().y
-                     + e->getSprite()->getGlobalBounds().top;
-            auto width = e->getSprite()->getGlobalBounds().width;
-            auto height = e->getSprite()->getGlobalBounds().height;
-            auto right = left + width;
-            auto bottom = top + height;
-
-            if ((left <= this->positionInWorld.x + this->sizeInWorld.x)
-            &&  (top <= this->positionInWorld.y + this->sizeInWorld.y)
-            &&  (right >= this->positionInWorld.x)
-            &&  (bottom >= this->positionInWorld.y)) {
+            if ((b.left <= this->positionInWorld.x + this->sizeInWorld.x)
+            &&  (b.top <= this->positionInWorld.y + this->sizeInWorld.y)
+            &&  (b.left + b.width >= this->positionInWorld.x)
+            &&  (b.top + b.height >= this->positionInWorld.y)) {
 
                 // add to render queue
                 renderQueue.push(e);
@@ -142,8 +133,8 @@ namespace sg {
         while (!renderQueue.empty()) {
     
             // fetch entity
-            Entity *entity = entityQueue.top();
-            entityQueue.pop();
+            Entity *entity = renderQueue.top();
+            renderQueue.pop();
 
             // draw entity
             entity->draw();
@@ -165,10 +156,10 @@ namespace sg {
     void GameWindow::setPosInScreen(sf::Vector2f positionInScreen) {
     
         this->positionInScreen = positionInScreen;
-        sf::Rect viewport(this->positionInScreen.x,
-                          this->positionInScreen.y,
-                          this->sizeInScreen.x,
-                          this->sizeInScreen.y);
+        sf::Rect<float> viewport(this->positionInScreen.x,
+                                 this->positionInScreen.y,
+                                 this->sizeInScreen.x,
+                                 this->sizeInScreen.y);
         view.setViewport(viewport);
     }
     sf::Vector2f GameWindow::getPosInScreen() {
@@ -177,10 +168,10 @@ namespace sg {
     
     void GameWindow::setSizeInScreen(sf::Vector2f sizeInScreen) {
         this->sizeInScreen = sizeInScreen;
-        sf::Rect viewport(this->positionInScreen.x,
-                          this->positionInScreen.y,
-                          this->sizeInScreen.x,
-                          this->sizeInScreen.y);
+        sf::Rect<float> viewport(this->positionInScreen.x,
+                                 this->positionInScreen.y,
+                                 this->sizeInScreen.x,
+                                 this->sizeInScreen.y);
         view.setViewport(viewport);
     }
     sf::Vector2f GameWindow::getSizeInScreen() {
@@ -213,10 +204,10 @@ namespace sg {
     
     void GameWindow::updateView() {
     
-        sf::Rect viewport(this->positionInScreen.x,
-                          this->positionInScreen.y,
-                          this->sizeInScreen.x,
-                          this->sizeInScreen.y);
+        sf::Rect<float> viewport(this->positionInScreen.x,
+                                 this->positionInScreen.y,
+                                 this->sizeInScreen.x,
+                                 this->sizeInScreen.y);
         view.setViewport(viewport);
         view.setCenter(positionInWorld);
         view.setSize(sizeInWorld);

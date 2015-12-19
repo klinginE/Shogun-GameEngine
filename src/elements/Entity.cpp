@@ -146,7 +146,7 @@ namespace sg {
 
     }
 
-    void Entity::expandTextureBounds(sf::FloatRect &bounds, sf::FloatRect br) {
+    void Entity::expandBounds(sf::FloatRect &bounds, sf::FloatRect br) {
 
         if (br.left < bounds.left)
             bounds.left = br.left;
@@ -159,7 +159,7 @@ namespace sg {
 
     }
 
-    const sf::FloatRect &Entity::getSurfaceBounds() {
+    sf::FloatRect Entity::getSurfaceBounds() {
 
         //TODO: add code to itterate through animated and bounded sprite for loops and call private expand functions
         float inf = std::numeric_limits<float>::infinity();

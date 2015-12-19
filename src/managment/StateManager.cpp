@@ -22,11 +22,9 @@ namespace sg {
     
     }
     
-    GameState *StateManager::popState() {
+    void StateManager::popState() {
     
-        GameState *state = states.top();
         states.pop();
-        return state;
     
     }
     

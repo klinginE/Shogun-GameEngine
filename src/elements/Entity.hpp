@@ -11,6 +11,7 @@
 
 //SHOGUN includes
 #include"AnimatedSprite.hpp"
+#include"BoundedSprite.hpp"
 
 namespace sg {
 
@@ -48,11 +49,13 @@ namespace sg {
             sf::FloatRect getTextureBounds();
             std::vector<sf::Sprite *>::size_type addSprite(sf::Sprite &);
             sf::Sprite *removeSprite(uint32_t);
-            virtual void update(float tslu) {
-         
+            virtual void update(sf::Time tslu) {
+        
+                float tslu_sec = tslu.asSeconds();
+
                 for (std::vector<sf::Sprite *>::iterator it = this->sprites.begin() ; it != this->sprites.end(); ++it)
                     if (AnimatedSprite *s = dynamic_cast<AnimatedSprite *>((*it)))
-                        s->update(tslu);
+                        s->update(tslu_sec);
         
             }
             virtual void draw() {

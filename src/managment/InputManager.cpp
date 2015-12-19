@@ -2,6 +2,7 @@
 #include <functional>
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Window.hpp>
 
 #include "InputManager.hpp"
 
@@ -33,7 +34,7 @@ namespace sg {
         for (std::set<int>::iterator
              iter=keys.begin(); iter!=keys.end(); ++iter) {
     
-            if (sf::Keyboard::isKeyPressed(*iter)) {
+            if (sf::Keyboard::isKeyPressed((sf::Keyboard::Key) *iter)) {
     
                 actions[*iter](); // call callback function
     

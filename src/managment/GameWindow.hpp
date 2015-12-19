@@ -61,6 +61,7 @@ namespace sg {
         private:
             
             void updateView();
+            bool verticalSort(Entity *, Entity *);
     
     };
 

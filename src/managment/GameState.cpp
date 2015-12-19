@@ -35,7 +35,7 @@ namespace sg {
             
             GameWorld *gameWorld = *gameWorldIt;
             assert(gameWorld != NULL);
-            gameWorld->update();
+            gameWorld->update(tslu);
     
         }
     

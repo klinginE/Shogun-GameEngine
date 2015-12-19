@@ -1,7 +1,6 @@
-#include <SFML/Vector2.hpp>
 
 #include "GameWorld.hpp"
-#include "Entity.hpp"
+#include "../elements/Entity.hpp"
 #include "GameLoop.hpp"
 
 #include "GameWorld.hpp"
@@ -41,38 +40,34 @@ namespace sg {
         sortEntities();
     }
 
-    void GameWorld::update() {
+    void GameWorld::update(const sf::Time &tslu) {
         // process input
         if (inputActive && inputManager)
             inputManager->processInput();
         // update all entities
         for (auto entityIter = entities.begin();
-             entityIter != entities.end(); ++entitiyIter) {
+             entityIter != entities.end(); ++entityIter) {
             Entity *e = *entityIter;
-            e->update();
+            e->update(tslu);
         }
         // Detect and resolve collisions between entities
         if (collisionActive)
             scanline();
     }
 
-    float GameWorld::getMinX(Entity *e) {
-        return e->getPos().x + e->getSprite()->getGlobalBounds().left;
+    float GameWorld::scanMin(Entity *e) {
+        if (scanlineType == scanline_t::HORIZONTAL)
+            return e->getSurfaceBounds().left;
+
+        return e->getSurfaceBounds().top;
     }
-    float GameWorld::getMaxX(Entity *e) {
-        return e->getPos().x
-             + e->getSprite()->getGlobalBounds().left
-             + e->getSprite()->getGlobalBounds().width;
-    }
-    float GameWorld::getMinY(Entity *e) {
-        return e->getPos().y
-             + e->getSprite()->getGlobalBounds().top
-             + e->getSprite()->getGlobalBounds().height;
-    }
-    float GameWorld::getMaxY(Entity *e) {
-        return e->getPos().y
-             + e->getSprite()->getGlobalBounds().top
-             + e->getSprite()->getGlobalBounds().height;
+    float GameWorld::scanMax(Entity *e) {
+        if (scanlineType == scanline_t::HORIZONTAL)
+            return e->getSurfaceBounds().left
+                 + e->getSurfaceBounds().width;
+
+        return e->getSurfaceBounds().top
+             + e->getSurfaceBounds().height;
     }
 
     void GameWorld::scanline() {
@@ -84,16 +79,16 @@ namespace sg {
              i1 != entities.end(); ++i1) {
             Entity *e1 = *i1;
 
-            if (!getIsCollidable(e1))
+            if (!e1->getIsCollidable())
                 continue;
 
             for (auto i2 = i1;
-                 i2 != entities.end && getMinX(*i2) <= getMaxX(e1);
+                 i2 != entities.end() && scanMin(*i2) <= scanMax(e1);
                  ++i2) {
                 
                 Entity *e2 = *i2;
 
-                if (!getIsCollidable(e2))
+                if (!e2->getIsCollidable())
                     continue;
 
                 e1->collides(*e2);
@@ -105,7 +100,7 @@ namespace sg {
     void GameWorld::addEntity(Entity *entity) {
         entities.push_back(entity);
     }
-    bool GameWorld::removeEntity(Entity *entity) {
+    void GameWorld::removeEntity(Entity *entity) {
         deleteSet.insert(entity);
     }
     std::vector<Entity *> GameWorld::getEntities() {
@@ -119,7 +114,7 @@ namespace sg {
         collisionActive = false;
     }
     bool GameWorld::getCollisionStatus() {
-        return collisionAcive;
+        return collisionActive;
     }
 
     void GameWorld::activateInput() {
@@ -146,30 +141,28 @@ namespace sg {
         this->inputManager = inputManager;
     }
 
-    bool GameWorld::horizontalSort(Entity *e1, Entity *e2) {
-        if (e1->getPos().x + e1->getSprite()->getGlobalBounds().left
-          < e2->getPos().x + e2->getSprite()->getGlobalBounds().left)
+    bool verticalComparitor(Entity *e1, Entity *e2) {
+        if (e1->getSurfaceBounds().top < e2->getSurfaceBounds().top)
             return true;
-        else
-            return false;
+        
+        return false;
     }
-    bool GameWorld::verticalSort(Entity *e1, Entity *e2) {
-        if (e1->getPos().y + e1->getSprite()->getGlobalBounds().top
-          < e2->getPos().y + e2->getSprite()->getGlobalBounds().top)
+    bool horizontalComparitor(Entity *e1, Entity *e2) {
+        if (e1->getSurfaceBounds().left < e2->getSurfaceBounds().left)
             return true;
-        else
-            return false;
+        
+        return false;
     }
 
     void GameWorld::sortEntities() {
-        removeDeletedEntiteis();
+        removeDeletedEntities();
         if (scanlineType == scanline_t::VERTICAL) {
             std::sort(entities.begin(), entities.end(),
-                      verticalSort);
+                      verticalComparitor);
         }
         else {
             std::sort(entities.begin(), entities.end(),
-                      horizontalSort);
+                      horizontalComparitor);
         }
     }
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <set>
 #include <functional>
 
 /* TODO: We need a way to handle mouse input as well as keyboard input

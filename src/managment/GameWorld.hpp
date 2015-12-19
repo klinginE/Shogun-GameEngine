@@ -32,7 +32,7 @@ namespace sg {
             GameWorld(InputManager *inputManager,
                       std::vector<Entity *> entities);
             
-            void update();
+            void update(const sf::Time &);
 
             void addEntity(Entity *entity);
             void removeEntity(Entity *entity);
@@ -58,10 +58,8 @@ namespace sg {
             void sortEntities();
             void removeDeletedEntities();
             void scanline();
-            float getMinX(Entity *e);
-            float getMaxX(Entity *e);
-            float getMinY(Entity *e);
-            float getMaxY(Entity *e);
+            float scanMin(Entity *e);
+            float scanMax(Entity *e);
 
     };
 
