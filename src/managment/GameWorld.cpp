@@ -155,7 +155,8 @@ namespace sg {
     }
 
     void GameWorld::sortEntities() {
-        removeDeletedEntities();
+        //TODO:Add deleted entities function to class
+        //removeDeletedEntities();
         if (scanlineType == scanline_t::VERTICAL) {
             std::sort(entities.begin(), entities.end(),
                       verticalComparitor);

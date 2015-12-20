@@ -13,6 +13,7 @@ namespace sg {
 
         private:
             std::vector<const sf::Shape *> shapes;
+            sf::FloatRect getShapeBounds(bool) const;
 
         public:
             BoundingShape();
@@ -21,6 +22,8 @@ namespace sg {
             const sf::Shape *getShape(uint32_t) const;
             std::vector<const sf::Shape *>::size_type addShape(const sf::Shape &);
             const sf::Shape *removeShape(uint32_t);
+            sf::FloatRect getLocalShapeBounds() const;
+            sf::FloatRect getGlobalShapeBounds() const;
 
     };
 

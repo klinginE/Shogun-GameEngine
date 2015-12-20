@@ -146,7 +146,7 @@ namespace sg {
 
     }
 
-    void Entity::expandBounds(sf::FloatRect &bounds, sf::FloatRect br) {
+    void Entity::expandSurfaceBounds(sf::FloatRect &bounds, sf::FloatRect br) {
 
         if (br.left < bounds.left)
             bounds.left = br.left;
@@ -161,18 +161,16 @@ namespace sg {
 
     sf::FloatRect Entity::getSurfaceBounds() {
 
-        //TODO: add code to itterate through animated and bounded sprite for loops and call private expand functions
         float inf = std::numeric_limits<float>::infinity();
         sf::FloatRect bounds(inf, inf, -inf, -inf);
-        for (std::vector<sf::Sprite *>::iterator it = this->sprites.begin() ; it != this->sprites.end(); ++it)
-            if (AnimatedSprite *as = dynamic_cast<AnimatedSprite *>((*it))) {}
-                /*for ()
-                    this->expandSurfaceBounds(bounds, );*/
-            else if (BoundedSprite *bs = dynamic_cast<BoundedSprite *>((*it))) {}
-                /*for ()
-                    this->expandSurfaceBounds(bounds, );*/
+        for (std::vector<sf::Sprite *>::iterator it = this->sprites.begin(); it != this->sprites.end(); ++it)
+            if (AnimatedSprite *as = dynamic_cast<AnimatedSprite *>((*it)))
+                for (uint32_t i = 0; i < as->getNumOfFrames(); i++)
+                    this->expandSurfaceBounds(bounds, as->getFrameBound(i)->getGlobalShapeBounds());
+            else if (BoundedSprite *bs = dynamic_cast<BoundedSprite *>((*it)))
+                this->expandSurfaceBounds(bounds, bs->getSurface()->getGlobalShapeBounds());
             else
-                this->expandBounds(bounds, (*it)->getGlobalBounds());
+                this->expandSurfaceBounds(bounds, (*it)->getGlobalBounds());
 
         bounds.width -= bounds.left;
         bounds.height -= bounds.top;
@@ -187,8 +185,8 @@ namespace sg {
 
         float inf = std::numeric_limits<float>::infinity();
         sf::FloatRect bounds(inf, inf, -inf, -inf);
-        for (std::vector<sf::Sprite *>::iterator it = this->sprites.begin() ; it != this->sprites.end(); ++it)
-            this->expandBounds(bounds, (*it)->getGlobalBounds());
+        for (std::vector<sf::Sprite *>::iterator it = this->sprites.begin(); it != this->sprites.end(); ++it)
+            this->expandSurfaceBounds(bounds, (*it)->getGlobalBounds());
 
         bounds.width -= bounds.left;
         bounds.height -= bounds.top;

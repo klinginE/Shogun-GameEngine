@@ -18,7 +18,7 @@ namespace sg {
     class Entity {
 
         private:
-           void expandBounds(sf::FloatRect &, sf::FloatRect);
+           void expandSurfaceBounds(sf::FloatRect &, sf::FloatRect);
 
         protected:
             std::vector<sf::Sprite *> sprites;

@@ -16,6 +16,8 @@ namespace sg {
 
         private:
             const BoundingShape *surface;
+            sf::FloatRect getShapeBounds(bool);
+
         public:
             BoundedSprite();
             BoundedSprite(const BoundingShape &);
@@ -24,6 +26,8 @@ namespace sg {
             ~BoundedSprite();
             const BoundingShape *getSurface() const;
             void setSurface(const BoundingShape &);
+            sf::FloatRect getGlobalShapeBounds();
+            sf::FloatRect getLocalShapeBounds();
 
     };
 
