@@ -49,8 +49,8 @@ namespace sg {
     
     }
     
-    void GameLoop::init(sf::Vector2i windowDimensions,
-                    sf::String windowName) {
+    void GameLoop::init(sf::Vector2u windowDimensions,
+                        sf::String windowName) {
     
         // Configure
         sf::VideoMode setWindowDimensions(
@@ -72,6 +72,7 @@ namespace sg {
         getRenderWindow().create(setWindowDimensions,
                 windowName, windowStyleBitmask);
         getRenderWindow().setPosition(windowPosition);
+        getRenderWindow().setSize(windowDimensions);
         getRenderWindow().setVerticalSyncEnabled(true);
         getRenderWindow().setFramerateLimit(60);
     

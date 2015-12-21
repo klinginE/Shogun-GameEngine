@@ -26,15 +26,17 @@ class TestState : public sg::GameState {
             
             // Initialize entity with white box
             for (int i = 0; i < 200*200*4; i += 4) {
-                pixels[i] = 0;     // R
-                pixels[i+1] = 0;   // G
-                pixels[i+2] = 0;   // B
+                pixels[i]   = 255; // R
+                pixels[i+1] = 255; // G
+                pixels[i+2] = 255; // B
                 pixels[i+3] = 255; // A
             }
             entityTexture.create(200, 200);
             entityTexture.update(pixels);
             entitySprite.setTexture(entityTexture);
+            entitySprite.setTextureRect(sf::IntRect(0, 0, 200, 200));
             entity.addSprite(entitySprite);
+            entity.move(sf::Vector2f(0, 0));
 
             // Initialize world
             world.addEntity(&entity);
@@ -49,6 +51,11 @@ class TestState : public sg::GameState {
             
             // Initialize window
             window.setWorld(&world);
+            window.setSizeInWorld(sf::Vector2f(600, 600));
+
+            std::cout << "Window SizeInWorld: "
+                      << window.getSizeInWorld().x << ", "
+                      << window.getSizeInWorld().y << std::endl;
             
             // add game world and window
             accessGameWorlds().push_back(&world);

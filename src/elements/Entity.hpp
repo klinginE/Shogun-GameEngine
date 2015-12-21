@@ -12,6 +12,7 @@
 //SHOGUN includes
 #include"AnimatedSprite.hpp"
 #include"BoundedSprite.hpp"
+#include"../management/GameLoop.hpp"
 
 namespace sg {
 
@@ -59,10 +60,10 @@ namespace sg {
         
             }
             virtual void draw() {
-        
+
                 //TODO: Uncomment this code once GameLoop is ready.
-                /*for (std::vector<sf::Sprite *>::iterator it = this->sprites.begin() ; it != this->sprites.end(); ++it)
-                    GameLoop.inst().getRenderWindow().draw((*it));*/
+                for (std::vector<sf::Sprite *>::iterator it = this->sprites.begin() ; it != this->sprites.end(); ++it)
+                    GameLoop::inst().getRenderWindow().draw(*(*it));
         
             }
 

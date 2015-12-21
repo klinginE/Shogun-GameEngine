@@ -16,7 +16,7 @@ namespace sg {
     
     void GameState::render() {
 
-        GameLoop::inst().getRenderWindow().clear(sf::Color::Black);
+//        GameLoop::inst().getRenderWindow().clear(sf::Color::Black);
 
         for (std::list<GameWindow*>::iterator
              gameWindowIt=gameWindows.begin();
@@ -28,7 +28,7 @@ namespace sg {
     
         }
 
-        GameLoop::inst().getRenderWindow().display();
+//        GameLoop::inst().getRenderWindow().display();
     
     }
     

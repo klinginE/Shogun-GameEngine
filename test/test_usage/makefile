@@ -1,5 +1,5 @@
 CC=g++
-CFLAGS=-c -Wall -pedantic -std=c++11
+CFLAGS=-c -g -Wall -pedantic -std=c++11
 SFML_FLAGS=-lsfml-graphics -lsfml-window -lsfml-system
 SHOGUN_LIB=shogun
 LINKER_PATH=-L../../lib -l$(SHOGUN_LIB)

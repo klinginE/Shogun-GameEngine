@@ -147,6 +147,7 @@ namespace sg {
         }
         
         GameLoop::inst().getRenderWindow().setView(this->view);
+        GameLoop::inst().getRenderWindow().clear(sf::Color::Black);
 
         while (!renderQueue.empty()) {
     
@@ -159,6 +160,7 @@ namespace sg {
 
         }
 
+        GameLoop::inst().getRenderWindow().display();
         GameLoop::inst().getRenderWindow().setView(
                 GameLoop::inst().getRenderWindow().getDefaultView());
     
