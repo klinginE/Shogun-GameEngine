@@ -8,6 +8,24 @@
 
 namespace sg {
     
+    GameWindow::GameWindow() {
+       
+        this->world = NULL;
+
+        this->positionInScreen.x = 0;
+        this->positionInScreen.y = 0;
+        this->sizeInScreen.x = 1;
+        this->sizeInScreen.y = 1;
+        this->positionInWorld.x = 0;
+        this->positionInWorld.y = 0;
+        this->sizeInWorld.x = GameLoop::inst().getRenderWindow().getSize().x;
+        this->sizeInWorld.y = GameLoop::inst().getRenderWindow().getSize().y;
+        this->rotationInWorld = 0;
+    
+        this->updateView();
+        
+    }
+
     GameWindow::GameWindow(GameWorld *world) {
     
         this->world = world;

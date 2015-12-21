@@ -18,6 +18,7 @@ namespace sg {
         sf::View view;
     
         public:
+            GameWindow();
             GameWindow(GameWorld *world);
             GameWindow(GameWorld *world,
                        sf::Vector2f positionInScreen,
