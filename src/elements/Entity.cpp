@@ -3,8 +3,6 @@
 
 //SHOGUN includes
 #include"Entity.hpp"
-//TODO: uncomment code once GameLoop is ready.
-//#include"../management/GameLoop.hpp"
 
 namespace sg {
 
@@ -33,14 +31,42 @@ namespace sg {
 
     }
 
-    bool Entity::collides(const sg::Entity &e) {
+    bool Entity::collides(sg::Entity &e) {
 
-        if (!this->isCollidable)
+        if (!this->isCollidable || !e.getIsCollidable())
             return false;
 
-        //TODO: Add code that checks for collision with e.
-        //this->handleCollision(...);
-        return false;
+        bool isCollides = false;
+        std::vector<sf::Vector2f> collisionVectors();
+        for (std::vector<sf::Sprite *>::iterator it = this->sprites.begin(); it != this->sprites.end(); ++it)
+            for (uint32_t i = 0; i < e.getNumOfSprites(); i++) {
+
+                 sf::Sprite *sp0 = (*it);
+                 const sf::Sprite *sp1 = e.getSprite(i);
+                 const sf::Shape *s0 = NULL;
+                 const sf::Shape *s1 = NULL;
+                 if (AnimatedSprite *as = dynamic_cast<AnimatedSprite *>(sp0))
+                     s0 = as->getSurface(as->getFrameIndex());
+                 else if (BoundedSprite *bs = dynamic_cast<BoundedSprite *>(sp0))
+                     s0 = bs->getSurface();
+                 if (AnimatedSprite *as = dynamic_cast<AnimatedSprite *>(sp1))
+                     s1 = as->getSurface(as->getFrameIndex());
+                 else if (BoundedSprite *bs = dynamic_cast<BoundedSprite *>(sp1))
+                     s1 = bs->getSurface();
+
+                 sf::Vector2f v(0.0f, 0.0f);
+                 if (s0 != NULL && s1 != NULL && s0->collides(s1, v)) {
+
+                     isCollides = true;
+                     collisionVectors.push_back(v);
+
+                 }
+
+            }
+
+        this->handelCollision(e, collisionVectors);
+
+        return isCollides;
 
     }
 
@@ -165,8 +191,7 @@ namespace sg {
         sf::FloatRect bounds(inf, inf, -inf, -inf);
         for (std::vector<sf::Sprite *>::iterator it = this->sprites.begin(); it != this->sprites.end(); ++it)
             if (AnimatedSprite *as = dynamic_cast<AnimatedSprite *>((*it)))
-                for (uint32_t i = 0; i < as->getNumOfFrames(); i++)
-                    this->expandSurfaceBounds(bounds, as->getFrameBound(i)->getGlobalShapeBounds());
+                this->expandSurfaceBounds(bounds, as->getFrameBound(as->getFrameIndex())->getGlobalShapeBounds());
             else if (BoundedSprite *bs = dynamic_cast<BoundedSprite *>((*it)))
                 this->expandSurfaceBounds(bounds, bs->getSurface()->getGlobalShapeBounds());
             else
