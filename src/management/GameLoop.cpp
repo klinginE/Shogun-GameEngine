@@ -23,23 +23,27 @@ namespace sg {
     
         while (getRenderWindow().isOpen()) {
     
-            // handle window close event
-            sf::Event event;
-            while (getRenderWindow().pollEvent(event)) {
-    
-                if (event.type == sf::Event::Closed)
-                    getRenderWindow().close();
-    
-            }
-    
             // elapsed time
             sf::Time elapsed = clock.restart();
     
             // process current state
-            if (StateManager::inst().peekState() == NULL) break;
+            if (StateManager::inst().peekState() == NULL) {
+                getRenderWindow().close();
+                break;
+            };
            
             StateManager::inst().peekState()->update(elapsed);
             StateManager::inst().peekState()->render();
+    
+            // handle window close event
+            sf::Event event;
+            while (getRenderWindow().pollEvent(event)) {
+    
+                if (event.type == sf::Event::Closed) {
+                    getRenderWindow().close();
+                }
+    
+            }
     
         }
     

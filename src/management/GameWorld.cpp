@@ -36,7 +36,6 @@ namespace sg {
         this->inputActive = true;
         this->scanlineType = scanline_t::HORIZONTAL;
         this->collisionActive = true;
-        // TODO: sort entities here
         sortEntities();
     }
 
@@ -74,7 +73,7 @@ namespace sg {
         // sort all entities before scanline 
         sortEntities();
         
-        // TODO: scanline
+        // scanline
         for (auto i1 = entities.begin();
              i1 != entities.end(); ++i1) {
             Entity *e1 = *i1;
