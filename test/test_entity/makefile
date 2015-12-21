@@ -1,29 +1,19 @@
 CC=g++
 CFLAGS=-c -Wall -pedantic -std=c++11
 SFML_FLAGS=-lsfml-graphics -lsfml-window -lsfml-system
-MANAG_DIR=../../src/management
-ELEM_DIR=../../src/elements
-SOURCES=testEntity.cpp \
-$(MANAG_DIR)/GameLoop.cpp \
-$(MANAG_DIR)/GameState.cpp \
-$(MANAG_DIR)/GameWindow.cpp \
-$(MANAG_DIR)/GameWorld.cpp \
-$(MANAG_DIR)/InputManager.cpp \
-$(MANAG_DIR)/StateManager.cpp \
-$(ELEM_DIR)/AnimatedSprite.cpp \
-$(ELEM_DIR)/BoundedSprite.cpp \
-$(ELEM_DIR)/BoundingShape.cpp \
-$(ELEM_DIR)/Entity.cpp
+SHOGUN_LIB=shogun
+LINKER_PATH=-L../../lib -l$(SHOGUN_LIB)
+SOURCES=testEntity.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=testE
 
 all: $(SOURCES) $(EXECUTABLE)
 
 $(EXECUTABLE): $(OBJECTS)
-	$(CC) $(OBJECTS) -o $@ $(SFML_FLAGS)
+	$(CC) $(INC_PATH) -o $@ $(OBJECTS) $(LINKER_PATH) $(SFML_FLAGS)
 
 .cpp.o:
-	$(CC) $(CFLAGS) $< -o $@ $(SFML_FLAGS)
+	$(CC) $(INC_PATH) $(CFLAGS) $(INC_PATH) $< -o $@ $(LINKER_PATH) $(SFML_FLAGS)
 
 clean:
 	rm *.o $(EXECUTABLE)

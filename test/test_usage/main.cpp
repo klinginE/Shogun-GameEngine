@@ -1,4 +1,5 @@
-#include "../../src/management/GameLoop.hpp"
+#include <GameLoop.hpp>
+#include <SFML/Graphics.hpp>
 
 int main() {
 
