@@ -1,6 +1,7 @@
 #include <list>
 #include <assert.h>
 
+#include "GameLoop.hpp"
 #include "GameWorld.hpp"
 #include "GameWindow.hpp"
 #include "InputManager.hpp"
@@ -14,7 +15,9 @@ namespace sg {
     }
     
     void GameState::render() {
-    
+
+        GameLoop::inst().getRenderWindow().clear(sf::Color::Black);
+
         for (std::list<GameWindow*>::iterator
              gameWindowIt=gameWindows.begin();
              gameWindowIt != gameWindows.end(); ++gameWindowIt) {
@@ -24,6 +27,8 @@ namespace sg {
             gameWindow->render();
     
         }
+
+        GameLoop::inst().getRenderWindow().display();
     
     }
     
