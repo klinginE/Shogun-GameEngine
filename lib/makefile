@@ -16,7 +16,7 @@ $(ELEM_DIR)/AnimatedSprite.cpp \
 $(ELEM_DIR)/BoundedSprite.cpp \
 $(ELEM_DIR)/BoundingShape.cpp \
 $(ELEM_DIR)/Entity.cpp
-OBJECTS=$(SOURCES:.cpp=.o)
+OBJECTS=$(notdir $(SOURCES:.cpp=.o))
 LIBRARY=shogun
 
 all: compile_objects compile_library clean
