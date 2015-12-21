@@ -1,5 +1,5 @@
 #include<iostream>
-#include"../src/elements/Entity.hpp"
+#include"../../src/elements/Entity.hpp"
 
 int main() {
 
