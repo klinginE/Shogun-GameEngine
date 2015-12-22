@@ -31,12 +31,14 @@ namespace sg {
     
     void InputManager::processInput() {
     
-        for (std::set<int>::iterator
-             iter=keys.begin(); iter!=keys.end(); ++iter) {
+        for (auto iter=actions.begin(); iter!=actions.end(); ++iter) {
+            
+            sf::Keyboard::Key key = (sf::Keyboard::Key) iter->first;
+            auto callback = iter->second;
+
+            if (sf::Keyboard::isKeyPressed(key)) {
     
-            if (sf::Keyboard::isKeyPressed((sf::Keyboard::Key) *iter)) {
-    
-                actions[*iter](); // call callback function
+                callback(); // call callback function
     
             }
     

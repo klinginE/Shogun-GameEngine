@@ -13,7 +13,6 @@ namespace sg {
     class InputManager {
         
         std::map<int, std::function<void()>> actions;
-        std::set<int> keys;
     
         public:
             InputManager();
