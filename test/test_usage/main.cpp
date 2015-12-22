@@ -12,20 +12,13 @@
 
 int main() {
 
-    // Initialize states
-    TestState testState;
-    sg::StateManager::inst().pushState(&testState);
-
     // Initialize gameloop
     sg::GameLoop::inst().init(sf::Vector2u(600, 600),
                               sf::String("Test"));
 
-    std::cout << "RenderWindow size: "
-              << sg::GameLoop::inst().getRenderWindow().getSize().x
-              << ", "
-              << sg::GameLoop::inst().getRenderWindow().getSize().y
-              << std::endl;
-
+    // Initialize states
+    TestState testState;
+    sg::StateManager::inst().pushState(&testState);
 
     // Start gameloop
     sg::GameLoop::inst().start();

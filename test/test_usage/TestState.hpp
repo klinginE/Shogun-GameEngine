@@ -51,7 +51,8 @@ class TestState : public sg::GameState {
             
             // Initialize window
             window.setWorld(&world);
-            window.setSizeInWorld(sf::Vector2f(600, 600));
+            window.setSizeInWorld(sf::Vector2f((float) sg::GameLoop::inst().getRenderWindow().getSize().x,
+                                               (float) sg::GameLoop::inst().getRenderWindow().getSize().y));
 
             std::cout << "Window SizeInWorld: "
                       << window.getSizeInWorld().x << ", "
@@ -70,28 +71,48 @@ class TestState : public sg::GameState {
             entity.translate(transVec);
             std::cout << "New position: "
                       << entity.getPos().x << ", "
-                      << entity.getPos().y << std::endl;
+                      << entity.getPos().y << " "
+                      << "Bounds: "
+                      << entity.getTextureBounds().left << ", "
+                      << entity.getTextureBounds().top << ", "
+                      << entity.getTextureBounds().width << ", "
+                      << entity.getTextureBounds().height << std::endl;
         };
         void moveRight() {
             sf::Vector2f transVec(10, 0);
             entity.translate(transVec);
             std::cout << "New position: "
                       << entity.getPos().x << ", "
-                      << entity.getPos().y << std::endl;
+                      << entity.getPos().y << " "
+                      << "Bounds: "
+                      << entity.getTextureBounds().left << ", "
+                      << entity.getTextureBounds().top << ", "
+                      << entity.getTextureBounds().width << ", "
+                      << entity.getTextureBounds().height << std::endl;
         };
         void moveUp() {
             sf::Vector2f transVec(0, -10);
             entity.translate(transVec);
             std::cout << "New position: "
                       << entity.getPos().x << ", "
-                      << entity.getPos().y << std::endl;
+                      << entity.getPos().y << " "
+                      << "Bounds: "
+                      << entity.getTextureBounds().left << ", "
+                      << entity.getTextureBounds().top << ", "
+                      << entity.getTextureBounds().width << ", "
+                      << entity.getTextureBounds().height << std::endl;
         };
         void moveDown() {
             sf::Vector2f transVec(0, 10);
             entity.translate(transVec);
             std::cout << "New position: "
                       << entity.getPos().x << ", "
-                      << entity.getPos().y << std::endl;
+                      << entity.getPos().y << " "
+                      << "Bounds: "
+                      << entity.getTextureBounds().left << ", "
+                      << entity.getTextureBounds().top << ", "
+                      << entity.getTextureBounds().width << ", "
+                      << entity.getTextureBounds().height << std::endl;
         };
 
 };

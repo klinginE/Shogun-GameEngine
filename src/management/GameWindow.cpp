@@ -134,10 +134,10 @@ namespace sg {
 
             auto b = e->getTextureBounds();
 
-            if ((b.left <= this->positionInWorld.x + this->sizeInWorld.x)
-            &&  (b.top <= this->positionInWorld.y + this->sizeInWorld.y)
-            &&  (b.left + b.width >= this->positionInWorld.x)
-            &&  (b.top + b.height >= this->positionInWorld.y)) {
+            if ((b.left <= this->positionInWorld.x + this->sizeInWorld.x/2)
+            &&  (b.top <= this->positionInWorld.y + this->sizeInWorld.y/2)
+            &&  (b.left + b.width >= this->positionInWorld.x - this->sizeInWorld.x/2)
+            &&  (b.top + b.height >= this->positionInWorld.y - this->sizeInWorld.y/2)) {
 
                 // add to render queue
                 renderQueue.push(e);
