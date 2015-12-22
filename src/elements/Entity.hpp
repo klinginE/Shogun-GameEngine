@@ -61,9 +61,19 @@ namespace sg {
             }
             virtual void draw() {
 
-                //TODO: Uncomment this code once GameLoop is ready.
+                // Move view to draw entity in the correct place
+                sf::View saveView = GameLoop::inst().getRenderWindow().getView();
+                sf::View drawView = saveView;
+                drawView.setCenter(saveView.getCenter().x - getPos().x,
+                                   saveView.getCenter().y - getPos().y);
+                GameLoop::inst().getRenderWindow().setView(drawView);
+
+                // Draw sprites
                 for (std::vector<sf::Sprite *>::iterator it = this->sprites.begin() ; it != this->sprites.end(); ++it)
                     GameLoop::inst().getRenderWindow().draw(*(*it));
+
+                // Set view back to the way it was before
+                GameLoop::inst().getRenderWindow().setView(saveView);
         
             }
 
