@@ -33,6 +33,8 @@ namespace sg {
     }
     
     void GameState::update(const sf::Time &tslu) {
+
+        inputManager.processInput();
     
         for (std::list<GameWorld*>::iterator
              gameWorldIt=gameWorlds.begin();

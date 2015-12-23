@@ -242,4 +242,8 @@ namespace sg {
             return false;
     }
 
+    sf::View &GameWindow::getView() {
+        return view;
+    }
+
 }
