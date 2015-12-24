@@ -1,4 +1,4 @@
 *.o
 practiceGame1/build/*
 *.swp
-test/sgTest
+*.a

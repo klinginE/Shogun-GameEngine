@@ -37,25 +37,25 @@ namespace sg {
             return false;
 
         bool isCollides = false;
-        std::vector<sf::Vector2f> collisionVectors();
+        std::vector<sf::Vector2f> collisionVectors;
         for (std::vector<sf::Sprite *>::iterator it = this->sprites.begin(); it != this->sprites.end(); ++it)
             for (uint32_t i = 0; i < e.getNumOfSprites(); i++) {
 
                  sf::Sprite *sp0 = (*it);
                  const sf::Sprite *sp1 = e.getSprite(i);
-                 const sf::Shape *s0 = NULL;
-                 const sf::Shape *s1 = NULL;
+                 const BoundingShape *s0 = NULL;
+                 const BoundingShape *s1 = NULL;
                  if (AnimatedSprite *as = dynamic_cast<AnimatedSprite *>(sp0))
-                     s0 = as->getSurface(as->getFrameIndex());
+                     s0 = dynamic_cast<const BoundingShape *>(as->getFrameBound(as->getFrameIndex()));
                  else if (BoundedSprite *bs = dynamic_cast<BoundedSprite *>(sp0))
-                     s0 = bs->getSurface();
-                 if (AnimatedSprite *as = dynamic_cast<AnimatedSprite *>(sp1))
-                     s1 = as->getSurface(as->getFrameIndex());
-                 else if (BoundedSprite *bs = dynamic_cast<BoundedSprite *>(sp1))
-                     s1 = bs->getSurface();
+                     s0 = dynamic_cast<const BoundingShape *>(bs->getSurface());
+                 if (const AnimatedSprite *as = dynamic_cast<const AnimatedSprite *>(sp1))
+                     s1 = dynamic_cast<const BoundingShape *>(as->getFrameBound(as->getFrameIndex()));
+                 else if (const BoundedSprite *bs = dynamic_cast<const BoundedSprite *>(sp1))
+                     s1 = dynamic_cast<const BoundingShape *>(bs->getSurface());
 
                  sf::Vector2f v(0.0f, 0.0f);
-                 if (s0 != NULL && s1 != NULL && s0->collides(s1, v)) {
+                 if (s0 != NULL && s1 != NULL && s0->collides((*s1), v)) {
 
                      isCollides = true;
                      collisionVectors.push_back(v);
@@ -64,7 +64,7 @@ namespace sg {
 
             }
 
-        this->handelCollision(e, collisionVectors);
+        this->handleCollision(e, collisionVectors);
 
         return isCollides;
 

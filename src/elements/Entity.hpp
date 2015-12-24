@@ -24,7 +24,7 @@ namespace sg {
             std::vector<sf::Sprite *> sprites;
             bool isCollidable;
             sf::Vector2f pos;//world coordinates
-            virtual void handleCollision(Entity &, const sf::Vector2f &, const std::vector<sf::Vector2f> &) {}
+            virtual void handleCollision(Entity &, const std::vector<sf::Vector2f> &) {}
 
         public:
             Entity();
