@@ -42,6 +42,12 @@ class RunState : public sg::GameState {
 
         };
 
+        void render() {
+            
+            universe.setDispRadius(0.01f*window.getSizeInWorld().x);
+
+            sg::GameState::render();
+        };
 
     private:
         void increaseWindowSize() {
