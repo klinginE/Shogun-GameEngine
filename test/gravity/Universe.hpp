@@ -3,6 +3,7 @@
 // Standard includes
 #include <math.h>
 #include <stdio.h>
+#include <limits>
 
 // Shogun includes
 #include <GameWorld.hpp>
@@ -37,6 +38,7 @@ class Universe : public sg::GameWorld {
 
         void update(const sf::Time &tslu) {
             sg::GameWorld::update(tslu);
+            QuadTree qT;
 
             // TODO: do quad-tree method instead
             for (int i = 0; i < NUM_STARS; i++) {
@@ -55,6 +57,33 @@ class Universe : public sg::GameWorld {
             for (int i = 0; i < NUM_STARS; i++)
                 stars[i].translate(stars[i].getVel());
 
+        };
+
+    private:
+        void createQuadTree(QuadTree *t) {
+            float minX = std::numeric_limits<float>::max();
+            float minY = std::numeric_limits<float>::max();
+            float maxX = -std::numeric_limits<float>::max();
+            float maxY = -std::numeric_limits<float>::max();
+            
+            for (int i = 0; i < NUM_STARS; i++) {
+                sf::Vector2f pos = stars[i].getPos();
+                if (pos.x < minX) minX = pos.x;
+                if (pos.y < minY) minY = pos.y;
+                if (pos.x > maxX) maxX = pos.x;
+                if (pos.y > maxY) maxY = pos.y;
+            }
+            if (maxX - minX > maxY - minY) {
+                float medY = (maxY + minY)/2;
+                float half_diff = (maxX - minX)/2;
+                maxY = medY + half_diff;
+                minY = medY - half_diff;
+            }
+
+            for (int i = 0; i < NUM_STARS; i++) {
+                t->add(&stars[i], minX, minY, maxX, maxY);
+                // TODO: have this function return leaf where it added
+            }
         };
 
 };
