@@ -10,16 +10,15 @@
 // standard includes
 #include <cstdlib>
 
-#define STAR_RADIUS 1
-
 class Star : public sg::Entity {
     
     sf::Sprite sprite;
     sf::Vector2f vel;
+    float disp_radius;
 
     public:
         Star() : sg::Entity() {
-            sprite.setTextureRect(sf::IntRect(0, 0, STAR_RADIUS*2, STAR_RADIUS*2));
+            sprite.setTextureRect(sf::IntRect(0, 0, disp_radius*2, disp_radius*2));
             addSprite(sprite);
 
             float xVel = ((float) (std::rand() % 10)) / 100.0f;
@@ -28,6 +27,8 @@ class Star : public sg::Entity {
             if (std::rand() % 2) yVel = -yVel;
 
             setVel(sf::Vector2f(xVel, yVel));
+
+            disp_radius = 1.0f;
         };
 
         void setVel(sf::Vector2f newVel) {
@@ -41,6 +42,10 @@ class Star : public sg::Entity {
             vel.y += deltaVel.y;
         };
 
+        void setDispRadius(float newRadius) {
+            disp_radius = newRadius;
+        };
+
         void draw() {
             
             // Move view to draw entity in the correct place
@@ -52,7 +57,7 @@ class Star : public sg::Entity {
 
             // Draw circle
             sf::CircleShape circle;
-            circle.setRadius(STAR_RADIUS);
+            circle.setRadius(disp_radius);
             circle.setFillColor(sf::Color(255, 255, 255, 100));
             sg::GameLoop::inst().getRenderWindow().draw(circle);
 
