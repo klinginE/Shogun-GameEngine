@@ -30,42 +30,28 @@ class QuadTree {
             child_downright = NULL;
             star = NULL;
         };
+        ~QuadTree() {
+            clean();
+        };
+
+        void clean() {
+            if (child_upleft) child_upleft->clean();
+            delete child_upleft;
+            if (child_upright) child_upright->clean();
+            delete child_upright;
+            if (child_downleft) child_downleft->clean();
+            delete child_downleft;
+            if (child_downright) child_downright->clean();
+            delete child_downright;
+        };
+
+        void gravity_recursive( // TODO TODO TODO
 
         void add(Star *newStar, float minX, float minY,
-                                float maxX, float maxY) {
+                                float maxX, float maxY,
+                 bool __override) {
 
-            if (numberOfStars == 0) {
-
-                star = newStar;
-                centerOfMass = newStar->getPos();
-                numberOfStars += 1;
-            }
-            else if (numberOfStars == 1) {
-            
-                assert(this->star != NULL);
-                
-                sf::Vector2f pos = newStar->getPos();
-
-                center_of_mass = (center_of_mass + pos)/2;
-
-                QuadTree *newParent = new QuadTree();
-                newParent->parent = this->parent;
-                this->parent = newParent;
-
-                if (newParent->parent->child_upleft == this)
-                    newParent->parent->child_upleft = newParent;
-                else if (newParent->parent->child_upright == this)
-                    newParent->parent->child_upright = newParent;
-                else if (newParent->parent->child_downleft == this)
-                    newParent->parent->child_downleft = newParent;
-                else {
-                    assert(newParent->parent->child_downright == this);
-                    newParent->parent->child_downright = newParent;
-                }
-
-// TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO
-            }
-            else {
+            if (__override || numberOfStars > 1) {
 
                 sf::Vector2f pos = newStar->getPos();
 
@@ -130,6 +116,26 @@ class QuadTree {
                         }
                     }
                 }
+                numberOfStars += 1;
+            }
+            else if (numberOfStars == 1) {
+            
+                assert(this->star != NULL);
+                
+                sf::Vector2f pos = newStar->getPos();
+
+                center_of_mass = (center_of_mass + pos)/2;
+                
+                Star *otherStar = this->star;
+                
+                this->numberOfStars = 0;
+                this->add(otherStar, minX, minY, maxX, maxY, true);
+                this->add(newStar, minX, minY, maxX, maxY, true);
+            }
+            else {
+
+                star = newStar;
+                centerOfMass = newStar->getPos();
                 numberOfStars += 1;
             }
         };
