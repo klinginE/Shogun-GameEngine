@@ -11,10 +11,11 @@
 // Local includes
 #include "Star.hpp"
 
-#define NUM_STARS 1000
-#define NUM_STARS_ACROSS 100
-#define GRAV_CONST 1.0f
-#define STAR_SPACING 10.0f
+#define NUM_STARS (25*25)
+#define NUM_STARS_ACROSS (25)
+#define GRAV_CONST 0.01f
+#define STAR_SPACING 5.0f
+#define STAR_SIZE 1.0f
 
 class Universe : public sg::GameWorld {
     
@@ -50,10 +51,17 @@ class Universe : public sg::GameWorld {
                     if (j == i) continue;
                     sf::Vector2f diff = stars[j].getPos() - stars[i].getPos();
                     float dist_squared = diff.x*diff.x + diff.y*diff.y;
-                    if (dist_squared > 1.0f) {
+                    if (dist_squared > STAR_SIZE) {
                         float dist = sqrt(dist_squared);
                         diff = diff*GRAV_CONST/(dist_squared*dist);
                         stars[i].changeVel(diff);
+                    }
+                    else {
+                        sf::Vector2f vel1 = stars[i].getVel();
+                        sf::Vector2f vel2 = stars[j].getVel();
+                        sf::Vector2f newVel = (vel1 + vel2)/2.0f;
+                        stars[i].setVel(newVel);
+                        stars[j].setVel(newVel);
                     }
                 }
             }
