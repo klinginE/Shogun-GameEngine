@@ -8,9 +8,9 @@
 // Shogun includes
 #include <GameWorld.hpp>
 
-#define GRAV_CONST 0.00005f
-#define NUM_STARS (10*10)
-#define NUM_STARS_ACROSS (10)
+#define GRAV_CONST 0.005f
+#define NUM_STARS (100*100)
+#define NUM_STARS_ACROSS (100)
 #define STAR_SPACING 50.0f
 #define STAR_SIZE 1.0f
 

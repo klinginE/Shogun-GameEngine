@@ -52,39 +52,39 @@ class RunState : public sg::GameState {
     private:
         void increaseWindowSize() {
             sf::Vector2f windowSize = window.getSizeInWorld();
-            windowSize.x *= 1.1f;
-            windowSize.y *= 1.1f;
+            windowSize.x *= 1.05f;
+            windowSize.y *= 1.05f;
             window.setSizeInWorld(windowSize);
         };
 
         void decreaseWindowSize() {
             sf::Vector2f windowSize = window.getSizeInWorld();
-            windowSize.x /= 1.1f;
-            windowSize.y /= 1.1f;
+            windowSize.x /= 1.05f;
+            windowSize.y /= 1.05f;
             window.setSizeInWorld(windowSize);
         };
 
         void moveLeft() {
             sf::Vector2f windowPos = window.getPosInWorld();
-            windowPos.x -= window.getSizeInWorld().x*0.1;
+            windowPos.x -= window.getSizeInWorld().x*0.02;
             window.setPosInWorld(windowPos);
         };
 
         void moveRight() {
             sf::Vector2f windowPos = window.getPosInWorld();
-            windowPos.x += window.getSizeInWorld().x*0.1;
+            windowPos.x += window.getSizeInWorld().x*0.02;
             window.setPosInWorld(windowPos);
         };
 
         void moveUp() {
             sf::Vector2f windowPos = window.getPosInWorld();
-            windowPos.y -= window.getSizeInWorld().y*0.1;
+            windowPos.y -= window.getSizeInWorld().y*0.02;
             window.setPosInWorld(windowPos);
         };
 
         void moveDown() {
             sf::Vector2f windowPos = window.getPosInWorld();
-            windowPos.y += window.getSizeInWorld().y*0.1;
+            windowPos.y += window.getSizeInWorld().y*0.02;
             window.setPosInWorld(windowPos);
         };
 
