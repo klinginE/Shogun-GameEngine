@@ -184,8 +184,8 @@ class QuadTree {
             else {
                 auto grav_iter = grav_stack->begin();
                 auto com_iter = com_stack->begin();
-                while (grav_iter++ != grav_stack->end()
-                    && com_iter++ != com_stack->end()) {
+                while (++grav_iter != grav_stack->end()
+                    && ++com_iter != com_stack->end()) {
                     
                     sf::Vector2f diff = *(com_iter) - this->star->getPos();
                     float dist_squared = diff.x*diff.x + diff.y*diff.y;

@@ -8,10 +8,10 @@
 // Shogun includes
 #include <GameWorld.hpp>
 
-#define GRAV_CONST 0.005f
-#define NUM_STARS (25*25)
-#define NUM_STARS_ACROSS (25)
-#define STAR_SPACING 5.0f
+#define GRAV_CONST 0.00005f
+#define NUM_STARS (10*10)
+#define NUM_STARS_ACROSS (10)
+#define STAR_SPACING 50.0f
 #define STAR_SIZE 1.0f
 
 // Local includes
@@ -29,13 +29,12 @@ class Universe : public sg::GameWorld {
             deactivateInput();
             deactivateCollisions();
 
-            for (int i = 0; i < NUM_STARS_ACROSS; i++) {
-                for (int j = 0; j < NUM_STARS/NUM_STARS_ACROSS; j++) {
-                    stars[i + j*NUM_STARS_ACROSS].move(
-                            sf::Vector2f(i*STAR_SPACING,
-                                         j*STAR_SPACING));
-                    addEntity(dynamic_cast<sg::Entity *>(&stars[i + j*NUM_STARS_ACROSS]));
-                }
+            for (int i = 0; i < NUM_STARS; i++) {
+                int x_i = i % NUM_STARS_ACROSS;
+                int y_i = i / NUM_STARS_ACROSS;
+                stars[i].move(sf::Vector2f(x_i*STAR_SPACING,
+                                           y_i*STAR_SPACING));
+                addEntity(dynamic_cast<sg::Entity *>(&stars[i]));
             }
 
             disp_radius = 1.0f;
