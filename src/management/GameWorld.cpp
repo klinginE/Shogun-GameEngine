@@ -102,7 +102,7 @@ namespace sg {
     void GameWorld::removeEntity(Entity *entity) {
         deleteSet.insert(entity);
     }
-    std::vector<Entity *> GameWorld::getEntities() {
+    const std::vector<Entity *> & GameWorld::getEntities() {
         return entities;
     }
 

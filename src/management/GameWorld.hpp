@@ -36,7 +36,7 @@ namespace sg {
 
             void addEntity(Entity *entity);
             void removeEntity(Entity *entity);
-            std::vector<Entity *> getEntities();
+            const std::vector<Entity *> & getEntities();
             
             void activateCollisions();
             void deactivateCollisions();
