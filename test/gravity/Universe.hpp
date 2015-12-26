@@ -8,14 +8,15 @@
 // Shogun includes
 #include <GameWorld.hpp>
 
-// Local includes
-#include "Star.hpp"
-
+#define GRAV_CONST 0.005f
 #define NUM_STARS (25*25)
 #define NUM_STARS_ACROSS (25)
-#define GRAV_CONST 0.01f
 #define STAR_SPACING 5.0f
 #define STAR_SIZE 1.0f
+
+// Local includes
+#include "Star.hpp"
+#include "QuadTree.hpp"
 
 class Universe : public sg::GameWorld {
     
@@ -45,32 +46,16 @@ class Universe : public sg::GameWorld {
             sg::GameWorld::update(tslu);
             QuadTree qT;
 
-            // TODO: do quad-tree method instead
-            for (int i = 0; i < NUM_STARS; i++) {
-                for (int j = 0; j < NUM_STARS; j++) {
-                    if (j == i) continue;
-                    sf::Vector2f diff = stars[j].getPos() - stars[i].getPos();
-                    float dist_squared = diff.x*diff.x + diff.y*diff.y;
-                    if (dist_squared > STAR_SIZE) {
-                        float dist = sqrt(dist_squared);
-                        diff = diff*GRAV_CONST/(dist_squared*dist);
-                        stars[i].changeVel(diff);
-                    }
-                    else {
-                        sf::Vector2f vel1 = stars[i].getVel();
-                        sf::Vector2f vel2 = stars[j].getVel();
-                        sf::Vector2f newVel = (vel1 + vel2)/2.0f;
-                        stars[i].setVel(newVel);
-                        stars[j].setVel(newVel);
-                    }
-                }
-            }
+            createQuadTree(&qT);
+
+            qT.gravity();
 
             for (int i = 0; i < NUM_STARS; i++) {
                 stars[i].translate(stars[i].getVel());
                 stars[i].setDispRadius(disp_radius);
             }
 
+            qT.clean();
         };
 
         void setDispRadius(float newDispRadius) {
@@ -99,8 +84,7 @@ class Universe : public sg::GameWorld {
             }
 
             for (int i = 0; i < NUM_STARS; i++) {
-                t->add(&stars[i], minX, minY, maxX, maxY);
-                // TODO: have this function return leaf where it added
+                t->add(&stars[i], minX, minY, maxX, maxY, false);
             }
         };
 

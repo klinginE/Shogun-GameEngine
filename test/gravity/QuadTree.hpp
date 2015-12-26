@@ -8,6 +8,7 @@
 
 // Standard includes
 #include <assert.h>
+#include <list>
 
 class QuadTree {
 
@@ -29,23 +30,174 @@ class QuadTree {
             child_downleft = NULL;
             child_downright = NULL;
             star = NULL;
+            numberOfStars = 0;
         };
         ~QuadTree() {
             clean();
         };
 
         void clean() {
-            if (child_upleft) child_upleft->clean();
-            delete child_upleft;
-            if (child_upright) child_upright->clean();
-            delete child_upright;
-            if (child_downleft) child_downleft->clean();
-            delete child_downleft;
-            if (child_downright) child_downright->clean();
-            delete child_downright;
+            if (child_upleft) {
+                QuadTree *delNode = child_upleft;
+                child_upleft = NULL;
+                delNode->clean();
+                delete delNode;
+            }
+            if (child_upright) {
+                QuadTree *delNode = child_upright;
+                child_upright = NULL;
+                delNode->clean();
+                delete delNode;
+            }
+            if (child_downleft) {
+                QuadTree *delNode = child_downleft;
+                child_downleft = NULL;
+                delNode->clean();
+                delete delNode;
+            }
+            if (child_downright) {
+                QuadTree *delNode = child_downright;
+                child_downright = NULL;
+                delNode->clean();
+                delete delNode;
+            }
         };
 
-        void gravity_recursive( // TODO TODO TODO
+        void gravity() {
+            std::list<int> grav_stack;
+            std::list<sf::Vector2f> com_stack;
+            gravity_recursive(&grav_stack, &com_stack);
+        }
+
+        void gravity_recursive(std::list<int> *grav_stack,
+                               std::list<sf::Vector2f> *com_stack) {
+            if (star == NULL) {
+                if (child_upleft) {
+                    if (child_upright) {
+                        grav_stack->push_back(child_upright->numberOfStars);
+                        com_stack->push_back(child_upright->center_of_mass);
+                    }
+                    if (child_downleft) {
+                        grav_stack->push_back(child_downleft->numberOfStars);
+                        com_stack->push_back(child_downleft->center_of_mass);
+                    }
+                    if (child_downright) {
+                        grav_stack->push_back(child_downright->numberOfStars);
+                        com_stack->push_back(child_downright->center_of_mass);
+                    }
+                    child_upleft->gravity_recursive(grav_stack, com_stack);
+                    if (child_upright) {
+                        grav_stack->pop_back();
+                        com_stack->pop_back();
+                    }
+                    if (child_downleft) {
+                        grav_stack->pop_back();
+                        com_stack->pop_back();
+                    }
+                    if (child_downright) {
+                        grav_stack->pop_back();
+                        com_stack->pop_back();
+                    }
+                }
+                if (child_upright) {
+                    if (child_upleft) {
+                        grav_stack->push_back(child_upleft->numberOfStars);
+                        com_stack->push_back(child_upleft->center_of_mass);
+                    }
+                    if (child_downleft) {
+                        grav_stack->push_back(child_downleft->numberOfStars);
+                        com_stack->push_back(child_downleft->center_of_mass);
+                    }
+                    if (child_downright) {
+                        grav_stack->push_back(child_downright->numberOfStars);
+                        com_stack->push_back(child_downright->center_of_mass);
+                    }
+                    child_upright->gravity_recursive(grav_stack, com_stack);
+                    if (child_upleft) {
+                        grav_stack->pop_back();
+                        com_stack->pop_back();
+                    }
+                    if (child_downleft) {
+                        grav_stack->pop_back();
+                        com_stack->pop_back();
+                    }
+                    if (child_downright) {
+                        grav_stack->pop_back();
+                        com_stack->pop_back();
+                    }
+                }
+                if (child_downleft) {
+                    if (child_upright) {
+                        grav_stack->push_back(child_upright->numberOfStars);
+                        com_stack->push_back(child_upright->center_of_mass);
+                    }
+                    if (child_upleft) {
+                        grav_stack->push_back(child_upleft->numberOfStars);
+                        com_stack->push_back(child_upleft->center_of_mass);
+                    }
+                    if (child_downright) {
+                        grav_stack->push_back(child_downright->numberOfStars);
+                        com_stack->push_back(child_downright->center_of_mass);
+                    }
+                    child_downleft->gravity_recursive(grav_stack, com_stack);
+                    if (child_upright) {
+                        grav_stack->pop_back();
+                        com_stack->pop_back();
+                    }
+                    if (child_upleft) {
+                        grav_stack->pop_back();
+                        com_stack->pop_back();
+                    }
+                    if (child_downright) {
+                        grav_stack->pop_back();
+                        com_stack->pop_back();
+                    }
+                }
+                if (child_downright) {
+                    if (child_upright) {
+                        grav_stack->push_back(child_upright->numberOfStars);
+                        com_stack->push_back(child_upright->center_of_mass);
+                    }
+                    if (child_upleft) {
+                        grav_stack->push_back(child_upleft->numberOfStars);
+                        com_stack->push_back(child_upleft->center_of_mass);
+                    }
+                    if (child_downleft) {
+                        grav_stack->push_back(child_downleft->numberOfStars);
+                        com_stack->push_back(child_downleft->center_of_mass);
+                    }
+                    child_downright->gravity_recursive(grav_stack, com_stack);
+                    if (child_upright) {
+                        grav_stack->pop_back();
+                        com_stack->pop_back();
+                    }
+                    if (child_upleft) {
+                        grav_stack->pop_back();
+                        com_stack->pop_back();
+                    }
+                    if (child_downleft) {
+                        grav_stack->pop_back();
+                        com_stack->pop_back();
+                    }
+                }
+            }
+            else {
+                auto grav_iter = grav_stack->begin();
+                auto com_iter = com_stack->begin();
+                while (grav_iter++ != grav_stack->end()
+                    && com_iter++ != com_stack->end()) {
+                    
+                    sf::Vector2f diff = *(com_iter) - this->star->getPos();
+                    float dist_squared = diff.x*diff.x + diff.y*diff.y;
+                    if (dist_squared > STAR_SIZE*STAR_SIZE) {
+                        float dist = sqrt(dist_squared);
+                        diff = diff*GRAV_CONST
+                             *(1.0f + (*grav_iter))/(dist_squared*dist);
+                        this->star->changeVel(diff);
+                    }
+                }
+            }
+        };
 
         void add(Star *newStar, float minX, float minY,
                                 float maxX, float maxY,
@@ -55,7 +207,7 @@ class QuadTree {
 
                 sf::Vector2f pos = newStar->getPos();
 
-                center_of_mass = (center_of_mass*numberOfStars + pos)/(numberOfStars + 1);
+                center_of_mass = (center_of_mass*((float) numberOfStars) + pos)/((float) (numberOfStars + 1));
 
                 float splitX = (minX + maxX)/2;
                 float splitY = (minY + maxY)/2;
@@ -64,27 +216,27 @@ class QuadTree {
                     if (pos.y < splitY) {
                         // upleft
                         if (this->child_upleft) {
-                            this->child_upleft->add(newStar, minX, minY, splitX, splitY);
+                            this->child_upleft->add(newStar, minX, minY, splitX, splitY, false);
                         }
                         else {
                             QuadTree *newLeaf = new QuadTree();
                             newLeaf->parent = this;
 
                             this->child_upleft = newLeaf;
-                            newLeaf->add(newStar, minX, minY, splitX, splitY);
+                            newLeaf->add(newStar, minX, minY, splitX, splitY, false);
                         }
                     }
                     else { // pos.y >= splitY
                         // downleft
                         if (this->child_downleft) {
-                            this->child_downleft->add(newStar, minX, minY, splitX, splitY);
+                            this->child_downleft->add(newStar, minX, splitY, splitX, maxY, false);
                         }
                         else {
                             QuadTree *newLeaf = new QuadTree();
                             newLeaf->parent = this;
 
                             this->child_downleft = newLeaf;
-                            newLeaf->add(newStar, minX, splitY, splitX, maxY);
+                            newLeaf->add(newStar, minX, splitY, splitX, maxY, false);
                         }
                     }
                 }
@@ -92,27 +244,27 @@ class QuadTree {
                     if (pos.y < splitY) {
                         // upright
                         if (this->child_upright) {
-                            this->child_upright->add(newStar, splitX, minY, maxX, splitY);
+                            this->child_upright->add(newStar, splitX, minY, maxX, splitY, false);
                         }
                         else {
                             QuadTree *newLeaf = new QuadTree();
                             newLeaf->parent = this;
 
                             this->child_upright = newLeaf;
-                            newLeaf->add(newStar, splitX, minY, maxX, splitY);
+                            newLeaf->add(newStar, splitX, minY, maxX, splitY, false);
                         }
                     }
                     else { // pos.y >= splitY
                         // downright
                         if (this->child_downright) {
-                            this->child_downright->add(newStar, splitX, splitY, maxX, maxY);
+                            this->child_downright->add(newStar, splitX, splitY, maxX, maxY, false);
                         }
                         else {
                             QuadTree *newLeaf = new QuadTree();
                             newLeaf->parent = this;
 
                             this->child_downright = newLeaf;
-                            newLeaf->add(newStar, splitX, splitY, maxX, maxY);
+                            newLeaf->add(newStar, splitX, splitY, maxX, maxY, false);
                         }
                     }
                 }
@@ -124,9 +276,10 @@ class QuadTree {
                 
                 sf::Vector2f pos = newStar->getPos();
 
-                center_of_mass = (center_of_mass + pos)/2;
+                center_of_mass = (center_of_mass + pos)/2.0f;
                 
                 Star *otherStar = this->star;
+                this->star = NULL;
                 
                 this->numberOfStars = 0;
                 this->add(otherStar, minX, minY, maxX, maxY, true);
@@ -135,7 +288,7 @@ class QuadTree {
             else {
 
                 star = newStar;
-                centerOfMass = newStar->getPos();
+                center_of_mass = newStar->getPos();
                 numberOfStars += 1;
             }
         };
@@ -171,8 +324,8 @@ class QuadTree {
         void setChildDownRight(QuadTree *childDownRight) {
             child_downright = childDownRight;
         };
-        QuadTree *getChildUpRight() {
-            return child_upright;
+        QuadTree *getChildDownRight() {
+            return child_downright;
         };
 
         void setStar(Star *newStar) {
@@ -182,42 +335,11 @@ class QuadTree {
             return star;
         };
 
-        void setCenterOfMass(Vector2f newCenterOfMass) {
+        void setCenterOfMass(sf::Vector2f newCenterOfMass) {
             center_of_mass = newCenterOfMass;
         };
-        Vector2f getCenterOfMass() {
+        sf::Vector2f getCenterOfMass() {
             return center_of_mass;
         };
 
-        void setLevel(int newLevel) {
-            level = newLevel;
-        };
-        int getLevel() {
-            return level;
-        };
-
-        void setMinX(float newMinX) {
-            minX = newMinX;
-        };
-        void setMinY(float newMinY) {
-            minY = newMinY;
-        };
-        void setMaxX(float newMaxX) {
-            maxX = newMaxX;
-        };
-        void setMaxY(float newMaxY) {
-            maxY = newMaxY;
-        };
-        float getMinX() {
-            return minX;
-        };
-        float getMinY() {
-            return minY;
-        };
-        float getMaxX() {
-            return maxX;
-        };
-        float getMaxY() {
-            return maxY;
-        };
 };
