@@ -13,7 +13,7 @@ int main() {
     s0.setPoint(1, sf::Vector2f(2.0f, 0.0f));
     s0.setPoint(2, sf::Vector2f(10.0f, 10.0f));
     s0.setPoint(3, sf::Vector2f(-10.0f, 10.0f));
-    s0.scale(sf::Vector2f(2.0f, 2.0f));
+    //s0.scale(sf::Vector2f(2.0f, 2.0f));
     bs0.addShape(s0);
     std::cout << bs0.getNumOfShapes() << std::endl;
     std::cout << "x: " << bs0.getShape(0)->getPoint(0).x << ", y: " << bs0.getShape(0)->getPoint(0).y << std::endl;
@@ -42,7 +42,7 @@ int main() {
 
     sf::CircleShape s2;
     s2.setPosition(sf::Vector2f(0.0f, 0.0f));
-    s2.setRadius(20.0f);
+    s2.setRadius(5.0f);
     bs1.addShape(s2);
     std::cout << "bs1 getNumOfShapes: " << bs1.getNumOfShapes() << std::endl;
     const sf::ConvexShape rm = *dynamic_cast<const sf::ConvexShape *>(bs1.removeShape(0));

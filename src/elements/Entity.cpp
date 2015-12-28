@@ -55,7 +55,9 @@ namespace sg {
                      s1 = dynamic_cast<const BoundingShape *>(bs->getSurface());
 
                  sf::Vector2f v(0.0f, 0.0f);
-                 if (s0 != NULL && s1 != NULL && s0->collides((*s1), v)) {
+                 sf::Vector2f offset1(this->getPos().x + sp0->getPosition().x, this->getPos().y + sp0->getPosition().y);
+                 sf::Vector2f offset2(e.getPos().x + sp1->getPosition().x, e.getPos().y + sp1->getPosition().y);
+                 if (s0 != NULL && s1 != NULL && s0->collides((*s1), v, offset1, offset2)) {
 
                      isCollides = true;
                      collisionVectors.push_back(v);
