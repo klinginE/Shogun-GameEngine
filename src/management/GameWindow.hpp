@@ -39,7 +39,7 @@ namespace sg {
                        sf::Vector2f positionInScreen,
                        sf::Vector2f sizeInScreen);
     
-            void render();
+            virtual void render();
     
             void setWorld(GameWorld *newWorld);
             GameWorld *getWorld();
@@ -58,6 +58,8 @@ namespace sg {
     
             void setRotInWorld(float rotationInWorld);
             float getRotInWorld();
+
+            sf::View &getView();
     
         private:
             

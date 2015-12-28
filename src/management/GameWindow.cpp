@@ -134,10 +134,10 @@ namespace sg {
 
             auto b = e->getTextureBounds();
 
-            if ((b.left <= this->positionInWorld.x + this->sizeInWorld.x)
-            &&  (b.top <= this->positionInWorld.y + this->sizeInWorld.y)
-            &&  (b.left + b.width >= this->positionInWorld.x)
-            &&  (b.top + b.height >= this->positionInWorld.y)) {
+            if ((b.left <= this->positionInWorld.x + this->sizeInWorld.x/2)
+            &&  (b.top <= this->positionInWorld.y + this->sizeInWorld.y/2)
+            &&  (b.left + b.width >= this->positionInWorld.x - this->sizeInWorld.x/2)
+            &&  (b.top + b.height >= this->positionInWorld.y - this->sizeInWorld.y/2)) {
 
                 // add to render queue
                 renderQueue.push(e);
@@ -147,6 +147,7 @@ namespace sg {
         }
         
         GameLoop::inst().getRenderWindow().setView(this->view);
+        GameLoop::inst().getRenderWindow().clear(sf::Color::Black);
 
         while (!renderQueue.empty()) {
     
@@ -159,6 +160,7 @@ namespace sg {
 
         }
 
+        GameLoop::inst().getRenderWindow().display();
         GameLoop::inst().getRenderWindow().setView(
                 GameLoop::inst().getRenderWindow().getDefaultView());
     
@@ -238,6 +240,10 @@ namespace sg {
             return true;
         else
             return false;
+    }
+
+    sf::View &GameWindow::getView() {
+        return view;
     }
 
 }

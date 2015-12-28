@@ -17,8 +17,8 @@ namespace sg {
         public:
             GameState();
     
-            void render();
-            void update(const sf::Time &tslu);
+            virtual void render();
+            virtual void update(const sf::Time &tslu);
     
             std::list<GameWorld*>  & accessGameWorlds();
             std::list<GameWindow*> & accessGameWindows();

@@ -1,6 +1,6 @@
 CC=g++
 AR=ar cr
-CFLAGS=-fPIC -c -Wall -pedantic -std=c++11
+CFLAGS=-fPIC -c -g -Wall -pedantic -std=c++11
 LIBFLAGS=
 SFML_FLAGS=-lsfml-graphics -lsfml-window -lsfml-system
 MANAG_DIR=../src/management

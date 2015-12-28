@@ -178,9 +178,9 @@ namespace sg {
             bounds.left = br.left;
         if (br.top < bounds.top)
             bounds.top = br.top;
-        if ((br.left + br.width) > br.width)
+        if ((br.left + br.width) > bounds.width)
             bounds.width = (br.left + br.width);
-        if ((br.top + br.height) > br.height)
+        if ((br.top + br.height) > bounds.height)
             bounds.height = (br.top + br.height);
 
     }

@@ -1,12 +1,13 @@
 // Shogun libraries
 #include <GameLoop.hpp>
 #include <StateManager.hpp>
+#include <GameState.hpp>
 
 // SFML libraries
 #include <SFML/Graphics.hpp>
 
 // Local includes
-#include "TestState.hpp"
+#include "RunState.hpp"
 
 #include <stdio.h>
 
@@ -17,8 +18,9 @@ int main() {
                               sf::String("Test"));
 
     // Initialize states
-    TestState testState;
-    sg::StateManager::inst().pushState(&testState);
+    RunState runState;
+    sg::StateManager::inst().pushState(
+            dynamic_cast<sg::GameState *>(&runState));
 
     // Start gameloop
     sg::GameLoop::inst().start();

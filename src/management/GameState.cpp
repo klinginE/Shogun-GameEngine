@@ -16,7 +16,7 @@ namespace sg {
     
     void GameState::render() {
 
-        GameLoop::inst().getRenderWindow().clear(sf::Color::Black);
+//        GameLoop::inst().getRenderWindow().clear(sf::Color::Black);
 
         for (std::list<GameWindow*>::iterator
              gameWindowIt=gameWindows.begin();
@@ -28,11 +28,13 @@ namespace sg {
     
         }
 
-        GameLoop::inst().getRenderWindow().display();
+//        GameLoop::inst().getRenderWindow().display();
     
     }
     
     void GameState::update(const sf::Time &tslu) {
+
+        inputManager.processInput();
     
         for (std::list<GameWorld*>::iterator
              gameWorldIt=gameWorlds.begin();

@@ -32,11 +32,11 @@ namespace sg {
             GameWorld(InputManager *inputManager,
                       std::vector<Entity *> entities);
             
-            void update(const sf::Time &);
+            virtual void update(const sf::Time &);
 
             void addEntity(Entity *entity);
             void removeEntity(Entity *entity);
-            std::vector<Entity *> getEntities();
+            const std::vector<Entity *> & getEntities();
             
             void activateCollisions();
             void deactivateCollisions();

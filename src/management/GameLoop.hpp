@@ -10,7 +10,7 @@ namespace sg {
         public:
             static GameLoop & inst();
             
-            void init(sf::Vector2i windowDimensions,
+            void init(sf::Vector2u windowDimensions,
                       sf::String windowName);
     
             void start();

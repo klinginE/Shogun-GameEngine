@@ -6,7 +6,7 @@ LINKER_PATH=-L../../lib -l$(SHOGUN_LIB)
 SOURCES=main.cpp
 INC_PATH=-I../../src/management -I../../src/elements
 OBJECTS=$(SOURCES:.cpp=.o)
-EXECUTABLE=test
+EXECUTABLE=gravity
 
 all: $(SOURCES) $(EXECUTABLE)
 
