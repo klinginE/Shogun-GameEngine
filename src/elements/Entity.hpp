@@ -46,8 +46,8 @@ namespace sg {
             void scaleSprite(uint32_t, const sf::Vector2f &);
             const sf::Vector2f &getPos() const;
             const sf::Vector2f &getPosSprite(uint32_t) const;
-            sf::FloatRect getSurfaceBounds();
-            sf::FloatRect getTextureBounds();
+            sf::FloatRect getSurfaceBounds(bool=true);
+            sf::FloatRect getTextureBounds(bool=true);
             std::vector<sf::Sprite *>::size_type addSprite(sf::Sprite &);
             sf::Sprite *removeSprite(uint32_t);
             virtual void update(sf::Time tslu) {

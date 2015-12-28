@@ -187,17 +187,29 @@ namespace sg {
 
     }
 
-    sf::FloatRect Entity::getSurfaceBounds() {
+    sf::FloatRect Entity::getSurfaceBounds(bool useGlobal) {
 
         float inf = std::numeric_limits<float>::infinity();
         sf::FloatRect bounds(inf, inf, -inf, -inf);
         for (std::vector<sf::Sprite *>::iterator it = this->sprites.begin(); it != this->sprites.end(); ++it)
-            if (AnimatedSprite *as = dynamic_cast<AnimatedSprite *>((*it)))
-                this->expandSurfaceBounds(bounds, as->getFrameBound(as->getFrameIndex())->getGlobalShapeBounds());
-            else if (BoundedSprite *bs = dynamic_cast<BoundedSprite *>((*it)))
-                this->expandSurfaceBounds(bounds, bs->getSurface()->getGlobalShapeBounds());
-            else
-                this->expandSurfaceBounds(bounds, (*it)->getGlobalBounds());
+            if (AnimatedSprite *as = dynamic_cast<AnimatedSprite *>((*it))) {
+                if (useGlobal)
+                    this->expandSurfaceBounds(bounds, as->getFrameBound(as->getFrameIndex())->getGlobalShapeBounds());
+                else
+                    this->expandSurfaceBounds(bounds, as->getFrameBound(as->getFrameIndex())->getLocalShapeBounds());
+            }
+            else if (BoundedSprite *bs = dynamic_cast<BoundedSprite *>((*it))) {
+                if (useGlobal)
+                    this->expandSurfaceBounds(bounds, bs->getSurface()->getGlobalShapeBounds());
+                else
+                    this->expandSurfaceBounds(bounds, bs->getSurface()->getLocalShapeBounds());
+            }
+            else {
+                if (useGlobal)
+                    this->expandSurfaceBounds(bounds, (*it)->getGlobalBounds());
+                else
+                    this->expandSurfaceBounds(bounds, (*it)->getLocalBounds());
+            }
 
         bounds.width -= bounds.left;
         bounds.height -= bounds.top;
@@ -208,12 +220,15 @@ namespace sg {
 
     }
 
-    sf::FloatRect Entity::getTextureBounds() {
+    sf::FloatRect Entity::getTextureBounds(bool useGlobal) {
 
         float inf = std::numeric_limits<float>::infinity();
         sf::FloatRect bounds(inf, inf, -inf, -inf);
         for (std::vector<sf::Sprite *>::iterator it = this->sprites.begin(); it != this->sprites.end(); ++it)
-            this->expandSurfaceBounds(bounds, (*it)->getGlobalBounds());
+            if (useGlobal)
+                this->expandSurfaceBounds(bounds, (*it)->getGlobalBounds());
+            else
+                this->expandSurfaceBounds(bounds, (*it)->getLocalBounds());
 
         bounds.width -= bounds.left;
         bounds.height -= bounds.top;
