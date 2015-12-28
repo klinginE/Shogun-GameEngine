@@ -160,4 +160,106 @@ namespace sg {
 
     }
 
+    void AnimatedSprite::setRotation(float angle) {
+
+        sf::Sprite::setRotation(angle);
+        for (std::vector<const BoundingShape *>::const_iterator it = this->surfaces.begin(); it != this->surfaces.end(); ++it)
+            for (uint32_t i = 0; i <= (*it)->getNumOfShapes(); i++) {
+
+                //This const cast is dangerous as it could have undefined behavior
+                sf::Shape *curShape = const_cast<sf::Shape *>((*it)->getShape(i));
+                const sf::Vector2f &temp = curShape->getOrigin();
+                curShape->setOrigin(this->getOrigin());
+                curShape->setRotation(angle);
+                curShape->setOrigin(temp);
+
+            }
+
+    }
+
+    void AnimatedSprite::rotate(float angle) {
+
+        sf::Sprite::rotate(angle);
+        for (std::vector<const BoundingShape *>::const_iterator it = this->surfaces.begin(); it != this->surfaces.end(); ++it)
+            for (uint32_t i = 0; i <= (*it)->getNumOfShapes(); i++) {
+
+                //This const cast is dangerous as it could have undefined behavior
+                sf::Shape *curShape = const_cast<sf::Shape *>((*it)->getShape(i));
+                const sf::Vector2f temp = curShape->getOrigin();
+                curShape->setOrigin(this->getOrigin());
+                curShape->rotate(angle);
+                curShape->setOrigin(temp);
+
+            }
+
+    }
+
+    void AnimatedSprite::setScale(float factorX, float factorY) {
+
+        sf::Sprite::setScale(factorX, factorY);
+        for (std::vector<const BoundingShape *>::const_iterator it = this->surfaces.begin(); it != this->surfaces.end(); ++it)
+            for (uint32_t i = 0; i <= (*it)->getNumOfShapes(); i++) {
+
+                //This const cast is dangerous as it could have undefined behavior
+                sf::Shape *curShape = const_cast<sf::Shape *>((*it)->getShape(i));
+                const sf::Vector2f temp = curShape->getOrigin();
+                curShape->setOrigin(this->getOrigin());
+                curShape->setScale(factorX, factorY);
+                curShape->setOrigin(temp);
+
+            }
+
+    }
+
+    void AnimatedSprite::scale(float factorX, float factorY) {
+
+        sf::Sprite::scale(factorX, factorY);
+        for (std::vector<const BoundingShape *>::const_iterator it = this->surfaces.begin(); it != this->surfaces.end(); ++it)
+            for (uint32_t i = 0; i <= (*it)->getNumOfShapes(); i++) {
+
+                //This const cast is dangerous as it could have undefined behavior
+                sf::Shape *curShape = const_cast<sf::Shape *>((*it)->getShape(i));
+                const sf::Vector2f temp = curShape->getOrigin();
+                curShape->setOrigin(this->getOrigin());
+                curShape->scale(factorX, factorY);
+                curShape->setOrigin(temp);
+
+            }
+
+    }
+
+    void AnimatedSprite::setScale(const sf::Vector2f &factor) {
+
+        sf::Sprite::setScale(factor);
+        for (std::vector<const BoundingShape *>::const_iterator it = this->surfaces.begin(); it != this->surfaces.end(); ++it)
+            for (uint32_t i = 0; i <= (*it)->getNumOfShapes(); i++) {
+
+                //This const cast is dangerous as it could have undefined behavior
+                sf::Shape *curShape = const_cast<sf::Shape *>((*it)->getShape(i));
+                const sf::Vector2f temp = curShape->getOrigin();
+                curShape->setOrigin(this->getOrigin());
+                curShape->setScale(factor);
+                curShape->setOrigin(temp);
+
+            }
+
+    }
+
+    void AnimatedSprite::scale(const sf::Vector2f &factor) {
+
+        sf::Sprite::scale(factor);
+        for (std::vector<const BoundingShape *>::const_iterator it = this->surfaces.begin(); it != this->surfaces.end(); ++it)
+            for (uint32_t i = 0; i <= (*it)->getNumOfShapes(); i++) {
+
+                //This const cast is dangerous as it could have undefined behavior
+                sf::Shape *curShape = const_cast<sf::Shape *>((*it)->getShape(i));
+                const sf::Vector2f temp = curShape->getOrigin();
+                curShape->setOrigin(this->getOrigin());
+                curShape->scale(factor);
+                curShape->setOrigin(temp);
+
+            }
+
+    }
+
 }
