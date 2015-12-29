@@ -42,6 +42,12 @@ namespace sg {
             void stop();
             void restart();
             void update(float);
+            void setRotation(float angle);
+            void rotate(float angle);
+            void setScale(float, float);
+            void scale(float, float);
+            void setScale(const sf::Vector2f &);
+            void scale(const sf::Vector2f &);
 
     };
 

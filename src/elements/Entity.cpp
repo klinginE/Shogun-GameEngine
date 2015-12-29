@@ -3,8 +3,6 @@
 
 //SHOGUN includes
 #include"Entity.hpp"
-//TODO: uncomment code once GameLoop is ready.
-//#include"../management/GameLoop.hpp"
 
 namespace sg {
 
@@ -33,14 +31,44 @@ namespace sg {
 
     }
 
-    bool Entity::collides(const sg::Entity &e) {
+    bool Entity::collides(sg::Entity &e) {
 
-        if (!this->isCollidable)
+        if (!this->isCollidable || !e.getIsCollidable())
             return false;
 
-        //TODO: Add code that checks for collision with e.
-        //this->handleCollision(...);
-        return false;
+        bool isCollides = false;
+        std::vector<sf::Vector2f> collisionVectors;
+        for (std::vector<sf::Sprite *>::iterator it = this->sprites.begin(); it != this->sprites.end(); ++it)
+            for (uint32_t i = 0; i < e.getNumOfSprites(); i++) {
+
+                 sf::Sprite *sp0 = (*it);
+                 const sf::Sprite *sp1 = e.getSprite(i);
+                 const BoundingShape *s0 = NULL;
+                 const BoundingShape *s1 = NULL;
+                 if (AnimatedSprite *as = dynamic_cast<AnimatedSprite *>(sp0))
+                     s0 = dynamic_cast<const BoundingShape *>(as->getFrameBound(as->getFrameIndex()));
+                 else if (BoundedSprite *bs = dynamic_cast<BoundedSprite *>(sp0))
+                     s0 = dynamic_cast<const BoundingShape *>(bs->getSurface());
+                 if (const AnimatedSprite *as = dynamic_cast<const AnimatedSprite *>(sp1))
+                     s1 = dynamic_cast<const BoundingShape *>(as->getFrameBound(as->getFrameIndex()));
+                 else if (const BoundedSprite *bs = dynamic_cast<const BoundedSprite *>(sp1))
+                     s1 = dynamic_cast<const BoundingShape *>(bs->getSurface());
+
+                 sf::Vector2f v(0.0f, 0.0f);
+                 sf::Vector2f offset1(this->getPos().x + sp0->getPosition().x, this->getPos().y + sp0->getPosition().y);
+                 sf::Vector2f offset2(e.getPos().x + sp1->getPosition().x, e.getPos().y + sp1->getPosition().y);
+                 if (s0 != NULL && s1 != NULL && s0->collides((*s1), v, offset1, offset2)) {
+
+                     isCollides = true;
+                     collisionVectors.push_back(v);
+
+                 }
+
+            }
+
+        this->handleCollision(e, collisionVectors);
+
+        return isCollides;
 
     }
 
@@ -159,18 +187,29 @@ namespace sg {
 
     }
 
-    sf::FloatRect Entity::getSurfaceBounds() {
+    sf::FloatRect Entity::getSurfaceBounds(bool useGlobal) {
 
         float inf = std::numeric_limits<float>::infinity();
         sf::FloatRect bounds(inf, inf, -inf, -inf);
         for (std::vector<sf::Sprite *>::iterator it = this->sprites.begin(); it != this->sprites.end(); ++it)
-            if (AnimatedSprite *as = dynamic_cast<AnimatedSprite *>((*it)))
-                for (uint32_t i = 0; i < as->getNumOfFrames(); i++)
-                    this->expandSurfaceBounds(bounds, as->getFrameBound(i)->getGlobalShapeBounds());
-            else if (BoundedSprite *bs = dynamic_cast<BoundedSprite *>((*it)))
-                this->expandSurfaceBounds(bounds, bs->getSurface()->getGlobalShapeBounds());
-            else
-                this->expandSurfaceBounds(bounds, (*it)->getGlobalBounds());
+            if (AnimatedSprite *as = dynamic_cast<AnimatedSprite *>((*it))) {
+                if (useGlobal)
+                    this->expandSurfaceBounds(bounds, as->getFrameBound(as->getFrameIndex())->getGlobalShapeBounds());
+                else
+                    this->expandSurfaceBounds(bounds, as->getFrameBound(as->getFrameIndex())->getLocalShapeBounds());
+            }
+            else if (BoundedSprite *bs = dynamic_cast<BoundedSprite *>((*it))) {
+                if (useGlobal)
+                    this->expandSurfaceBounds(bounds, bs->getSurface()->getGlobalShapeBounds());
+                else
+                    this->expandSurfaceBounds(bounds, bs->getSurface()->getLocalShapeBounds());
+            }
+            else {
+                if (useGlobal)
+                    this->expandSurfaceBounds(bounds, (*it)->getGlobalBounds());
+                else
+                    this->expandSurfaceBounds(bounds, (*it)->getLocalBounds());
+            }
 
         bounds.width -= bounds.left;
         bounds.height -= bounds.top;
@@ -181,12 +220,15 @@ namespace sg {
 
     }
 
-    sf::FloatRect Entity::getTextureBounds() {
+    sf::FloatRect Entity::getTextureBounds(bool useGlobal) {
 
         float inf = std::numeric_limits<float>::infinity();
         sf::FloatRect bounds(inf, inf, -inf, -inf);
         for (std::vector<sf::Sprite *>::iterator it = this->sprites.begin(); it != this->sprites.end(); ++it)
-            this->expandSurfaceBounds(bounds, (*it)->getGlobalBounds());
+            if (useGlobal)
+                this->expandSurfaceBounds(bounds, (*it)->getGlobalBounds());
+            else
+                this->expandSurfaceBounds(bounds, (*it)->getLocalBounds());
 
         bounds.width -= bounds.left;
         bounds.height -= bounds.top;

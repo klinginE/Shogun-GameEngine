@@ -8,7 +8,6 @@
 
 //Shogun includes
 #include"BoundingShape.hpp"
-//#include<SHOGUN/elements/BoundingShape.hpp>
 
 namespace sg {
 
@@ -26,8 +25,12 @@ namespace sg {
             ~BoundedSprite();
             const BoundingShape *getSurface() const;
             void setSurface(const BoundingShape &);
-            sf::FloatRect getGlobalShapeBounds();
-            sf::FloatRect getLocalShapeBounds();
+            void setRotation(float angle);
+            void rotate(float angle);
+            void setScale(float, float);
+            void scale(float, float);
+            void setScale(const sf::Vector2f &);
+            void scale(const sf::Vector2f &);
 
     };
 

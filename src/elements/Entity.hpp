@@ -25,13 +25,13 @@ namespace sg {
             std::vector<sf::Sprite *> sprites;
             bool isCollidable;
             sf::Vector2f pos;//world coordinates
+            virtual void handleCollision(Entity &, const std::vector<sf::Vector2f> &) {}
 
         public:
             Entity();
             Entity(const sf::Vector2f &, bool=true);
             ~Entity();
-            bool collides(const sg::Entity &);// calls handleCollision
-            virtual void handleCollision(std::string, const sf::Vector2f &, const std::vector<sf::Vector2f> &) {}
+            bool collides(sg::Entity &);// calls handleCollision
             bool getIsCollidable() const;
             void setIsCollidable(bool);
             std::vector<sf::Sprite *>::size_type getNumOfSprites() const;
@@ -46,8 +46,8 @@ namespace sg {
             void scaleSprite(uint32_t, const sf::Vector2f &);
             const sf::Vector2f &getPos() const;
             const sf::Vector2f &getPosSprite(uint32_t) const;
-            sf::FloatRect getSurfaceBounds();
-            sf::FloatRect getTextureBounds();
+            sf::FloatRect getSurfaceBounds(bool=true);
+            sf::FloatRect getTextureBounds(bool=true);
             std::vector<sf::Sprite *>::size_type addSprite(sf::Sprite &);
             sf::Sprite *removeSprite(uint32_t);
             virtual void update(sf::Time tslu) {
