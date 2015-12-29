@@ -17,13 +17,14 @@ namespace sg {
     class GameWorld {
     
         //std::vector<sf::Sprite *> background; // TODO: implemenet fuctions for this, and with GameWindow
-        std::set<Entity *> deleteSet;
-        std::vector<Entity *> entities;
-        InputManager *inputManager;
+        protected:
+            std::set<Entity *> deleteSet;
+            std::vector<Entity *> entities;
+            InputManager *inputManager;
 
-        bool inputActive;
-        scanline_t scanlineType;
-        bool collisionActive;
+            bool inputActive;
+            scanline_t scanlineType;
+            bool collisionActive;
     
         public:
             GameWorld();
@@ -52,7 +53,7 @@ namespace sg {
 
             void setInputManager(InputManager *);
 
-        private:
+        protected:
             bool horizontalSort(Entity *e1, Entity *e2);
             bool verticalSort(Entity *e1, Entity *e2);
             void sortEntities();

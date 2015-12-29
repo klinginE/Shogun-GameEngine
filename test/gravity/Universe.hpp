@@ -8,10 +8,10 @@
 // Shogun includes
 #include <GameWorld.hpp>
 
-#define GRAV_CONST 1.0f
+#define GRAV_CONST 10.0f
 #define NUM_STARS (50*50)
 #define NUM_STARS_ACROSS (50)
-#define STAR_SPACING 50.0f
+#define STAR_SPACING 90.0f
 
 // Local includes
 #include "Star.hpp"
@@ -51,20 +51,31 @@ class Universe : public sg::GameWorld {
         };
 
         void update(const sf::Time &tslu) {
-            sg::GameWorld::update(tslu);
-            
             QuadTree qT;
 
             createQuadTree(&qT);
 
             qT.gravity();
-
             for (int i = 0; i < NUM_STARS; i++) {
                 stars[i].translate(stars[i].getVel());
                 stars[i].setDispRadius(disp_radius);
             }
 
             qT.clean();
+
+            // process input
+            if (inputActive && inputManager)
+                inputManager->processInput();
+            // Detect and resolve collisions between entities
+            if (collisionActive)
+                scanline();
+            // update all entities
+            for (auto entityIter = entities.begin();
+                 entityIter != entities.end(); ++entityIter) {
+                sg::Entity *e = *entityIter;
+                e->update(tslu);
+            }
+
         };
 
         void setDispRadius(float newDispRadius) {

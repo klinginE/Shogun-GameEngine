@@ -12,6 +12,7 @@
 // standard includes
 #include <cstdlib>
 #include <math.h>
+#include <stdio.h>
 
 #define STAR_SIZE 2.0f
 
@@ -20,9 +21,6 @@ class Star : public sg::Entity {
     sf::Sprite sprite;
     sf::Vector2f vel;
     float disp_radius;
-//    static sg::BoundingShape boundingShape;
-//    static sg::BoundedSprite boundedSprite;
-//    static sf::CircleShape circleShape;
 
     public:
         Star() : sg::Entity() {
@@ -33,7 +31,7 @@ class Star : public sg::Entity {
             if (std::rand() % 2) xVel = -xVel;
             if (std::rand() % 2) yVel = -yVel;
 
-            setVel(sf::Vector2f(xVel, yVel));
+            //setVel(sf::Vector2f(xVel, yVel));
 
             disp_radius = 1.0f;
             setIsCollidable(true);
@@ -74,23 +72,13 @@ class Star : public sg::Entity {
 
         };
 
-        // TODO: This function is temporarily made virtual in base class
-        /*
-        bool collides(sg::Entity &e) {
+        void handleCollision(Entity &e, const std::vector<sf::Vector2f> &colInfo) {
             Star *other = dynamic_cast<Star *>(&e);
-            sf::Vector2f thisPos = this->getPos();
-            sf::Vector2f otherPos = other->getPos();
-            sf::Vector2f diff = otherPos - thisPos;
-            float dist = sqrt(diff.x*diff.x + diff.y*diff.y);
-            if (dist < 2*STAR_SIZE) {
-                sf::Vector2f thisVel = this->getVel();
-                sf::Vector2f otherVel = other->getVel();
-                sf::Vector2f avgVel = (thisVel + otherVel)/2.0f;
-                this->setVel(avgVel);
-                other->setVel(avgVel);
-                return true;
-            }
-            return false;
+            sf::Vector2f thisVel = this->getVel();
+            sf::Vector2f otherVel = other->getVel();
+            sf::Vector2f avgVel = (thisVel + otherVel)/2.0f;
+            this->setVel(avgVel);
+            other->setVel(avgVel);
+            std::cout << "GOT HERE!!!" << std::endl;
         };
-        */
 };
