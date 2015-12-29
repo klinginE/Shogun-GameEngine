@@ -6,20 +6,27 @@
 // Shogun includes
 #include <Entity.hpp>
 #include <GameLoop.hpp>
+#include <BoundingShape.hpp>
+#include <BoundedSprite.hpp>
 
 // standard includes
 #include <cstdlib>
+#include <math.h>
+
+#define STAR_SIZE 2.0f
 
 class Star : public sg::Entity {
     
     sf::Sprite sprite;
     sf::Vector2f vel;
     float disp_radius;
+//    static sg::BoundingShape boundingShape;
+//    static sg::BoundedSprite boundedSprite;
+//    static sf::CircleShape circleShape;
 
     public:
         Star() : sg::Entity() {
-            sprite.setTextureRect(sf::IntRect(0, 0, disp_radius*2, disp_radius*2));
-            addSprite(sprite);
+            
 
             float xVel = ((float) (std::rand() % 10)) / 100.0f;
             float yVel = ((float) (std::rand() % 10)) / 100.0f;
@@ -29,6 +36,7 @@ class Star : public sg::Entity {
             setVel(sf::Vector2f(xVel, yVel));
 
             disp_radius = 1.0f;
+            setIsCollidable(true);
         };
 
         void setVel(sf::Vector2f newVel) {
@@ -65,4 +73,24 @@ class Star : public sg::Entity {
             sg::GameLoop::inst().getRenderWindow().setView(saveView);
 
         };
+
+        // TODO: This function is temporarily made virtual in base class
+        /*
+        bool collides(sg::Entity &e) {
+            Star *other = dynamic_cast<Star *>(&e);
+            sf::Vector2f thisPos = this->getPos();
+            sf::Vector2f otherPos = other->getPos();
+            sf::Vector2f diff = otherPos - thisPos;
+            float dist = sqrt(diff.x*diff.x + diff.y*diff.y);
+            if (dist < 2*STAR_SIZE) {
+                sf::Vector2f thisVel = this->getVel();
+                sf::Vector2f otherVel = other->getVel();
+                sf::Vector2f avgVel = (thisVel + otherVel)/2.0f;
+                this->setVel(avgVel);
+                other->setVel(avgVel);
+                return true;
+            }
+            return false;
+        };
+        */
 };

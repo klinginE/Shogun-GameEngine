@@ -8,11 +8,10 @@
 // Shogun includes
 #include <GameWorld.hpp>
 
-#define GRAV_CONST 0.005f
-#define NUM_STARS (100*100)
-#define NUM_STARS_ACROSS (100)
+#define GRAV_CONST 1.0f
+#define NUM_STARS (50*50)
+#define NUM_STARS_ACROSS (50)
 #define STAR_SPACING 50.0f
-#define STAR_SIZE 1.0f
 
 // Local includes
 #include "Star.hpp"
@@ -23,17 +22,27 @@ class Universe : public sg::GameWorld {
     Star stars[NUM_STARS];
     float disp_radius;
 
+    sg::BoundingShape boundingShape;
+    sg::BoundedSprite boundedSprite;
+    sf::CircleShape circleShape;
+
     public:
         Universe() {
 
             deactivateInput();
-            deactivateCollisions();
+            activateCollisions();
+            
+            circleShape.setRadius(STAR_SIZE);
+            boundingShape.addShape(circleShape);
+            boundedSprite.setSurface(boundingShape);
+            boundedSprite.setPosition(sf::Vector2f(-STAR_SIZE, -STAR_SIZE));
 
             for (int i = 0; i < NUM_STARS; i++) {
                 int x_i = i % NUM_STARS_ACROSS;
                 int y_i = i / NUM_STARS_ACROSS;
                 stars[i].move(sf::Vector2f(x_i*STAR_SPACING,
                                            y_i*STAR_SPACING));
+                stars[i].addSprite(boundedSprite);
                 addEntity(dynamic_cast<sg::Entity *>(&stars[i]));
             }
 
@@ -43,6 +52,7 @@ class Universe : public sg::GameWorld {
 
         void update(const sf::Time &tslu) {
             sg::GameWorld::update(tslu);
+            
             QuadTree qT;
 
             createQuadTree(&qT);
