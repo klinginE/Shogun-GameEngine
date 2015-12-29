@@ -55,9 +55,7 @@ namespace sg {
                      s1 = dynamic_cast<const BoundingShape *>(bs->getSurface());
 
                  sf::Vector2f v(0.0f, 0.0f);
-                 sf::Vector2f offset1(this->getPos().x + sp0->getPosition().x, this->getPos().y + sp0->getPosition().y);
-                 sf::Vector2f offset2(e.getPos().x + sp1->getPosition().x, e.getPos().y + sp1->getPosition().y);
-                 if (s0 != NULL && s1 != NULL && s0->collides((*s1), v, offset1, offset2)) {
+                 if (s0 != NULL && s1 != NULL && s0->collides((*s1), v)) {
 
                      isCollides = true;
                      collisionVectors.push_back(v);
@@ -98,33 +96,44 @@ namespace sg {
 
     }
 
-    void Entity::move(const sf::Vector2f &v) {
+    void Entity::setPos(const sf::Vector2f &v) {
 
         this->pos.x = v.x;
         this->pos.y = v.y;
+        for (std::vector<sf::Sprite *>::iterator it = this->sprites.begin(); it != this->sprites.end(); ++it)
+            (*it)->setPosition(v);
 
     }
 
-    void Entity::moveSprite(uint32_t idx, const sf::Vector2f &v) {
+    /*void Entity::setPosSprite(uint32_t idx, const sf::Vector2f &v) {
 
         if (idx >= this->getNumOfSprites())
             return;
         this->sprites[idx]->setPosition(v);
 
-    }
+    }*/
 
-    void Entity::translate(const sf::Vector2f &v) {
+    void Entity::move(const sf::Vector2f &v) {
 
         this->pos.x += v.x;
         this->pos.y += v.y;
+        for (std::vector<sf::Sprite *>::iterator it = this->sprites.begin(); it != this->sprites.end(); ++it)
+            (*it)->move(v);
 
     }
 
-    void Entity::translateSprite(uint32_t idx, const sf::Vector2f &v) {
+    /*void Entity::moveSprite(uint32_t idx, const sf::Vector2f &v) {
 
         if (idx >= this->getNumOfSprites())
             return;
         this->sprites[idx]->move(v);
+
+    }*/
+
+    void Entity::setOrigin(const sf::Vector2f &origin) {
+
+        for (std::vector<sf::Sprite *>::iterator it = this->sprites.begin(); it != this->sprites.end(); ++it)
+            (*it)->setOrigin(origin);
 
     }
 

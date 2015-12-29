@@ -25,6 +25,12 @@ namespace sg {
             ~BoundedSprite();
             const BoundingShape *getSurface() const;
             void setSurface(const BoundingShape &);
+            void setPosition(float, float);
+            void setPosition(const sf::Vector2f &);
+            void move(float, float);
+            void move(const sf::Vector2f &);
+            void setOrigin(float, float);
+            void setOrigin(const sf::Vector2f &);
             void setRotation(float angle);
             void rotate(float angle);
             void setScale(float, float);

@@ -16,7 +16,7 @@ namespace sg {
 
     }
 
-    std::vector<const sf::Shape *>::size_type BoundingShape::getNumOfShapes() const {
+    std::vector<sf::Shape *>::size_type BoundingShape::getNumOfShapes() const {
 
         return this->shapes.size();
 
@@ -30,7 +30,7 @@ namespace sg {
 
     }
 
-    std::vector<const sf::Shape *>::size_type BoundingShape::addShape(const sf::Shape &newShape) {
+    std::vector<sf::Shape *>::size_type BoundingShape::addShape(sf::Shape &newShape) {
 
         this->shapes.push_back(&newShape);
         return (this->getNumOfShapes() - 1);
@@ -42,10 +42,24 @@ namespace sg {
         if (idx >= this->getNumOfShapes())
             return NULL;
 
-        const sf::Shape *s = this->shapes[idx];
+        sf::Shape *s = this->shapes[idx];
         this->shapes.erase(this->shapes.begin() + idx);
 
         return s;
+
+    }
+
+    void BoundingShape::setPos(const sf::Vector2f &newPos) {
+
+        for (std::vector<sf::Shape *>::iterator it = this->shapes.begin(); it != this->shapes.end(); ++it)
+            (*it)->setPosition(newPos);
+
+    }
+
+    void BoundingShape::move(const sf::Vector2f &delta) {
+
+        for (std::vector<sf::Shape *>::iterator it = this->shapes.begin(); it != this->shapes.end(); ++it)
+            (*it)->move(delta);
 
     }
 
@@ -53,9 +67,9 @@ namespace sg {
 
         float inf = std::numeric_limits<float>::infinity();
         sf::FloatRect bounds(inf, inf, -inf, -inf);
-        for (std::vector<const sf::Shape *>::const_iterator it = this->shapes.begin(); it != this->shapes.end(); ++it) {
+        for (std::vector<sf::Shape *>::const_iterator it = this->shapes.begin(); it != this->shapes.end(); ++it) {
 
-            const sf::Shape *s = (*it);
+            sf::Shape *s = (*it);
             sf::FloatRect br(0.0f, 0.0f, 0.0f, 0.0f);
             if (useLocal)
                 br = s->getLocalBounds();
@@ -92,15 +106,11 @@ namespace sg {
 
     }
 
-    sf::Vector2f BoundingShape::calculateUnitNormal(const sf::Shape &poly, uint32_t i, const sf::Vector2f &polyOffset) const {
+    sf::Vector2f BoundingShape::calculateUnitNormal(const sf::Shape &poly, uint32_t i) const {
 
         uint32_t j = (i + 1) % poly.getPointCount();
         sf::Vector2f currentVertex = poly.getTransform().transformPoint(poly.getPoint(i));
-        currentVertex.x += polyOffset.x;
-        currentVertex.y += polyOffset.y;
         sf::Vector2f adjacentVertex = poly.getTransform().transformPoint(poly.getPoint(j));
-        adjacentVertex.x += polyOffset.x;
-        adjacentVertex.y += polyOffset.y;
         sf::Vector2f unitNormal(adjacentVertex.x - currentVertex.x, adjacentVertex.y - currentVertex.y);
         float magnitude = static_cast<float>(std::sqrt(unitNormal.x * unitNormal.x + unitNormal.y * unitNormal.y));
         unitNormal.x /= magnitude;
@@ -114,18 +124,16 @@ namespace sg {
 
     }
 
-    float BoundingShape::projectPoint(const sf::Shape &poly, const sf::Vector2f &unitNormal, uint32_t k, const sf::Vector2f &polyOffset) const {
+    float BoundingShape::projectPoint(const sf::Shape &poly, const sf::Vector2f &unitNormal, uint32_t k) const {
 
         sf::Vector2f vertex = poly.getTransform().transformPoint(poly.getPoint(k));
-        vertex.x += polyOffset.x;
-        vertex.y += polyOffset.y;
         float point = vertex.x * unitNormal.x + vertex.y * unitNormal.y;
 
         return point;
 
     }
 
-    bool BoundingShape::collides_ptp(const sf::Shape &poly1, const sf::Shape &poly2, sf::Vector2f &least, const sf::Vector2f &poly1Offset, const sf::Vector2f &poly2Offset) const {
+    bool BoundingShape::collides_ptp(const sf::Shape &poly1, const sf::Shape &poly2, sf::Vector2f &least) const {
 
         if (dynamic_cast<const sf::CircleShape *>(&poly1)) {
 
@@ -145,13 +153,13 @@ namespace sg {
         least.y = inf;
         float minGap = inf;
         uint32_t normalsLen = poly1.getPointCount() + poly2.getPointCount();
-        std::vector<sf::Vector2f> unitNormals;
+        std::vector<sf::Vector2f> unitNormals(normalsLen);
 
         for (uint32_t i = 0; i < poly1.getPointCount(); i++)
-            unitNormals.push_back(calculateUnitNormal(poly1, i, poly1Offset));
+            unitNormals.push_back(calculateUnitNormal(poly1, i));
 
         for (uint32_t i = 0; i < poly2.getPointCount(); i++)
-            unitNormals.push_back(calculateUnitNormal(poly2, i, poly2Offset));
+            unitNormals.push_back(calculateUnitNormal(poly2, i));
 
         for (uint32_t i = 0; i < normalsLen; i++) {
 
@@ -161,7 +169,7 @@ namespace sg {
             float maxPoint1 = -inf;
             for (uint32_t k = 0; k < poly1.getPointCount(); k++) {
 
-                float point = projectPoint(poly1, unitNormal, k, poly1Offset);
+                float point = projectPoint(poly1, unitNormal, k);
                 if (point < minPoint1)
                     minPoint1 = point;
                 if (point > maxPoint1)
@@ -173,7 +181,7 @@ namespace sg {
             float maxPoint2 = -inf;
             for (uint32_t k = 0; k < poly2.getPointCount(); k++) {
 
-                float point = projectPoint(poly2, unitNormal, k, poly2Offset);
+                float point = projectPoint(poly2, unitNormal, k);
                 if (point < minPoint2)
                     minPoint2 = point;
                 if (point > maxPoint2)
@@ -205,7 +213,7 @@ namespace sg {
 
     }
 
-    bool BoundingShape::collides_ctp(const sf::Shape &poly1, const sf::Shape &poly2, sf::Vector2f &least, const sf::Vector2f &poly1Offset, const sf::Vector2f &poly2Offset) const {
+    bool BoundingShape::collides_ctp(const sf::Shape &poly1, const sf::Shape &poly2, sf::Vector2f &least) const {
 
         if (!(dynamic_cast<const sf::CircleShape *>(&poly1))) {
 
@@ -222,7 +230,7 @@ namespace sg {
 
         const sf::CircleShape &circle = dynamic_cast<const sf::CircleShape &>(poly1);
 
-        sf::Vector2f center(circle.getPosition().x + circle.getRadius() + poly1Offset.x, circle.getPosition().y + circle.getRadius() + poly1Offset.y);
+        sf::Vector2f center(circle.getPosition().x + circle.getRadius(), circle.getPosition().y + circle.getRadius());
         float inf = std::numeric_limits<float>::infinity();
         float minDist = inf;
         sf::Vector2f circleNormal;
@@ -231,14 +239,11 @@ namespace sg {
         least.y = inf;
         float minGap = inf;
         uint32_t normalsLen = poly2.getPointCount() + 1;
-        std::vector<sf::Vector2f> unitNormals;
+        std::vector<sf::Vector2f> unitNormals(normalsLen);
 
         for (uint32_t i = 0; i < poly2.getPointCount(); i++) {
 
             sf::Vector2f currentVertex = poly2.getTransform().transformPoint(poly2.getPoint(i));
-            currentVertex.x += poly2Offset.x;
-            currentVertex.y += poly2Offset.y;
-
             float xDiff = (currentVertex.x - center.x);
             float yDiff = (currentVertex.y - center.y);
             float distance = xDiff * xDiff + yDiff * yDiff;
@@ -253,7 +258,7 @@ namespace sg {
 
             }
 
-            unitNormals.push_back(calculateUnitNormal(poly2, i, poly2Offset));
+            unitNormals.push_back(calculateUnitNormal(poly2, i));
 
         }
         unitNormals.push_back(circleNormal);
@@ -277,7 +282,7 @@ namespace sg {
             float maxPoint2 = -inf;
             for (uint32_t k = 0; k < poly2.getPointCount(); k++) {
 
-                float point = projectPoint(poly2, unitNormal, k, poly2Offset);
+                float point = projectPoint(poly2, unitNormal, k);
                 if (point < minPoint2)
                     minPoint2 = point;
                 if (point > maxPoint2)
@@ -309,7 +314,7 @@ namespace sg {
 
     }
 
-    bool BoundingShape::collides_ctc(const sf::Shape &poly1, const sf::Shape &poly2, sf::Vector2f &least, const sf::Vector2f &poly1Offset, const sf::Vector2f &poly2Offset) const {
+    bool BoundingShape::collides_ctc(const sf::Shape &poly1, const sf::Shape &poly2, sf::Vector2f &least) const {
 
         if (!(dynamic_cast<const sf::CircleShape *>(&poly1))) {
 
@@ -327,8 +332,8 @@ namespace sg {
         const sf::CircleShape &circle1 = dynamic_cast<const sf::CircleShape &>(poly1);
         const sf::CircleShape &circle2 = dynamic_cast<const sf::CircleShape &>(poly2);
 
-        sf::Vector2f center1(circle1.getPosition().x + circle1.getRadius() + poly1Offset.x, circle1.getPosition().y + circle1.getRadius() + poly2Offset.y);
-        sf::Vector2f center2(circle2.getPosition().x + circle2.getRadius() + poly1Offset.x, circle2.getPosition().y + circle2.getRadius() + poly2Offset.y);
+        sf::Vector2f center1(circle1.getPosition().x + circle1.getRadius(), circle1.getPosition().y + circle1.getRadius());
+        sf::Vector2f center2(circle2.getPosition().x + circle2.getRadius(), circle2.getPosition().y + circle2.getRadius());
 
         float xDiff = (center2.x - center1.x);
         float yDiff = (center2.y - center1.y);
@@ -363,25 +368,19 @@ namespace sg {
 
     bool BoundingShape::collides(const BoundingShape &bs, sf::Vector2f &least) const {
 
-        return this->collides(bs, least, sf::Vector2f(0.0f, 0.0f), sf::Vector2f(0.0f, 0.0f));
-
-    }
-
-    bool BoundingShape::collides(const BoundingShape &bs, sf::Vector2f &least, const sf::Vector2f &bs1Offset, const sf::Vector2f &bs2Offset) const {
-
         least.x = 0.0f;
         least.y = 0.0f;
         bool isCollide = false;
-        for (std::vector<const sf::Shape *>::const_iterator it = this->shapes.begin(); it != this->shapes.end(); ++it)
+        for (std::vector<sf::Shape *>::const_iterator it = this->shapes.begin(); it != this->shapes.end(); ++it)
             for (uint32_t i = 0; i < bs.getNumOfShapes(); i++) {
 
-                const sf::Shape *s0 = (*it);
+                sf::Shape *s0 = (*it);
                 const sf::Shape *s1 = bs.getShape(i);
                 //Circle to Circle
                 sf::Vector2f v(0.0f, 0.0f);
                 if ((dynamic_cast<const sf::CircleShape *>(s0)) &&
                     (dynamic_cast<const sf::CircleShape *>(s1))) {
-                    if (this->collides_ctc(*s0, *s1, v, bs1Offset, bs2Offset)) {
+                    if (this->collides_ctc(*s0, *s1, v)) {
 
                         isCollide = true;
                         if (std::fabs(v.x) > std::fabs(least.x))
@@ -394,7 +393,7 @@ namespace sg {
                 //Circle to polygon
                 else if ((dynamic_cast<const sf::CircleShape *>(s0)) &&
                          !(dynamic_cast<const sf::CircleShape *>(s1))) {
-                    if (this->collides_ctp(*s0, *s1, v, bs1Offset, bs2Offset)) {
+                    if (this->collides_ctp(*s0, *s1, v)) {
 
                         isCollide = true;
                         if (std::fabs(v.x) > std::fabs(least.x))
@@ -407,7 +406,7 @@ namespace sg {
                 //polygon to circle
                 else if (!(dynamic_cast<const sf::CircleShape *>(s0)) &&
                          (dynamic_cast<const sf::CircleShape *>(s1))) {
-                    if (this->collides_ctp(*s1, *s0, v, bs1Offset, bs2Offset)) {
+                    if (this->collides_ctp(*s1, *s0, v)) {
 
                         v.x = -v.x;
                         v.y = -v.y;
@@ -421,7 +420,7 @@ namespace sg {
                 }
                 //polygon to polygon
                 else {
-                    if (this->collides_ptp(*s0, *s1, v, bs1Offset, bs2Offset)) {
+                    if (this->collides_ptp(*s0, *s1, v)) {
 
                         isCollide = true;
                         if (std::fabs(v.x) > std::fabs(least.x))

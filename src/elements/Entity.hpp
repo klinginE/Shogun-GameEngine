@@ -36,10 +36,11 @@ namespace sg {
             void setIsCollidable(bool);
             std::vector<sf::Sprite *>::size_type getNumOfSprites() const;
             const sf::Sprite *getSprite(uint32_t) const;
+            void setPos(const sf::Vector2f &);
+            //void setPosSprite(uint32_t, const sf::Vector2f &);
             void move(const sf::Vector2f &);
-            void moveSprite(uint32_t, const sf::Vector2f &);
-            void translate(const sf::Vector2f &);
-            void translateSprite(uint32_t, const sf::Vector2f &);
+            //void moveSprite(uint32_t, const sf::Vector2f &);
+            void setOrigin(const sf::Vector2f &);
             void rotate(float, bool=true);
             void rotateSprite(uint32_t, float, bool=true);
             void scale(const sf::Vector2f &);

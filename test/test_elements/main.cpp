@@ -4,7 +4,7 @@
 
 int main() {
 
-    sg::BoundingShape bs0;
+    /*sg::BoundingShape bs0;
     std::cout << "bs0 getNumOfShapes: " << bs0.getNumOfShapes() << std::endl;
     sf::ConvexShape s0;
     s0.setPosition(sf::Vector2f(8.0f, 0.0f));
@@ -60,7 +60,7 @@ int main() {
 
     sf::ConvexShape testShape;
     testShape.setPosition(sf::Vector2f(2.0f, 0.0f));
-    testShape.setOrigin(sf::Vector2f(0.0f, 0.0f));
+    testShape.setOrigin(sf::Vector2f(10.0f, 15.0f));
     testShape.setPointCount(4);
     testShape.setPoint(0, sf::Vector2f(2.0f, 0.0f));
     testShape.setPoint(1, sf::Vector2f(6.0f, 0.0f));
@@ -87,7 +87,53 @@ int main() {
         sf::Vector2f testPoint = testShape.getPoint(i);
         std::cout << "testShape x: " << testPoint.x << ", y: " << testPoint.y << std::endl;
     }
-    std::cout << std::endl;
+    std::cout << std::endl;*/
+
+    sf::ConvexShape posShape;
+    posShape.setOrigin(5.0f, 5.0f);
+    posShape.setPosition(sf::Vector2f(0.0f, 0.0f));
+    posShape.setPointCount(4);
+    posShape.setPoint(0, sf::Vector2f(0.0f, 0.0f));
+    posShape.setPoint(1, sf::Vector2f(10.0f, 0.0f));
+    posShape.setPoint(2, sf::Vector2f(10.0f, 10.0f));
+    posShape.setPoint(3, sf::Vector2f(0.0f, 10.0f));
+    posShape.setRotation(45);
+    //posShape.move(5.0f, 6.0f);
+    //posShape.setOrigin(-2.0f, -2.0f);
+    std::cout << "posShape origin:" << std::endl;
+    std::cout << "x: " << posShape.getOrigin().x << " y: " << posShape.getOrigin().y << std::endl;
+    std::cout << "posShape position:" << std::endl;
+    std::cout << "x: " << posShape.getPosition().x << " y: " << posShape.getPosition().y << std::endl;
+    std::cout << "posShape transformed points: " << std::endl;
+    for (uint32_t i = 0; i < posShape.getPointCount(); i++) {
+        sf::Vector2f testPoint = posShape.getTransform().transformPoint(posShape.getPoint(i));
+        std::cout << "posShape x: " << testPoint.x << ", y: " << testPoint.y << std::endl;
+    }
+    std::cout << "posShape global bounds:" << std:: endl;
+    sf::FloatRect posShape_b = posShape.getGlobalBounds();
+    std::cout << "left:   " << posShape_b.left << std::endl;
+    std::cout << "top:    " << posShape_b.top << std::endl;
+    std::cout << "width:  " << posShape_b.width << std::endl;
+    std::cout << "height: " << posShape_b.height << std::endl;
+
+    /*std::cout << "Rotate s0 by 180 degs" << std::endl;
+    posShpe.setRotation(180.0f);
+    //s0.setOrigin(0.0f, 0.0f);
+    s0_b = s0.getGlobalBounds();
+    std::cout << "top:    " << s0_b.top << std::endl;
+    std::cout << "left:   " << s0_b.left << std::endl;
+    std::cout << "width:  " << s0_b.width << std::endl;
+    std::cout << "height: " << s0_b.height << std::endl;
+    std::cout << "scale s0 x by 2.0 and y by 2.0" << std::endl;
+    //s0.setOrigin(0.0f, 0.0f);
+    s0.scale(2.0f, 2.0f);
+    s0.setOrigin(0.0f, 0.0f);
+    s0_b = s0.getGlobalBounds();
+    std::cout << "top:    " << s0_b.top << std::endl;
+    std::cout << "left:   " << s0_b.left << std::endl;
+    std::cout << "width:  " << s0_b.width << std::endl;
+    std::cout << "height: " << s0_b.height << std::endl;
+    std::cout << std::endl;*/
 
     return 0;
 

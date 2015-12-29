@@ -56,99 +56,111 @@ namespace sg {
 
     }
 
+    void BoundedSprite::setPosition(float x, float y) {
+
+        sf::Sprite::setPosition(x, y);
+        for (uint32_t i = 0; i <= this->surface->getNumOfShapes(); i++)
+            //This const cast is dangerous as it could have undefined behavior
+            (const_cast<sf::Shape *>(this->surface->getShape(i)))->setPosition(x, y);
+
+    }
+
+    void BoundedSprite::setPosition(const sf::Vector2f &position) {
+
+        sf::Sprite::setPosition(position);
+        for (uint32_t i = 0; i <= this->surface->getNumOfShapes(); i++)
+            //This const cast is dangerous as it could have undefined behavior
+            (const_cast<sf::Shape *>(this->surface->getShape(i)))->setPosition(position);
+
+    }
+
+    void BoundedSprite::move(float offsetX, float offsetY) {
+
+        sf::Sprite::move(offsetX, offsetY);
+        for (uint32_t i = 0; i <= this->surface->getNumOfShapes(); i++)
+            //This const cast is dangerous as it could have undefined behavior
+            (const_cast<sf::Shape *>(this->surface->getShape(i)))->move(offsetX, offsetY);
+
+    }
+
+    void BoundedSprite::move(const sf::Vector2f &offset) {
+
+        sf::Sprite::move(offset);
+        for (uint32_t i = 0; i <= this->surface->getNumOfShapes(); i++)
+            //This const cast is dangerous as it could have undefined behavior
+            (const_cast<sf::Shape *>(this->surface->getShape(i)))->move(offset);
+
+    }
+
+    void BoundedSprite::setOrigin(float x, float y) {
+
+        sf::Sprite::setOrigin(x, y);
+        for (uint32_t i = 0; i <= this->surface->getNumOfShapes(); i++)
+            //This const cast is dangerous as it could have undefined behavior
+            (const_cast<sf::Shape *>(this->surface->getShape(i)))->setOrigin(x, y);
+
+    }
+
+    void BoundedSprite::setOrigin(const sf::Vector2f &origin) {
+
+        sf::Sprite::setOrigin(origin);
+        for (uint32_t i = 0; i <= this->surface->getNumOfShapes(); i++)
+            //This const cast is dangerous as it could have undefined behavior
+            (const_cast<sf::Shape *>(this->surface->getShape(i)))->setOrigin(origin);
+
+    }
+
     void BoundedSprite::setRotation(float angle) {
 
         sf::Sprite::setRotation(angle);
-        for (uint32_t i = 0; i <= this->surface->getNumOfShapes(); i++) {
-
+        for (uint32_t i = 0; i <= this->surface->getNumOfShapes(); i++)
             //This const cast is dangerous as it could have undefined behavior
-            sf::Shape *curShape = const_cast<sf::Shape *>(this->surface->getShape(i));
-            const sf::Vector2f &temp = curShape->getOrigin();
-            curShape->setOrigin(this->getOrigin());
-            curShape->setRotation(angle);
-            curShape->setOrigin(temp);
-
-        }
+            (const_cast<sf::Shape *>(this->surface->getShape(i)))->setRotation(angle);
 
     }
 
     void BoundedSprite::rotate(float angle) {
 
         sf::Sprite::rotate(angle);
-        for (uint32_t i = 0; i <= this->surface->getNumOfShapes(); i++) {
-
+        for (uint32_t i = 0; i <= this->surface->getNumOfShapes(); i++)
             //This const cast is dangerous as it could have undefined behavior
-            sf::Shape *curShape = const_cast<sf::Shape *>(this->surface->getShape(i));
-            const sf::Vector2f temp = curShape->getOrigin();
-            curShape->setOrigin(this->getOrigin());
-            curShape->rotate(angle);
-            curShape->setOrigin(temp);
-
-        }
+            (const_cast<sf::Shape *>(this->surface->getShape(i)))->rotate(angle);
 
     }
 
     void BoundedSprite::setScale(float factorX, float factorY) {
 
         sf::Sprite::setScale(factorX, factorY);
-        for (uint32_t i = 0; i <= this->surface->getNumOfShapes(); i++) {
-
+        for (uint32_t i = 0; i <= this->surface->getNumOfShapes(); i++)
             //This const cast is dangerous as it could have undefined behavior
-            sf::Shape *curShape = const_cast<sf::Shape *>(this->surface->getShape(i));
-            const sf::Vector2f temp = curShape->getOrigin();
-            curShape->setOrigin(this->getOrigin());
-            curShape->setScale(factorX, factorY);
-            curShape->setOrigin(temp);
-
-        }
+            (const_cast<sf::Shape *>(this->surface->getShape(i)))->setScale(factorX, factorY);
 
     }
 
     void BoundedSprite::scale(float factorX, float factorY) {
 
         sf::Sprite::scale(factorX, factorY);
-        for (uint32_t i = 0; i <= this->surface->getNumOfShapes(); i++) {
-
+        for (uint32_t i = 0; i <= this->surface->getNumOfShapes(); i++)
             //This const cast is dangerous as it could have undefined behavior
-            sf::Shape *curShape = const_cast<sf::Shape *>(this->surface->getShape(i));
-            const sf::Vector2f temp = curShape->getOrigin();
-            curShape->setOrigin(this->getOrigin());
-            curShape->scale(factorX, factorY);
-            curShape->setOrigin(temp);
-
-        }
+            (const_cast<sf::Shape *>(this->surface->getShape(i)))->scale(factorX, factorY);
 
     }
 
     void BoundedSprite::setScale(const sf::Vector2f &factor) {
 
         sf::Sprite::setScale(factor);
-        for (uint32_t i = 0; i <= this->surface->getNumOfShapes(); i++) {
-
+        for (uint32_t i = 0; i <= this->surface->getNumOfShapes(); i++)
             //This const cast is dangerous as it could have undefined behavior
-            sf::Shape *curShape = const_cast<sf::Shape *>(this->surface->getShape(i));
-            const sf::Vector2f temp = curShape->getOrigin();
-            curShape->setOrigin(this->getOrigin());
-            curShape->setScale(factor);
-            curShape->setOrigin(temp);
-
-        }
+            (const_cast<sf::Shape *>(this->surface->getShape(i)))->setScale(factor);
 
     }
 
     void BoundedSprite::scale(const sf::Vector2f &factor) {
 
         sf::Sprite::scale(factor);
-        for (uint32_t i = 0; i <= this->surface->getNumOfShapes(); i++) {
-
+        for (uint32_t i = 0; i <= this->surface->getNumOfShapes(); i++)
             //This const cast is dangerous as it could have undefined behavior
-            sf::Shape *curShape = const_cast<sf::Shape *>(this->surface->getShape(i));
-            const sf::Vector2f temp = curShape->getOrigin();
-            curShape->setOrigin(this->getOrigin());
-            curShape->scale(factor);
-            curShape->setOrigin(temp);
-
-        }
+            (const_cast<sf::Shape *>(this->surface->getShape(i)))->scale(factor);
 
     }
 
