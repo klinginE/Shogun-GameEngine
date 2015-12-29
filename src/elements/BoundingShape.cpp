@@ -328,7 +328,7 @@ namespace sg {
         const sf::CircleShape &circle2 = dynamic_cast<const sf::CircleShape &>(poly2);
 
         sf::Vector2f center1(circle1.getPosition().x + circle1.getRadius() + poly1Offset.x, circle1.getPosition().y + circle1.getRadius() + poly2Offset.y);
-        sf::Vector2f center2(circle2.getPosition().x + circle2.getRadius() + poly1Offset.x, circle2.getPosition().y + circle2.getRadius() + poly2Offset.y);
+        sf::Vector2f center2(circle2.getPosition().x + circle2.getRadius() + poly2Offset.x, circle2.getPosition().y + circle2.getRadius() + poly2Offset.y);
 
         float xDiff = (center2.x - center1.x);
         float yDiff = (center2.y - center1.y);

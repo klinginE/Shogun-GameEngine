@@ -79,6 +79,5 @@ class Star : public sg::Entity {
             sf::Vector2f avgVel = (thisVel + otherVel)/2.0f;
             this->setVel(avgVel);
             other->setVel(avgVel);
-            std::cout << "GOT HERE!!!" << std::endl;
         };
 };

@@ -189,7 +189,7 @@ class QuadTree {
                     
                     sf::Vector2f diff = *(com_iter) - this->star->getPos();
                     float dist_squared = diff.x*diff.x + diff.y*diff.y;
-                    if (dist_squared > 0.0F) {
+                    if (dist_squared > STAR_SIZE*STAR_SIZE) {
                         float dist = sqrt(dist_squared);
                         diff = diff*GRAV_CONST
                              *(1.0f + (*grav_iter))/(dist_squared*dist);

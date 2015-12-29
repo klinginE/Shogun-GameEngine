@@ -66,7 +66,8 @@ namespace sg {
 
             }
 
-        this->handleCollision(e, collisionVectors);
+        if (isCollides)
+            this->handleCollision(e, collisionVectors);
 
         return isCollides;
 

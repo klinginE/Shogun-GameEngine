@@ -81,7 +81,7 @@ namespace sg {
             if (!e1->getIsCollidable())
                 continue;
 
-            for (auto i2 = i1;
+            for (auto i2 = i1 + 1;
                  i2 != entities.end() && scanMin(*i2) <= scanMax(e1);
                  ++i2) {
                 
