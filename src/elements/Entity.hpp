@@ -20,6 +20,7 @@ namespace sg {
 
         private:
            void expandSurfaceBounds(sf::FloatRect &, sf::FloatRect);
+           bool deletion;
 
         protected:
             std::vector<sf::Sprite *> sprites;
@@ -50,6 +51,9 @@ namespace sg {
             sf::FloatRect getTextureBounds(bool=true);
             std::vector<sf::Sprite *>::size_type addSprite(sf::Sprite &);
             sf::Sprite *removeSprite(uint32_t);
+            void setDeletionStatus(bool);
+            bool getDeletionStatus();
+
             virtual void update(sf::Time tslu) {
         
                 float tslu_sec = tslu.asSeconds();

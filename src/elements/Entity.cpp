@@ -11,6 +11,7 @@ namespace sg {
         this->pos.x = 0.0f;
         this->pos.y = 0.0f;
         this->isCollidable = true;
+        this->deletion = false;
 
     }
 
@@ -19,6 +20,7 @@ namespace sg {
         this->pos.x = startPos.x;
         this->pos.y = startPos.y;
         this->isCollidable = setCollidable;
+        this->deletion = false;
 
     }
 
@@ -255,6 +257,13 @@ namespace sg {
         this->sprites.erase(this->sprites.begin() + idx);
         return r;
 
+    }
+
+    void Entity::setDeletionStatus(bool newDeletionStatus) {
+        deletion = newDeletionStatus;
+    }
+    bool Entity::getDeletionStatus() {
+        return deletion;
     }
 
 }
