@@ -4,17 +4,21 @@
 #include <math.h>
 #include <stdio.h>
 #include <limits>
+#include <cstdlib>
 
 // Shogun includes
 #include <GameWorld.hpp>
 
-#define GRAV_CONST 0.1f
+#define GRAV_CONST 0.3f
 //#define GRAV_CONST 1.0f
 #define NUM_STARS 81*100
 #define NUM_STARS_ACROSS 100
 //#define NUM_STARS 5000
 //#define NUM_STARS_ACROSS 5000
-#define STAR_SPACING 10.0f
+#define STAR_SPACING 50.0f
+
+#define UNIVERSE_WIDTH 1200
+#define UNIVERSE_HEIGHT 1200
 
 // Local includes
 #include "Star.hpp"
@@ -33,15 +37,15 @@ class Universe : public sg::GameWorld {
             
 
             for (int i = 0; i < NUM_STARS; i++) {
-                int x_i = i % NUM_STARS_ACROSS;
-                int y_i = i / NUM_STARS_ACROSS;
-                stars[i].move(sf::Vector2f(x_i*STAR_SPACING,
-                                           y_i*STAR_SPACING));
+                float x = ((float) std::rand()) / (((float) RAND_MAX)/UNIVERSE_WIDTH);
+                float y = ((float) std::rand()) / (((float) RAND_MAX)/UNIVERSE_HEIGHT);
+                stars[i].move(sf::Vector2f(x, y));
                 addEntity(dynamic_cast<sg::Entity *>(&stars[i]));
             }
 
             min_disp_radius = 1.0f;
             
+            update(sf::seconds(1));
         };
 
         void update(const sf::Time &tslu) {

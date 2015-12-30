@@ -35,7 +35,7 @@ class Star : public sg::Entity {
             setVel(sf::Vector2f(xVel, yVel));
 
             min_disp_radius = 1.0f;
-            mass = 1.0f;
+            mass = 2.0f;
             setIsCollidable(true);
 
             circleShape.setRadius(getRadius());
