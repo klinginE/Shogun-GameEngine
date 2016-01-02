@@ -27,15 +27,8 @@ class Star : public sg::Entity {
     public:
         Star() : sg::Entity() {
 
-            float xVel = ((float) (std::rand() % 10)) / 10.0f;
-            float yVel = ((float) (std::rand() % 10)) / 10.0f;
-            if (std::rand() % 2) xVel = -xVel;
-            if (std::rand() % 2) yVel = -yVel;
-
-            setVel(sf::Vector2f(xVel, yVel));
-
             min_disp_radius = 1.0f;
-            mass = 2.0f;
+            mass = 0.1f;
             setIsCollidable(true);
 
             circleShape.setRadius(getRadius());
@@ -119,6 +112,8 @@ class Star : public sg::Entity {
 //        };
         
         void handleCollision(Entity &e, const std::vector<sf::Vector2f> &colInfo) {
+
+            return;
             
             if (getDeletionStatus())
                 return;

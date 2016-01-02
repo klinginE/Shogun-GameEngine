@@ -9,16 +9,19 @@
 // Shogun includes
 #include <GameWorld.hpp>
 
-#define GRAV_CONST 0.3f
+#define GRAV_CONST 10.0f
 //#define GRAV_CONST 1.0f
 #define NUM_STARS 81*100
-#define NUM_STARS_ACROSS 100
+//#define NUM_STARS_ACROSS 100
 //#define NUM_STARS 5000
 //#define NUM_STARS_ACROSS 5000
-#define STAR_SPACING 50.0f
+//#define STAR_SPACING 500.0f
 
-#define UNIVERSE_WIDTH 1200
-#define UNIVERSE_HEIGHT 1200
+//#define UNIVERSE_WIDTH 3000
+//#define UNIVERSE_HEIGHT 3000
+
+#define TIME_MULTIPLIER 1.0f
+
 
 // Local includes
 #include "Star.hpp"
@@ -35,11 +38,42 @@ class Universe : public sg::GameWorld {
             deactivateInput();
             activateCollisions();
             
-
+            //sf::Vector2f centerPos(UNIVERSE_WIDTH/2.0f, UNIVERSE_HEIGHT/2.0f);
+            sf::Vector2f centerPos(0, 0);
+            
+//            stars[0].move(centerPos);
+//            stars[0].setMass(100.0f);
+//            addEntity(dynamic_cast<sg::Entity *>(&stars[0]));
             for (int i = 0; i < NUM_STARS; i++) {
-                float x = ((float) std::rand()) / (((float) RAND_MAX)/UNIVERSE_WIDTH);
-                float y = ((float) std::rand()) / (((float) RAND_MAX)/UNIVERSE_HEIGHT);
-                stars[i].move(sf::Vector2f(x, y));
+
+                // random position
+                float ang = ((float) std::rand()) / (((float) RAND_MAX)/(2.0f*M_PI));
+                float dist = ((float) std::rand()) / (((float) RAND_MAX)/1000.0f);
+                dist += 10;
+                sf::Vector2f pos((float) dist*cos(ang), (float) dist*sin(ang));
+                stars[i].move(pos);
+
+                // Random velocity
+                sf::Vector2f distVec = pos - centerPos;
+                sf::Vector2f vel(-distVec.y, distVec.x);
+                vel /= dist;
+                vel *= ((float) std::rand()) / (((float) RAND_MAX)/(0.001f/dist));
+//                float xVel = ((float) std::rand()) / (((float) RAND_MAX)/0.0001f);
+//                float yVel = ((float) std::rand()) / (((float) RAND_MAX)/0.0001f);
+//                if (x > UNIVERSE_WIDTH/2.0f && y > UNIVERSE_HEIGHT/2.0f) {
+//                    yVel = -yVel;
+//                }
+//                else if (x > UNIVERSE_WIDTH/2.0f && y <= UNIVERSE_HEIGHT/2.0f) {
+//                    xVel = -xVel;
+//                    yVel = -yVel;
+//                }
+//                else if (x <= UNIVERSE_WIDTH/2.0f && y <= UNIVERSE_HEIGHT/2.0f) {
+//                    xVel = -xVel;
+//                }
+//                if (std::rand() % 2) xVel = -xVel;
+//                if (std::rand() % 2) yVel = -yVel;
+                //stars[i].setVel(vel);
+
                 addEntity(dynamic_cast<sg::Entity *>(&stars[i]));
             }
 
@@ -49,19 +83,20 @@ class Universe : public sg::GameWorld {
         };
 
         void update(const sf::Time &tslu) {
+
             QuadTree qT;
 
             createQuadTree(&qT);
 
             qT.gravity();
             for (int i = 0; i < NUM_STARS; i++) {
-                stars[i].translate(stars[i].getVel());
+                stars[i].translate(stars[i].getVel()*((float) tslu.asMilliseconds())*TIME_MULTIPLIER);
                 stars[i].setMinDispRadius(min_disp_radius);
             }
 
             qT.clean();
 
-            GameWorld::update(tslu);
+            //GameWorld::update(tslu*TIME_MULTIPLIER);
         };
 
         void setMinDispRadius(float newDispRadius) {
