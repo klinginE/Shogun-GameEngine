@@ -9,9 +9,9 @@
 // Shogun includes
 #include <GameWorld.hpp>
 
-#define GRAV_CONST 10.0f
+#define GRAV_CONST 0.01f
 //#define GRAV_CONST 1.0f
-#define NUM_STARS 81*100
+#define NUM_STARS 80*100
 //#define NUM_STARS_ACROSS 100
 //#define NUM_STARS 5000
 //#define NUM_STARS_ACROSS 5000
@@ -21,7 +21,20 @@
 //#define UNIVERSE_HEIGHT 3000
 
 #define TIME_MULTIPLIER 1.0f
+#define GRAVITY_SMOOTHING 10000.0f
 
+#define RING_WIDTH (500.0f)
+#define RING_START (10.0f)
+
+#define ALPHA 0.5f
+
+#define MIN_DISP_RADIUS_RATIO 0.0015f
+#define START_MASS 1.0f
+#define RADIUS_MODIFIER 0.2f
+#define INITIAL_ZOOM (10.0f/1.0f)
+
+#define INITIAL_VELOCITY 1.0f
+#define INITIAL_VELOCITY_ON (0)
 
 // Local includes
 #include "Star.hpp"
@@ -48,8 +61,8 @@ class Universe : public sg::GameWorld {
 
                 // random position
                 float ang = ((float) std::rand()) / (((float) RAND_MAX)/(2.0f*M_PI));
-                float dist = ((float) std::rand()) / (((float) RAND_MAX)/1000.0f);
-                dist += 10;
+                float dist = ((float) std::rand()) / (((float) RAND_MAX)/RING_WIDTH);
+                dist += RING_START;
                 sf::Vector2f pos((float) dist*cos(ang), (float) dist*sin(ang));
                 stars[i].move(pos);
 
@@ -57,22 +70,9 @@ class Universe : public sg::GameWorld {
                 sf::Vector2f distVec = pos - centerPos;
                 sf::Vector2f vel(-distVec.y, distVec.x);
                 vel /= dist;
-                vel *= ((float) std::rand()) / (((float) RAND_MAX)/(0.001f/dist));
-//                float xVel = ((float) std::rand()) / (((float) RAND_MAX)/0.0001f);
-//                float yVel = ((float) std::rand()) / (((float) RAND_MAX)/0.0001f);
-//                if (x > UNIVERSE_WIDTH/2.0f && y > UNIVERSE_HEIGHT/2.0f) {
-//                    yVel = -yVel;
-//                }
-//                else if (x > UNIVERSE_WIDTH/2.0f && y <= UNIVERSE_HEIGHT/2.0f) {
-//                    xVel = -xVel;
-//                    yVel = -yVel;
-//                }
-//                else if (x <= UNIVERSE_WIDTH/2.0f && y <= UNIVERSE_HEIGHT/2.0f) {
-//                    xVel = -xVel;
-//                }
-//                if (std::rand() % 2) xVel = -xVel;
-//                if (std::rand() % 2) yVel = -yVel;
-                //stars[i].setVel(vel);
+                vel *= ((float) std::rand()) / (((float) RAND_MAX)/(INITIAL_VELOCITY/dist));
+                if (INITIAL_VELOCITY_ON)
+                    stars[i].setVel(vel);
 
                 addEntity(dynamic_cast<sg::Entity *>(&stars[i]));
             }

@@ -28,7 +28,7 @@ class Star : public sg::Entity {
         Star() : sg::Entity() {
 
             min_disp_radius = 1.0f;
-            mass = 0.1f;
+            mass = START_MASS;
             setIsCollidable(true);
 
             circleShape.setRadius(getRadius());
@@ -48,7 +48,7 @@ class Star : public sg::Entity {
         };
 
         float getRadius() {
-            return (float) sqrt(mass/M_PI);
+            return (float) sqrt(mass/M_PI) * RADIUS_MODIFIER;
         };
 
         void setVel(sf::Vector2f newVel) {
@@ -83,7 +83,7 @@ class Star : public sg::Entity {
                 disp_radius = min_disp_radius;
             sf::CircleShape circle;
             circle.setRadius(disp_radius);
-            circle.setFillColor(sf::Color(150, 150, 150, 255));
+            circle.setFillColor(sf::Color(150, 150, 150, (int) 255 * ALPHA));
             circle.setPosition(sf::Vector2f(-disp_radius, -disp_radius));
             sg::GameLoop::inst().getRenderWindow().draw(circle);
 

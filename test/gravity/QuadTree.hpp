@@ -192,7 +192,7 @@ class QuadTree {
                     if (dist_squared > this->star->getRadius()) {
                         float dist = sqrt(dist_squared);
                         diff = diff*GRAV_CONST
-                             *(this->star->getMass() + (*grav_iter))/(dist_squared*dist*this->star->getMass());
+                             *(this->star->getMass() + (*grav_iter))/((dist_squared*dist + GRAVITY_SMOOTHING)*this->star->getMass());
                         this->star->changeVel(diff);
                     }
                 }
