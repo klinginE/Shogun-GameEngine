@@ -9,9 +9,11 @@
 // Shogun includes
 #include <GameWorld.hpp>
 
-#define GRAV_CONST 0.01f
+#define GRAV_CONST 1.0f
 //#define GRAV_CONST 1.0f
-#define NUM_STARS 80*100
+#define STARS_WIDTH 81
+#define STARS_HEIGHT 81
+#define NUM_STARS STARS_WIDTH*STARS_HEIGHT
 //#define NUM_STARS_ACROSS 100
 //#define NUM_STARS 5000
 //#define NUM_STARS_ACROSS 5000
@@ -20,21 +22,23 @@
 //#define UNIVERSE_WIDTH 3000
 //#define UNIVERSE_HEIGHT 3000
 
-#define TIME_MULTIPLIER 1.0f
+#define TIME_MULTIPLIER 0.01f
 #define GRAVITY_SMOOTHING 10000.0f
 
-#define RING_WIDTH (500.0f)
-#define RING_START (10.0f)
+#define RING_WIDTH (100.0f)
+#define RING_START (30.0f)
 
 #define ALPHA 0.5f
 
 #define MIN_DISP_RADIUS_RATIO 0.0015f
 #define START_MASS 1.0f
 #define RADIUS_MODIFIER 0.2f
-#define INITIAL_ZOOM (10.0f/1.0f)
+#define INITIAL_ZOOM (1.0f/1.0f)
 
-#define INITIAL_VELOCITY 1.0f
-#define INITIAL_VELOCITY_ON (0)
+#define INITIAL_VELOCITY 300.0f
+#define INITIAL_VELOCITY_ON (1)
+
+#define STAR_SPACING 10.0f
 
 // Local includes
 #include "Star.hpp"
@@ -49,7 +53,7 @@ class Universe : public sg::GameWorld {
         Universe() {
 
             deactivateInput();
-            activateCollisions();
+            deactivateCollisions();
             
             //sf::Vector2f centerPos(UNIVERSE_WIDTH/2.0f, UNIVERSE_HEIGHT/2.0f);
             sf::Vector2f centerPos(0, 0);
@@ -57,6 +61,9 @@ class Universe : public sg::GameWorld {
 //            stars[0].move(centerPos);
 //            stars[0].setMass(100.0f);
 //            addEntity(dynamic_cast<sg::Entity *>(&stars[0]));
+
+
+/*
             for (int i = 0; i < NUM_STARS; i++) {
 
                 // random position
@@ -70,11 +77,23 @@ class Universe : public sg::GameWorld {
                 sf::Vector2f distVec = pos - centerPos;
                 sf::Vector2f vel(-distVec.y, distVec.x);
                 vel /= dist;
-                vel *= ((float) std::rand()) / (((float) RAND_MAX)/(INITIAL_VELOCITY/dist));
+                //vel *= ((float) std::rand()) / (((float) RAND_MAX)/(INITIAL_VELOCITY/dist));
+                vel *= INITIAL_VELOCITY/dist;
                 if (INITIAL_VELOCITY_ON)
                     stars[i].setVel(vel);
 
                 addEntity(dynamic_cast<sg::Entity *>(&stars[i]));
+            }
+*/
+            for (int i = 0; i < STARS_WIDTH; i++) {
+                for (int j = 0; j < STARS_HEIGHT; j++) {
+                    
+                    sf::Vector2f pos(i*STAR_SPACING - STARS_WIDTH*STAR_SPACING/2.0f, j*STAR_SPACING - STARS_HEIGHT*STAR_SPACING/2.0f);
+
+                    stars[j + i*STARS_HEIGHT].move(pos);
+
+                    addEntity(dynamic_cast<sg::Entity *>(&stars[i*STARS_HEIGHT+j]));
+                }
             }
 
             min_disp_radius = 1.0f;
@@ -96,7 +115,7 @@ class Universe : public sg::GameWorld {
 
             qT.clean();
 
-            //GameWorld::update(tslu*TIME_MULTIPLIER);
+            GameWorld::update(tslu*TIME_MULTIPLIER);
         };
 
         void setMinDispRadius(float newDispRadius) {

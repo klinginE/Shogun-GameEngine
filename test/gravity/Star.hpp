@@ -113,7 +113,7 @@ class Star : public sg::Entity {
         
         void handleCollision(Entity &e, const std::vector<sf::Vector2f> &colInfo) {
 
-            return;
+            //return;
             
             if (getDeletionStatus())
                 return;
