@@ -6,26 +6,24 @@
 
 namespace sg {
 
-    Entity::Entity() {
+    Entity::Entity() :
+    sf::Transformable()
+    {
 
-        this->pos.x = 0.0f;
-        this->pos.y = 0.0f;
         this->isCollidable = true;
 
     }
 
-    Entity::Entity(const sf::Vector2f &startPos, bool setCollidable) {
+    Entity::Entity(bool setCollidable) :
+    sf::Transformable()
+    {
 
-        this->pos.x = startPos.x;
-        this->pos.y = startPos.y;
         this->isCollidable = setCollidable;
 
     }
 
     Entity::~Entity() {
 
-        this->pos.x = 0.0f;
-        this->pos.y = 0.0f;
         this->isCollidable = false;
         this->sprites.clear();
 
@@ -38,29 +36,29 @@ namespace sg {
 
         bool isCollides = false;
         std::vector<sf::Vector2f> collisionVectors;
-        for (std::vector<sf::Sprite *>::iterator it = this->sprites.begin(); it != this->sprites.end(); ++it)
+        for (std::vector<sf::Drawable *>::iterator it = this->sprites.begin(); it != this->sprites.end(); ++it)
             for (uint32_t i = 0; i < e.getNumOfSprites(); i++) {
 
-                 sf::Sprite *sp0 = (*it);
-                 const sf::Sprite *sp1 = e.getSprite(i);
-                 const BoundingShape *s0 = NULL;
-                 const BoundingShape *s1 = NULL;
-                 if (AnimatedSprite *as = dynamic_cast<AnimatedSprite *>(sp0))
-                     s0 = dynamic_cast<const BoundingShape *>(as->getFrameBound(as->getFrameIndex()));
-                 else if (BoundedSprite *bs = dynamic_cast<BoundedSprite *>(sp0))
-                     s0 = dynamic_cast<const BoundingShape *>(bs->getSurface());
-                 if (const AnimatedSprite *as = dynamic_cast<const AnimatedSprite *>(sp1))
-                     s1 = dynamic_cast<const BoundingShape *>(as->getFrameBound(as->getFrameIndex()));
-                 else if (const BoundedSprite *bs = dynamic_cast<const BoundedSprite *>(sp1))
-                     s1 = dynamic_cast<const BoundingShape *>(bs->getSurface());
+                sf::Drawable *sp0 = (*it);
+                const sf::Drawable *sp1 = e.getSprite(i);
+                const BoundingShape *s0 = NULL;
+                const BoundingShape *s1 = NULL;
+                if (AnimatedSprite *as = dynamic_cast<AnimatedSprite *>(sp0))
+                    s0 = dynamic_cast<const BoundingShape *>(as->getFrameBound(as->getFrameIndex()));
+                else if (BoundedSprite *bs = dynamic_cast<BoundedSprite *>(sp0))
+                    s0 = dynamic_cast<const BoundingShape *>(bs->getSurface());
+                if (const AnimatedSprite *as = dynamic_cast<const AnimatedSprite *>(sp1))
+                    s1 = dynamic_cast<const BoundingShape *>(as->getFrameBound(as->getFrameIndex()));
+                else if (const BoundedSprite *bs = dynamic_cast<const BoundedSprite *>(sp1))
+                    s1 = dynamic_cast<const BoundingShape *>(bs->getSurface());
 
-                 sf::Vector2f v(0.0f, 0.0f);
-                 if (s0 != NULL && s1 != NULL && s0->collides((*s1), v)) {
+                sf::Vector2f v(0.0f, 0.0f);
+                if (s0 != NULL && s1 != NULL && s0->collides((*s1), v, this->getTransform(), e.getTransform())) {
 
-                     isCollides = true;
-                     collisionVectors.push_back(v);
+                    isCollides = true;
+                    collisionVectors.push_back(v);
 
-                 }
+                }
 
             }
 
@@ -82,13 +80,13 @@ namespace sg {
 
     }
 
-    std::vector<sf::Sprite *>::size_type Entity::getNumOfSprites() const {
+    std::vector<sf::Drawable *>::size_type Entity::getNumOfSprites() const {
 
         return this->sprites.size();
 
     }
 
-    const sf::Sprite *Entity::getSprite(uint32_t idx) const {
+    const sf::Drawable *Entity::getSprite(uint32_t idx) const {
 
         if (idx >= this->getNumOfSprites())
             return NULL;
@@ -96,90 +94,105 @@ namespace sg {
 
     }
 
-    void Entity::setPos(const sf::Vector2f &v) {
-
-        this->pos.x = v.x;
-        this->pos.y = v.y;
-        for (std::vector<sf::Sprite *>::iterator it = this->sprites.begin(); it != this->sprites.end(); ++it)
-            (*it)->setPosition(v);
-
-    }
-
-    /*void Entity::setPosSprite(uint32_t idx, const sf::Vector2f &v) {
+    void Entity::setOriginSprite(uint32_t idx, const sf::Vector2f &origin) {
 
         if (idx >= this->getNumOfSprites())
             return;
-        this->sprites[idx]->setPosition(v);
 
-    }*/
-
-    void Entity::move(const sf::Vector2f &v) {
-
-        this->pos.x += v.x;
-        this->pos.y += v.y;
-        for (std::vector<sf::Sprite *>::iterator it = this->sprites.begin(); it != this->sprites.end(); ++it)
-            (*it)->move(v);
+        if (sf::Sprite *s = dynamic_cast<sf::Sprite *>(this->sprites[idx]))
+            s->setOrigin(origin);
+        else if (sf::Shape *sh = dynamic_cast<sf::Shape *>(this->sprites[idx]))
+            sh->setOrigin(origin);
+        else if (sf::Text *t = dynamic_cast<sf::Text *>(this->sprites[idx]))
+            t->setOrigin(origin);
 
     }
 
-    /*void Entity::moveSprite(uint32_t idx, const sf::Vector2f &v) {
+    void Entity::setPositionSprite(uint32_t idx, const sf::Vector2f &position) {
 
         if (idx >= this->getNumOfSprites())
             return;
-        this->sprites[idx]->move(v);
 
-    }*/
-
-    void Entity::setOrigin(const sf::Vector2f &origin) {
-
-        for (std::vector<sf::Sprite *>::iterator it = this->sprites.begin(); it != this->sprites.end(); ++it)
-            (*it)->setOrigin(origin);
-
-    }
-
-    void Entity::rotate(float angl, bool useDeg) {
-
-        for (uint32_t i = 0; 0 < this->getNumOfSprites(); i++)
-            this->rotateSprite(i, angl, useDeg);
+        if (sf::Sprite *s = dynamic_cast<sf::Sprite *>(this->sprites[idx]))
+            s->setPosition(position);
+        else if (sf::Shape *sh = dynamic_cast<sf::Shape *>(this->sprites[idx]))
+            sh->setPosition(position);
+        else if (sf::Text *t = dynamic_cast<sf::Text *>(this->sprites[idx]))
+            t->setPosition(position);
 
     }
 
-    void Entity::rotateSprite(uint32_t idx, float angl, bool useDeg) {
+    void Entity::moveSprite(uint32_t idx, const sf::Vector2f &offset) {
+
+        if (idx >= this->getNumOfSprites())
+            return;
+
+        if (sf::Sprite *s = dynamic_cast<sf::Sprite *>(this->sprites[idx]))
+            s->move(offset);
+        else if (sf::Shape *sh = dynamic_cast<sf::Shape *>(this->sprites[idx]))
+            sh->move(offset);
+        else if (sf::Text *t = dynamic_cast<sf::Text *>(this->sprites[idx]))
+            t->move(offset);
+
+    }
+
+    void Entity::setRotationSprite(uint32_t idx, float angle, bool useDeg) {
 
         if (idx >= this->getNumOfSprites())
             return;
         if (!useDeg)
-            angl *= (180.0f / M_PI);//If angl is not degs then make it degs
-        this->sprites[idx]->rotate(angl);
+            angle *= (180.0f / M_PI);//If angl is not degs then make it degs
+
+        if (sf::Sprite *s = dynamic_cast<sf::Sprite *>(this->sprites[idx]))
+            s->setRotation(angle);
+        else if (sf::Shape *sh = dynamic_cast<sf::Shape *>(this->sprites[idx]))
+            sh->setRotation(angle);
+        else if (sf::Text *t = dynamic_cast<sf::Text *>(this->sprites[idx]))
+            t->setRotation(angle);
 
     }
 
-    void Entity::scale(const sf::Vector2f &s) {
-
-        for (uint32_t i = 0; 0 < this->getNumOfSprites(); i++)
-            this->scaleSprite(i, s);
-
-    }
-
-    void Entity::scaleSprite(uint32_t idx, const sf::Vector2f &s) {
+    void Entity::rotateSprite(uint32_t idx, float angle, bool useDeg) {
 
         if (idx >= this->getNumOfSprites())
             return;
-        this->sprites[idx]->scale(s); 
+        if (!useDeg)
+            angle *= (180.0f / M_PI);//If angl is not degs then make it degs
+
+        if (sf::Sprite *s = dynamic_cast<sf::Sprite *>(this->sprites[idx]))
+            s->rotate(angle);
+        else if (sf::Shape *sh = dynamic_cast<sf::Shape *>(this->sprites[idx]))
+            sh->rotate(angle);
+        else if (sf::Text *t = dynamic_cast<sf::Text *>(this->sprites[idx]))
+            t->rotate(angle);
 
     }
 
-    const sf::Vector2f &Entity::getPos() const {
-
-        return this->pos;
-
-    }
-
-    const sf::Vector2f &Entity::getPosSprite(uint32_t idx) const {
+    void Entity::setScaleSprite(uint32_t idx, const sf::Vector2f &factor) {
 
         if (idx >= this->getNumOfSprites())
-            throw std::out_of_range("getPosSprite(): Not a vaild sprite index.");
-        return this->sprites[idx]->getPosition();
+            return;
+
+        if (sf::Sprite *s = dynamic_cast<sf::Sprite *>(this->sprites[idx]))
+            s->setScale(factor);
+        else if (sf::Shape *sh = dynamic_cast<sf::Shape *>(this->sprites[idx]))
+            sh->setScale(factor);
+        else if (sf::Text *t = dynamic_cast<sf::Text *>(this->sprites[idx]))
+            t->setScale(factor);
+
+    }
+
+    void Entity::scaleSprite(uint32_t idx, const sf::Vector2f &factor) {
+
+        if (idx >= this->getNumOfSprites())
+            return;
+
+        if (sf::Sprite *s = dynamic_cast<sf::Sprite *>(this->sprites[idx]))
+            s->scale(factor);
+        else if (sf::Shape *sh = dynamic_cast<sf::Shape *>(this->sprites[idx]))
+            sh->scale(factor);
+        else if (sf::Text *t = dynamic_cast<sf::Text *>(this->sprites[idx]))
+            t->scale(factor);
 
     }
 
@@ -200,30 +213,40 @@ namespace sg {
 
         float inf = std::numeric_limits<float>::infinity();
         sf::FloatRect bounds(inf, inf, -inf, -inf);
-        for (std::vector<sf::Sprite *>::iterator it = this->sprites.begin(); it != this->sprites.end(); ++it)
+        for (std::vector<sf::Drawable *>::iterator it = this->sprites.begin(); it != this->sprites.end(); ++it) {
+
+            sf::FloatRect currentBounds(0.0f, 0.0f, 0.0f, 0.0f);
             if (AnimatedSprite *as = dynamic_cast<AnimatedSprite *>((*it))) {
                 if (useGlobal)
-                    this->expandSurfaceBounds(bounds, as->getFrameBound(as->getFrameIndex())->getGlobalShapeBounds());
+                    currentBounds = as->getFrameBound(as->getFrameIndex())->getGlobalShapeBounds();
                 else
-                    this->expandSurfaceBounds(bounds, as->getFrameBound(as->getFrameIndex())->getLocalShapeBounds());
+                    currentBounds = as->getFrameBound(as->getFrameIndex())->getLocalShapeBounds();
             }
             else if (BoundedSprite *bs = dynamic_cast<BoundedSprite *>((*it))) {
                 if (useGlobal)
-                    this->expandSurfaceBounds(bounds, bs->getSurface()->getGlobalShapeBounds());
+                    currentBounds = bs->getSurface()->getGlobalShapeBounds();
                 else
-                    this->expandSurfaceBounds(bounds, bs->getSurface()->getLocalShapeBounds());
+                    currentBounds = bs->getSurface()->getLocalShapeBounds();
             }
-            else {
-                if (useGlobal)
-                    this->expandSurfaceBounds(bounds, (*it)->getGlobalBounds());
-                else
-                    this->expandSurfaceBounds(bounds, (*it)->getLocalBounds());
+            else
+                continue;
+
+            if (useGlobal) {
+
+                sf::ConvexShape transBounds(4);
+                transBounds.setPoint(0, this->getTransform().transformPoint(sf::Vector2f(currentBounds.left, currentBounds.top)));
+                transBounds.setPoint(1, this->getTransform().transformPoint(sf::Vector2f(currentBounds.left + currentBounds.width, currentBounds.top)));
+                transBounds.setPoint(2, this->getTransform().transformPoint(sf::Vector2f(currentBounds.left + currentBounds.width, currentBounds.top + currentBounds.height)));
+                transBounds.setPoint(3, this->getTransform().transformPoint(sf::Vector2f(currentBounds.left, currentBounds.top + currentBounds.height)));
+                currentBounds = transBounds.getGlobalBounds();
+
             }
+            this->expandSurfaceBounds(bounds, currentBounds);
+
+        }
 
         bounds.width -= bounds.left;
         bounds.height -= bounds.top;
-        bounds.left += this->pos.x;
-        bounds.top += this->pos.y;
 
         return bounds;
 
@@ -233,33 +256,65 @@ namespace sg {
 
         float inf = std::numeric_limits<float>::infinity();
         sf::FloatRect bounds(inf, inf, -inf, -inf);
-        for (std::vector<sf::Sprite *>::iterator it = this->sprites.begin(); it != this->sprites.end(); ++it)
-            if (useGlobal)
-                this->expandSurfaceBounds(bounds, (*it)->getGlobalBounds());
+        for (std::vector<sf::Drawable *>::iterator it = this->sprites.begin(); it != this->sprites.end(); ++it) {
+
+            sf::FloatRect currentBounds(0.0f, 0.0f, 0.0f, 0.0f);
+            if (sf::Sprite *s = dynamic_cast<sf::Sprite *>((*it))) {
+                if (useGlobal)
+                    currentBounds = s->getGlobalBounds();
+                else
+                    currentBounds = s->getLocalBounds();
+            }
+            else if (sf::Shape *sh = dynamic_cast<sf::Shape *>((*it))) {
+                if (useGlobal)
+                    currentBounds = sh->getGlobalBounds();
+                else
+                    currentBounds = sh->getLocalBounds();
+            }
+            else if (sf::Text *t = dynamic_cast<sf::Text *>((*it))) {
+                if (useGlobal)
+                    currentBounds = t->getGlobalBounds();
+                else
+                    currentBounds = t->getLocalBounds();
+            }
+            else if (sf::VertexArray *va = dynamic_cast<sf::VertexArray *>((*it)))
+                currentBounds = va->getBounds();
             else
-                this->expandSurfaceBounds(bounds, (*it)->getLocalBounds());
+                continue;
+
+            if (useGlobal) {
+
+                sf::ConvexShape transBounds(4);
+                transBounds.setPoint(0, this->getTransform().transformPoint(sf::Vector2f(currentBounds.left, currentBounds.top)));
+                transBounds.setPoint(1, this->getTransform().transformPoint(sf::Vector2f(currentBounds.left + currentBounds.width, currentBounds.top)));
+                transBounds.setPoint(2, this->getTransform().transformPoint(sf::Vector2f(currentBounds.left + currentBounds.width, currentBounds.top + currentBounds.height)));
+                transBounds.setPoint(3, this->getTransform().transformPoint(sf::Vector2f(currentBounds.left, currentBounds.top + currentBounds.height)));
+                currentBounds = transBounds.getGlobalBounds();
+
+            }
+            this->expandSurfaceBounds(bounds, currentBounds);
+
+        }
 
         bounds.width -= bounds.left;
         bounds.height -= bounds.top;
-        bounds.left += this->pos.x;
-        bounds.top += this->pos.y;
 
         return bounds;
 
     }
 
-    std::vector<sf::Sprite *>::size_type Entity::addSprite(sf::Sprite &newSprite) {
+    std::vector<sf::Drawable *>::size_type Entity::addSprite(sf::Drawable &newSprite) {
 
         this->sprites.push_back(&newSprite);
         return (this->getNumOfSprites() - 1);
 
     }
 
-    sf::Sprite *Entity::removeSprite(uint32_t idx) {
+    sf::Drawable *Entity::removeSprite(uint32_t idx) {
 
         if (idx >= this->getNumOfSprites())
             return NULL;
-        sf::Sprite *r = this->sprites[idx];
+        sf::Drawable *r = this->sprites[idx];
         this->sprites.erase(this->sprites.begin() + idx);
         return r;
 

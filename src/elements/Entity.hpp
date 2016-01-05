@@ -16,61 +16,53 @@
 
 namespace sg {
 
-    class Entity {
+    class Entity: public sf::Transformable {
 
         private:
-           void expandSurfaceBounds(sf::FloatRect &, sf::FloatRect);
+            void expandSurfaceBounds(sf::FloatRect &, sf::FloatRect);
 
         protected:
-            std::vector<sf::Sprite *> sprites;
+            std::vector<sf::Drawable *> sprites;
             bool isCollidable;
-            sf::Vector2f pos;//world coordinates
             virtual void handleCollision(Entity &, const std::vector<sf::Vector2f> &) {}
 
         public:
             Entity();
-            Entity(const sf::Vector2f &, bool=true);
+            Entity(bool);
             ~Entity();
             bool collides(sg::Entity &);// calls handleCollision
             bool getIsCollidable() const;
             void setIsCollidable(bool);
-            std::vector<sf::Sprite *>::size_type getNumOfSprites() const;
-            const sf::Sprite *getSprite(uint32_t) const;
-            void setPos(const sf::Vector2f &);
-            //void setPosSprite(uint32_t, const sf::Vector2f &);
-            void move(const sf::Vector2f &);
-            //void moveSprite(uint32_t, const sf::Vector2f &);
-            void setOrigin(const sf::Vector2f &);
-            void rotate(float, bool=true);
+            std::vector<sf::Drawable *>::size_type getNumOfSprites() const;
+            const sf::Drawable *getSprite(uint32_t) const;
+            void setOriginSprite(uint32_t, const sf::Vector2f &);
+            void setPositionSprite(uint32_t, const sf::Vector2f &);
+            void moveSprite(uint32_t, const sf::Vector2f &);
+            void setRotationSprite(uint32_t, float, bool=true);
             void rotateSprite(uint32_t, float, bool=true);
-            void scale(const sf::Vector2f &);
+            void setScaleSprite(uint32_t, const sf::Vector2f &);
             void scaleSprite(uint32_t, const sf::Vector2f &);
-            const sf::Vector2f &getPos() const;
-            const sf::Vector2f &getPosSprite(uint32_t) const;
             sf::FloatRect getSurfaceBounds(bool=true);
             sf::FloatRect getTextureBounds(bool=true);
-            std::vector<sf::Sprite *>::size_type addSprite(sf::Sprite &);
-            sf::Sprite *removeSprite(uint32_t);
+            std::vector<sf::Drawable *>::size_type addSprite(sf::Drawable &);
+            sf::Drawable *removeSprite(uint32_t);
             virtual void update(sf::Time tslu) {
-        
-                float tslu_sec = tslu.asSeconds();
 
-                for (std::vector<sf::Sprite *>::iterator it = this->sprites.begin() ; it != this->sprites.end(); ++it)
+                for (std::vector<sf::Drawable *>::iterator it = this->sprites.begin() ; it != this->sprites.end(); ++it)
                     if (AnimatedSprite *s = dynamic_cast<AnimatedSprite *>((*it)))
-                        s->update(tslu_sec);
+                        s->update(tslu);
         
             }
             virtual void draw() {
 
-                // Move view to draw entity in the correct place
+                // Transform view to draw entity in the correct place
                 sf::View saveView = GameLoop::inst().getRenderWindow().getView();
                 sf::View drawView = saveView;
-                drawView.setCenter(saveView.getCenter().x - getPos().x,
-                                   saveView.getCenter().y - getPos().y);
+                drawView.setCenter(this->getInverseTransform().transformPoint(saveView.getCenter()));
                 GameLoop::inst().getRenderWindow().setView(drawView);
 
                 // Draw sprites
-                for (std::vector<sf::Sprite *>::iterator it = this->sprites.begin() ; it != this->sprites.end(); ++it)
+                for (std::vector<sf::Drawable *>::iterator it = this->sprites.begin() ; it != this->sprites.end(); ++it)
                     GameLoop::inst().getRenderWindow().draw(*(*it));
 
                 // Set view back to the way it was before

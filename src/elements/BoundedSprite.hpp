@@ -14,28 +14,27 @@ namespace sg {
     class BoundedSprite : public sf::Sprite {
 
         private:
-            const BoundingShape *surface;
-            sf::FloatRect getShapeBounds(bool);
+            BoundingShape *surface;
 
         public:
             BoundedSprite();
-            BoundedSprite(const BoundingShape &);
-            BoundedSprite(const BoundingShape &, const sf::Texture &);
-            BoundedSprite(const BoundingShape &, const sf::Texture &, const sf::IntRect &);
+            BoundedSprite(BoundingShape &);
+            BoundedSprite(BoundingShape &, const sf::Texture &);
+            BoundedSprite(BoundingShape &, const sf::Texture &, const sf::IntRect &);
             ~BoundedSprite();
             const BoundingShape *getSurface() const;
-            void setSurface(const BoundingShape &);
+            void setSurface(BoundingShape &);
+            void setOrigin(float, float);
+            void setOrigin(const sf::Vector2f &);
             void setPosition(float, float);
             void setPosition(const sf::Vector2f &);
             void move(float, float);
             void move(const sf::Vector2f &);
-            void setOrigin(float, float);
-            void setOrigin(const sf::Vector2f &);
             void setRotation(float angle);
             void rotate(float angle);
             void setScale(float, float);
-            void scale(float, float);
             void setScale(const sf::Vector2f &);
+            void scale(float, float);
             void scale(const sf::Vector2f &);
 
     };

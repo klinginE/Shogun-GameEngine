@@ -17,42 +17,42 @@ namespace sg {
 
         private:
             std::vector<sf::IntRect> rects;
-            std::vector<const BoundingShape *> surfaces;
-            float frameDelay;
+            std::vector<BoundingShape *> surfaces;
+            sf::Time frameDelay;
+            sf::Time timePast;
             uint32_t frameIndex;
-            float timePast;
             bool playing;
 
         public:
             AnimatedSprite();
-            AnimatedSprite(float);
-            AnimatedSprite(float, const sf::Texture &);
+            AnimatedSprite(sf::Time);
+            AnimatedSprite(sf::Time, const sf::Texture &);
             ~AnimatedSprite();
             std::vector<sf::IntRect>::size_type getNumOfFrames() const;
             const BoundingShape *getFrameBound(uint32_t) const;
             const sf::IntRect &getFrameRect(uint32_t) const;
-            float getFrameDelay() const;
-            void setFrameDelay(float);
+            sf::Time getFrameDelay() const;
+            void setFrameDelay(sf::Time);
             uint32_t getFrameIndex() const;
-            float getTimePast() const;
+            sf::Time getTimePast() const;
             bool getIsPlaying() const;
-            std::vector<sf::IntRect>::size_type addFrame(const sf::IntRect &, const BoundingShape &);
-            std::pair<sf::IntRect &, const BoundingShape *> removeFrame(uint32_t);
+            std::vector<sf::IntRect>::size_type addFrame(sf::IntRect &, BoundingShape &);
+            std::pair<sf::IntRect &, BoundingShape *> removeFrame(uint32_t);
             void start();
             void stop();
             void restart();
-            void update(float);
+            void update(sf::Time);
+            void setOrigin(float, float);
+            void setOrigin(const sf::Vector2f &);
             void setPosition(float, float);
             void setPosition(const sf::Vector2f &);
             void move(float, float);
             void move(const sf::Vector2f &);
-            void setOrigin(float, float);
-            void setOrigin(const sf::Vector2f &);
             void setRotation(float);
             void rotate(float angle);
             void setScale(float, float);
-            void scale(float, float);
             void setScale(const sf::Vector2f &);
+            void scale(float, float);
             void scale(const sf::Vector2f &);
 
     };

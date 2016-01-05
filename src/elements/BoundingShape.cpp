@@ -49,7 +49,14 @@ namespace sg {
 
     }
 
-    void BoundingShape::setPos(const sf::Vector2f &newPos) {
+    void BoundingShape::setOrigin(const sf::Vector2f &origin) {
+
+        for (std::vector<sf::Shape *>::iterator it = this->shapes.begin(); it != this->shapes.end(); ++it)
+            (*it)->setOrigin(origin);
+
+    }
+
+    void BoundingShape::setPosition(const sf::Vector2f &newPos) {
 
         for (std::vector<sf::Shape *>::iterator it = this->shapes.begin(); it != this->shapes.end(); ++it)
             (*it)->setPosition(newPos);
@@ -60,6 +67,34 @@ namespace sg {
 
         for (std::vector<sf::Shape *>::iterator it = this->shapes.begin(); it != this->shapes.end(); ++it)
             (*it)->move(delta);
+
+    }
+
+    void BoundingShape::setRotation(float angle) {
+
+        for (std::vector<sf::Shape *>::iterator it = this->shapes.begin(); it != this->shapes.end(); ++it)
+            (*it)->setRotation(angle);
+
+    }
+
+    void BoundingShape::rotate(float angle) {
+
+        for (std::vector<sf::Shape *>::iterator it = this->shapes.begin(); it != this->shapes.end(); ++it)
+            (*it)->rotate(angle);
+
+    }
+
+    void BoundingShape::setScale(const sf::Vector2f &factor) {
+
+        for (std::vector<sf::Shape *>::iterator it = this->shapes.begin(); it != this->shapes.end(); ++it)
+            (*it)->setScale(factor);
+
+    }
+
+    void BoundingShape::scale(const sf::Vector2f &factor) {
+
+        for (std::vector<sf::Shape *>::iterator it = this->shapes.begin(); it != this->shapes.end(); ++it)
+            (*it)->scale(factor);
 
     }
 
@@ -106,11 +141,11 @@ namespace sg {
 
     }
 
-    sf::Vector2f BoundingShape::calculateUnitNormal(const sf::Shape &poly, uint32_t i) const {
+    sf::Vector2f BoundingShape::calculateUnitNormal(const sf::Shape &poly, uint32_t i, const sf::Transform &globalTrans) const {
 
         uint32_t j = (i + 1) % poly.getPointCount();
-        sf::Vector2f currentVertex = poly.getTransform().transformPoint(poly.getPoint(i));
-        sf::Vector2f adjacentVertex = poly.getTransform().transformPoint(poly.getPoint(j));
+        sf::Vector2f currentVertex = globalTrans.transformPoint(poly.getTransform().transformPoint(poly.getPoint(i)));
+        sf::Vector2f adjacentVertex = globalTrans.transformPoint(poly.getTransform().transformPoint(poly.getPoint(j)));
         sf::Vector2f unitNormal(adjacentVertex.x - currentVertex.x, adjacentVertex.y - currentVertex.y);
         float magnitude = static_cast<float>(std::sqrt(unitNormal.x * unitNormal.x + unitNormal.y * unitNormal.y));
         unitNormal.x /= magnitude;
@@ -124,16 +159,16 @@ namespace sg {
 
     }
 
-    float BoundingShape::projectPoint(const sf::Shape &poly, const sf::Vector2f &unitNormal, uint32_t k) const {
+    float BoundingShape::projectPoint(const sf::Shape &poly, const sf::Vector2f &unitNormal, uint32_t k, const sf::Transform &globalTrans) const {
 
-        sf::Vector2f vertex = poly.getTransform().transformPoint(poly.getPoint(k));
+        sf::Vector2f vertex = globalTrans.transformPoint(poly.getTransform().transformPoint(poly.getPoint(k)));
         float point = vertex.x * unitNormal.x + vertex.y * unitNormal.y;
 
         return point;
 
     }
 
-    bool BoundingShape::collides_ptp(const sf::Shape &poly1, const sf::Shape &poly2, sf::Vector2f &least) const {
+    bool BoundingShape::collides_ptp(const sf::Shape &poly1, const sf::Shape &poly2, sf::Vector2f &least, const sf::Transform &globalTrans1, const sf::Transform &globalTrans2) const {
 
         if (dynamic_cast<const sf::CircleShape *>(&poly1)) {
 
@@ -144,7 +179,7 @@ namespace sg {
         if (dynamic_cast<const sf::CircleShape *>(&poly2)) {
 
             std::cerr << "collides_ptp(): poly2 is circle shape not polygon." << std::endl;
-            throw std:: bad_typeid();
+            throw std::bad_typeid();
 
         }
 
@@ -156,10 +191,10 @@ namespace sg {
         std::vector<sf::Vector2f> unitNormals(normalsLen);
 
         for (uint32_t i = 0; i < poly1.getPointCount(); i++)
-            unitNormals.push_back(calculateUnitNormal(poly1, i));
+            unitNormals.push_back(calculateUnitNormal(poly1, i, globalTrans1));
 
         for (uint32_t i = 0; i < poly2.getPointCount(); i++)
-            unitNormals.push_back(calculateUnitNormal(poly2, i));
+            unitNormals.push_back(calculateUnitNormal(poly2, i, globalTrans2));
 
         for (uint32_t i = 0; i < normalsLen; i++) {
 
@@ -169,7 +204,7 @@ namespace sg {
             float maxPoint1 = -inf;
             for (uint32_t k = 0; k < poly1.getPointCount(); k++) {
 
-                float point = projectPoint(poly1, unitNormal, k);
+                float point = projectPoint(poly1, unitNormal, k, globalTrans1);
                 if (point < minPoint1)
                     minPoint1 = point;
                 if (point > maxPoint1)
@@ -181,7 +216,7 @@ namespace sg {
             float maxPoint2 = -inf;
             for (uint32_t k = 0; k < poly2.getPointCount(); k++) {
 
-                float point = projectPoint(poly2, unitNormal, k);
+                float point = projectPoint(poly2, unitNormal, k, globalTrans2);
                 if (point < minPoint2)
                     minPoint2 = point;
                 if (point > maxPoint2)
@@ -213,7 +248,7 @@ namespace sg {
 
     }
 
-    bool BoundingShape::collides_ctp(const sf::Shape &poly1, const sf::Shape &poly2, sf::Vector2f &least) const {
+    bool BoundingShape::collides_ctp(const sf::Shape &poly1, const sf::Shape &poly2, sf::Vector2f &least, const sf::Transform &globalTrans1, const sf::Transform &globalTrans2) const {
 
         if (!(dynamic_cast<const sf::CircleShape *>(&poly1))) {
 
@@ -230,7 +265,7 @@ namespace sg {
 
         const sf::CircleShape &circle = dynamic_cast<const sf::CircleShape &>(poly1);
 
-        sf::Vector2f center(circle.getPosition().x + circle.getRadius(), circle.getPosition().y + circle.getRadius());
+        sf::Vector2f center = globalTrans1.transformPoint(circle.getTransform().transformPoint(sf::Vector2f(0.0f, 0.0f)));
         float inf = std::numeric_limits<float>::infinity();
         float minDist = inf;
         sf::Vector2f circleNormal;
@@ -243,7 +278,7 @@ namespace sg {
 
         for (uint32_t i = 0; i < poly2.getPointCount(); i++) {
 
-            sf::Vector2f currentVertex = poly2.getTransform().transformPoint(poly2.getPoint(i));
+            sf::Vector2f currentVertex = globalTrans2.transformPoint(poly2.getTransform().transformPoint(poly2.getPoint(i)));
             float xDiff = (currentVertex.x - center.x);
             float yDiff = (currentVertex.y - center.y);
             float distance = xDiff * xDiff + yDiff * yDiff;
@@ -258,7 +293,7 @@ namespace sg {
 
             }
 
-            unitNormals.push_back(calculateUnitNormal(poly2, i));
+            unitNormals.push_back(calculateUnitNormal(poly2, i, globalTrans2));
 
         }
         unitNormals.push_back(circleNormal);
@@ -282,7 +317,7 @@ namespace sg {
             float maxPoint2 = -inf;
             for (uint32_t k = 0; k < poly2.getPointCount(); k++) {
 
-                float point = projectPoint(poly2, unitNormal, k);
+                float point = projectPoint(poly2, unitNormal, k, globalTrans2);
                 if (point < minPoint2)
                     minPoint2 = point;
                 if (point > maxPoint2)
@@ -314,7 +349,7 @@ namespace sg {
 
     }
 
-    bool BoundingShape::collides_ctc(const sf::Shape &poly1, const sf::Shape &poly2, sf::Vector2f &least) const {
+    bool BoundingShape::collides_ctc(const sf::Shape &poly1, const sf::Shape &poly2, sf::Vector2f &least, const sf::Transform &globalTrans1, const sf::Transform &globalTrans2) const {
 
         if (!(dynamic_cast<const sf::CircleShape *>(&poly1))) {
 
@@ -332,8 +367,8 @@ namespace sg {
         const sf::CircleShape &circle1 = dynamic_cast<const sf::CircleShape &>(poly1);
         const sf::CircleShape &circle2 = dynamic_cast<const sf::CircleShape &>(poly2);
 
-        sf::Vector2f center1(circle1.getPosition().x + circle1.getRadius(), circle1.getPosition().y + circle1.getRadius());
-        sf::Vector2f center2(circle2.getPosition().x + circle2.getRadius(), circle2.getPosition().y + circle2.getRadius());
+        sf::Vector2f center1 = globalTrans1.transformPoint(circle1.getTransform().transformPoint(sf::Vector2f(0.0f, 0.0f)));
+        sf::Vector2f center2 = globalTrans2.transformPoint(circle2.getTransform().transformPoint(sf::Vector2f(0.0f, 0.0f)));
 
         float xDiff = (center2.x - center1.x);
         float yDiff = (center2.y - center1.y);
@@ -366,7 +401,7 @@ namespace sg {
 
     }
 
-    bool BoundingShape::collides(const BoundingShape &bs, sf::Vector2f &least) const {
+    bool BoundingShape::collides(const BoundingShape &bs, sf::Vector2f &least, const sf::Transform &globalTrans1, const sf::Transform &globalTrans2) const {
 
         least.x = 0.0f;
         least.y = 0.0f;
@@ -380,7 +415,7 @@ namespace sg {
                 sf::Vector2f v(0.0f, 0.0f);
                 if ((dynamic_cast<const sf::CircleShape *>(s0)) &&
                     (dynamic_cast<const sf::CircleShape *>(s1))) {
-                    if (this->collides_ctc(*s0, *s1, v)) {
+                    if (this->collides_ctc(*s0, *s1, v, globalTrans1, globalTrans2)) {
 
                         isCollide = true;
                         if (std::fabs(v.x) > std::fabs(least.x))
@@ -393,7 +428,7 @@ namespace sg {
                 //Circle to polygon
                 else if ((dynamic_cast<const sf::CircleShape *>(s0)) &&
                          !(dynamic_cast<const sf::CircleShape *>(s1))) {
-                    if (this->collides_ctp(*s0, *s1, v)) {
+                    if (this->collides_ctp(*s0, *s1, v, globalTrans1, globalTrans2)) {
 
                         isCollide = true;
                         if (std::fabs(v.x) > std::fabs(least.x))
@@ -406,7 +441,7 @@ namespace sg {
                 //polygon to circle
                 else if (!(dynamic_cast<const sf::CircleShape *>(s0)) &&
                          (dynamic_cast<const sf::CircleShape *>(s1))) {
-                    if (this->collides_ctp(*s1, *s0, v)) {
+                    if (this->collides_ctp(*s1, *s0, v, globalTrans1, globalTrans2)) {
 
                         v.x = -v.x;
                         v.y = -v.y;
@@ -420,7 +455,7 @@ namespace sg {
                 }
                 //polygon to polygon
                 else {
-                    if (this->collides_ptp(*s0, *s1, v)) {
+                    if (this->collides_ptp(*s0, *s1, v, globalTrans1, globalTrans2)) {
 
                         isCollide = true;
                         if (std::fabs(v.x) > std::fabs(least.x))
