@@ -113,10 +113,9 @@ namespace sg {
     class verticalComparitor {
         public:
             bool operator() (Entity *e1, Entity *e2) {
-                if (e1->getPos().y < e2->getPos().y)
+                if (e1->getPosition().y < e2->getPosition().y)
                     return true;
-                else
-                    return false;
+                return false;
             }
     };
 
@@ -236,10 +235,9 @@ namespace sg {
     }
     
     bool GameWindow::verticalSort(Entity *e1, Entity *e2) {
-        if (e1->getPos().y < e2->getPos().y)
+        if (e1->getPosition().y < e2->getPosition().y)
             return true;
-        else
-            return false;
+        return false;
     }
 
     sf::View &GameWindow::getView() {

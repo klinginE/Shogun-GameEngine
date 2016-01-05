@@ -2,8 +2,28 @@
 #include<SFML/Graphics.hpp>
 #include<iostream>
 
+void testBoundingShape() {
+
+    //test init
+    std::cout << "TESTING INIT" << std::endl;
+    sg::BoundingShape bs0;
+    std::cout << "bs0 number of shapes: " << bs0.getNumOfShapes() << std::endl;
+    std::cout << std::endl;
+
+    //test get shape with no shape
+    std::cout << "TESTING GET 10th shape" << std::endl;
+    const sf::Shape *badShape = bs0.getShape(9);
+    if (badShape == NULL)
+        std::cout << "success!, shape is NULL" << std::endl;
+    else
+        std::cout << "failure!" << std::endl;
+    std::cout << std::endl;
+
+}
+
 int main() {
 
+    //testBoundingShape();
     /*sg::BoundingShape bs0;
     std::cout << "bs0 getNumOfShapes: " << bs0.getNumOfShapes() << std::endl;
     sf::ConvexShape s0;
@@ -90,27 +110,45 @@ int main() {
     std::cout << std::endl;*/
 
     sf::ConvexShape posShape;
-    posShape.setOrigin(5.0f, 5.0f);
+    posShape.setOrigin(0.0f, 0.0f);
     posShape.setPosition(sf::Vector2f(0.0f, 0.0f));
     posShape.setPointCount(4);
     posShape.setPoint(0, sf::Vector2f(0.0f, 0.0f));
-    posShape.setPoint(1, sf::Vector2f(10.0f, 0.0f));
-    posShape.setPoint(2, sf::Vector2f(10.0f, 10.0f));
+    posShape.setPoint(1, sf::Vector2f(20.0f, 0.0f));
+    posShape.setPoint(2, sf::Vector2f(20.0f, 10.0f));
     posShape.setPoint(3, sf::Vector2f(0.0f, 10.0f));
     posShape.setRotation(45);
-    //posShape.move(5.0f, 6.0f);
-    //posShape.setOrigin(-2.0f, -2.0f);
+    //posShape.setScale(3.0f, 1.5f);
+    //posShape.setOrigin(-9.0f, -15.0f);
+    posShape.move(2.0f, 5.0f);
     std::cout << "posShape origin:" << std::endl;
     std::cout << "x: " << posShape.getOrigin().x << " y: " << posShape.getOrigin().y << std::endl;
     std::cout << "posShape position:" << std::endl;
     std::cout << "x: " << posShape.getPosition().x << " y: " << posShape.getPosition().y << std::endl;
-    std::cout << "posShape transformed points: " << std::endl;
+    std::cout << "posShape relative transformed points: " << std::endl;
     for (uint32_t i = 0; i < posShape.getPointCount(); i++) {
-        sf::Vector2f testPoint = posShape.getTransform().transformPoint(posShape.getPoint(i));
+        sf::Vector2f currentPoint = posShape.getPoint(i);
+        currentPoint.x += posShape.getPosition().x;
+        currentPoint.y += posShape.getPosition().y;
+        sf::Vector2f testPoint = posShape.getTransform().transformPoint(currentPoint);
+        testPoint.x -= posShape.getPosition().x;
+        testPoint.y -= posShape.getPosition().y;
+        std::cout << "posShape x: " << testPoint.x << ", y: " << testPoint.y << std::endl;
+    }
+    std::cout << "posShape absolute transformed points: " << std::endl;
+    for (uint32_t i = 0; i < posShape.getPointCount(); i++) {
+        sf::Vector2f currentPoint = posShape.getPoint(i);
+        sf::Vector2f testPoint = posShape.getTransform().transformPoint(currentPoint);
         std::cout << "posShape x: " << testPoint.x << ", y: " << testPoint.y << std::endl;
     }
     std::cout << "posShape global bounds:" << std:: endl;
     sf::FloatRect posShape_b = posShape.getGlobalBounds();
+    std::cout << "left:   " << posShape_b.left << std::endl;
+    std::cout << "top:    " << posShape_b.top << std::endl;
+    std::cout << "width:  " << posShape_b.width << std::endl;
+    std::cout << "height: " << posShape_b.height << std::endl;
+    std::cout << "posShape local bounds:" << std:: endl;
+    posShape_b = posShape.getLocalBounds();
     std::cout << "left:   " << posShape_b.left << std::endl;
     std::cout << "top:    " << posShape_b.top << std::endl;
     std::cout << "width:  " << posShape_b.width << std::endl;
