@@ -16,11 +16,12 @@ namespace sg {
             std::vector<sf::Shape *> shapes;
             //Private member functions
             sf::FloatRect getShapeBounds(bool) const;
-            sf::Vector2f calculateUnitNormal(const sf::Shape &, uint32_t, const sf::Transform &) const;
-            float projectPoint(const sf::Shape &, const sf::Vector2f &, uint32_t, const sf::Transform &) const;
-            bool collides_ptp(const sf::Shape &, const sf::Shape &, sf::Vector2f &, const sf::Transform &, const sf::Transform &) const;
-            bool collides_ctp(const sf::Shape &, const sf::Shape &, sf::Vector2f &, const sf::Transform &, const sf::Transform &) const;
-            bool collides_ctc(const sf::Shape &, const sf::Shape &, sf::Vector2f &, const sf::Transform &, const sf::Transform &) const;
+            const sf::ConvexShape approximateCircle(const sf::CircleShape &, const sf::Transformable &) const;
+            sf::Vector2f calculateUnitNormal(const sf::Shape &, uint32_t, const sf::Transformable &) const;
+            float projectPoint(const sf::Shape &, const sf::Vector2f &, uint32_t, const sf::Transformable &) const;
+            bool collides_ptp(const sf::Shape &, const sf::Shape &, sf::Vector2f &, const sf::Transformable &, const sf::Transformable &) const;
+            bool collides_ctp(const sf::Shape &, const sf::Shape &, sf::Vector2f &, const sf::Transformable &, const sf::Transformable &) const;
+            bool collides_ctc(const sf::Shape &, const sf::Shape &, sf::Vector2f &, const sf::Transformable &, const sf::Transformable &) const;
 
         public:
             //Public member functions
@@ -39,7 +40,7 @@ namespace sg {
             void scale(const sf::Vector2f &);
             sf::FloatRect getLocalShapeBounds() const;
             sf::FloatRect getGlobalShapeBounds() const;
-            bool collides(const BoundingShape &, sf::Vector2f &, const sf::Transform &, const sf::Transform &) const;
+            bool collides(const BoundingShape &, sf::Vector2f &, const sf::Transformable &, const sf::Transformable &) const;
 
     };
 

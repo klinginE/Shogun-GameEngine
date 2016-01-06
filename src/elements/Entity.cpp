@@ -53,7 +53,7 @@ namespace sg {
                     s1 = dynamic_cast<const BoundingShape *>(bs->getSurface());
 
                 sf::Vector2f v(0.0f, 0.0f);
-                if (s0 != NULL && s1 != NULL && s0->collides((*s1), v, this->getTransform(), e.getTransform())) {
+                if (s0 != NULL && s1 != NULL && s0->collides((*s1), v, dynamic_cast<const sf::Transformable &>((*this)), dynamic_cast<const sf::Transformable &>(e))) {
 
                     isCollides = true;
                     collisionVectors.push_back(v);
@@ -231,16 +231,8 @@ namespace sg {
             else
                 continue;
 
-            if (useGlobal) {
-
-                sf::ConvexShape transBounds(4);
-                transBounds.setPoint(0, this->getTransform().transformPoint(sf::Vector2f(currentBounds.left, currentBounds.top)));
-                transBounds.setPoint(1, this->getTransform().transformPoint(sf::Vector2f(currentBounds.left + currentBounds.width, currentBounds.top)));
-                transBounds.setPoint(2, this->getTransform().transformPoint(sf::Vector2f(currentBounds.left + currentBounds.width, currentBounds.top + currentBounds.height)));
-                transBounds.setPoint(3, this->getTransform().transformPoint(sf::Vector2f(currentBounds.left, currentBounds.top + currentBounds.height)));
-                currentBounds = transBounds.getGlobalBounds();
-
-            }
+            if (useGlobal)
+                currentBounds = this->getTransform().transformRect(currentBounds);
             this->expandSurfaceBounds(bounds, currentBounds);
 
         }
@@ -282,16 +274,8 @@ namespace sg {
             else
                 continue;
 
-            if (useGlobal) {
-
-                sf::ConvexShape transBounds(4);
-                transBounds.setPoint(0, this->getTransform().transformPoint(sf::Vector2f(currentBounds.left, currentBounds.top)));
-                transBounds.setPoint(1, this->getTransform().transformPoint(sf::Vector2f(currentBounds.left + currentBounds.width, currentBounds.top)));
-                transBounds.setPoint(2, this->getTransform().transformPoint(sf::Vector2f(currentBounds.left + currentBounds.width, currentBounds.top + currentBounds.height)));
-                transBounds.setPoint(3, this->getTransform().transformPoint(sf::Vector2f(currentBounds.left, currentBounds.top + currentBounds.height)));
-                currentBounds = transBounds.getGlobalBounds();
-
-            }
+            if (useGlobal)
+                currentBounds = this->getTransform().transformRect(currentBounds);
             this->expandSurfaceBounds(bounds, currentBounds);
 
         }

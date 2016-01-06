@@ -19,11 +19,24 @@ void testBoundingShape() {
         std::cout << "failure!" << std::endl;
     std::cout << std::endl;
 
+    //test add shape
+    std::cout << "TESTING ADD SHAPE" << std::endl;
+    sf::ConvexShape shape0(4);
+    shape0.setPoint(0, sf::Vector2f(-5.0f, -5.0f));
+    shape0.setPoint(1, sf::Vector2f(5.0f, -5.0f));
+    shape0.setPoint(2, sf::Vector2f(5.0f, 5.0f));
+    shape0.setPoint(3, sf::Vector2f(-5.0f, 5.0f));
+    int index = bs0.addShape(shape0);
+    std::cout << "Added index: " << index << std::endl;
+    std::cout << "bs0 number of shapes: " << bs0.getNumOfShapes() << std::endl;
+    std::cout << std::endl;
+
 }
 
 int main() {
 
-    //testBoundingShape();
+    testBoundingShape();
+
     /*sg::BoundingShape bs0;
     std::cout << "bs0 getNumOfShapes: " << bs0.getNumOfShapes() << std::endl;
     sf::ConvexShape s0;
@@ -109,23 +122,27 @@ int main() {
     }
     std::cout << std::endl;*/
 
-    sf::ConvexShape posShape;
+    /*sf::CircleShape posShape;
     posShape.setOrigin(0.0f, 0.0f);
     posShape.setPosition(sf::Vector2f(0.0f, 0.0f));
-    posShape.setPointCount(4);
-    posShape.setPoint(0, sf::Vector2f(0.0f, 0.0f));
-    posShape.setPoint(1, sf::Vector2f(20.0f, 0.0f));
-    posShape.setPoint(2, sf::Vector2f(20.0f, 10.0f));
-    posShape.setPoint(3, sf::Vector2f(0.0f, 10.0f));
-    posShape.setRotation(45);
-    //posShape.setScale(3.0f, 1.5f);
-    //posShape.setOrigin(-9.0f, -15.0f);
-    posShape.move(2.0f, 5.0f);
+    posShape.setRadius(10.0f);
+    //posShape.setPointCount(4);
+    //posShape.setPoint(0, sf::Vector2f(-5.0f, -5.0f));
+    //posShape.setPoint(1, sf::Vector2f(5.0f, -5.0f));
+    //posShape.setPoint(2, sf::Vector2f(5.0f, 5.0f));
+    //posShape.setPoint(3, sf::Vector2f(-5.0f, 5.0f));
+    //posShape.setRotation(45);
+    posShape.setScale(2.0f, 2.0f);
+    posShape.setOrigin(10.0f, 10.0f);
+    posShape.move(10.0f, 0.0f);
     std::cout << "posShape origin:" << std::endl;
     std::cout << "x: " << posShape.getOrigin().x << " y: " << posShape.getOrigin().y << std::endl;
     std::cout << "posShape position:" << std::endl;
     std::cout << "x: " << posShape.getPosition().x << " y: " << posShape.getPosition().y << std::endl;
-    std::cout << "posShape relative transformed points: " << std::endl;
+    std::cout << "posShape radius:" << std::endl;
+    std::cout << "r: " << posShape.getRadius() << std::endl;
+    std::cout << "r: " << posShape.getRadius() * posShape.getScale().x << std::endl;*/
+    /*std::cout << "posShape relative transformed points: " << std::endl;
     for (uint32_t i = 0; i < posShape.getPointCount(); i++) {
         sf::Vector2f currentPoint = posShape.getPoint(i);
         currentPoint.x += posShape.getPosition().x;
@@ -134,8 +151,8 @@ int main() {
         testPoint.x -= posShape.getPosition().x;
         testPoint.y -= posShape.getPosition().y;
         std::cout << "posShape x: " << testPoint.x << ", y: " << testPoint.y << std::endl;
-    }
-    std::cout << "posShape absolute transformed points: " << std::endl;
+    }*/
+    /*std::cout << "posShape absolute transformed points: " << std::endl;
     for (uint32_t i = 0; i < posShape.getPointCount(); i++) {
         sf::Vector2f currentPoint = posShape.getPoint(i);
         sf::Vector2f testPoint = posShape.getTransform().transformPoint(currentPoint);
@@ -152,7 +169,7 @@ int main() {
     std::cout << "left:   " << posShape_b.left << std::endl;
     std::cout << "top:    " << posShape_b.top << std::endl;
     std::cout << "width:  " << posShape_b.width << std::endl;
-    std::cout << "height: " << posShape_b.height << std::endl;
+    std::cout << "height: " << posShape_b.height << std::endl;*/
 
     /*std::cout << "Rotate s0 by 180 degs" << std::endl;
     posShpe.setRotation(180.0f);
