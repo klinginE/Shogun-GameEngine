@@ -20,22 +20,24 @@ class Star : public sg::Entity {
     sf::Vector2f vel;
     float min_disp_radius;
     float mass;
-    sg::BoundingShape boundingShape;
-    sg::BoundedSprite boundedSprite;
-    sf::CircleShape circleShape;
+//    sg::BoundingShape boundingShape = sg::BoundingShape();
+//    sg::BoundedSprite boundedSprite = sg::BoundedSprite();
+    sf::CircleShape circleShape = sf::CircleShape();
 
     public:
         Star() : sg::Entity() {
-
+            
             min_disp_radius = 1.0f;
             mass = START_MASS;
             setIsCollidable(true);
 
             circleShape.setRadius(getRadius());
-            boundingShape.addShape(circleShape);
-            boundedSprite.setSurface(boundingShape);
-            boundedSprite.setPosition(sf::Vector2f(-getRadius(), -getRadius()));
-            this->addSprite(boundedSprite);
+            circleShape.setFillColor(sf::Color(150, 150, 150, (int) 255 * ALPHA));
+//            boundingShape.addShape(circleShape);
+//            boundedSprite.setSurface(boundingShape);
+//            boundedSprite.setTexture(circleShape);
+//            boundedSprite.setPosition(sf::Vector2f(-getRadius(), -getRadius()));
+            this->addSprite(circleShape);
         };
 
         float getMass() {
@@ -44,7 +46,7 @@ class Star : public sg::Entity {
         void setMass(float newMass) {
             mass = newMass;
             circleShape.setRadius(getRadius());
-            boundedSprite.setPosition(sf::Vector2f(-getRadius(), -getRadius()));
+            //boundedSprite.setPosition(sf::Vector2f(-getRadius(), -getRadius()));
         };
 
         float getRadius() {
@@ -66,31 +68,31 @@ class Star : public sg::Entity {
             min_disp_radius = newRadius;
         };
 
-        void draw() {
-            
-//            if (this->getDeletionStatus())
-//                return;
-            // Move view to draw entity in the correct place
-            sf::View saveView = sg::GameLoop::inst().getRenderWindow().getView();
-            sf::View drawView = saveView;
-            drawView.setCenter(saveView.getCenter().x - getPos().x,
-                               saveView.getCenter().y - getPos().y);
-            sg::GameLoop::inst().getRenderWindow().setView(drawView);
-
-            // Draw circle
-            float disp_radius = this->getRadius();
-            if (disp_radius < min_disp_radius)
-                disp_radius = min_disp_radius;
-            sf::CircleShape circle;
-            circle.setRadius(disp_radius);
-            circle.setFillColor(sf::Color(150, 150, 150, (int) 255 * ALPHA));
-            circle.setPosition(sf::Vector2f(-disp_radius, -disp_radius));
-            sg::GameLoop::inst().getRenderWindow().draw(circle);
-
-            // Set view back to the way it was before
-            sg::GameLoop::inst().getRenderWindow().setView(saveView);
-
-        };
+//        void draw() {
+//            
+////            if (this->getDeletionStatus())
+////                return;
+//            // Move view to draw entity in the correct place
+//            sf::View saveView = sg::GameLoop::inst().getRenderWindow().getView();
+//            sf::View drawView = saveView;
+//            drawView.setCenter(saveView.getCenter().x - getPosition().x,
+//                               saveView.getCenter().y - getPosition().y);
+//            sg::GameLoop::inst().getRenderWindow().setView(drawView);
+//
+//            // Draw circle
+//            float disp_radius = this->getRadius();
+//            if (disp_radius < min_disp_radius)
+//                disp_radius = min_disp_radius;
+//            sf::CircleShape circle;
+//            circle.setRadius(disp_radius);
+//            circle.setFillColor(sf::Color(150, 150, 150, (int) 255 * ALPHA));
+//            circle.setPosition(sf::Vector2f(-disp_radius, -disp_radius));
+//            sg::GameLoop::inst().getRenderWindow().draw(circle);
+//
+//            // Set view back to the way it was before
+//            sg::GameLoop::inst().getRenderWindow().setView(saveView);
+//
+//        };
 
 //        void handleCollision(Entity &e, const std::vector<sf::Vector2f> &colInfo) {
 //            Star *other = dynamic_cast<Star *>(&e);
@@ -126,7 +128,7 @@ class Star : public sg::Entity {
             sf::Vector2f avgVel = (thisVel*thisMass + otherVel*otherMass)/(thisMass + otherMass);
             this->setVel(avgVel);
             
-            sf::Vector2f avgPos = (this->getPos()*thisMass + other->getPos()*otherMass)/(thisMass + otherMass);
+            sf::Vector2f avgPos = (this->getPosition()*thisMass + other->getPosition()*otherMass)/(thisMass + otherMass);
             this->move(avgPos);
 
             this->setMass(thisMass + otherMass);
@@ -135,3 +137,4 @@ class Star : public sg::Entity {
             other->setDeletionStatus(true);
         };
 };
+

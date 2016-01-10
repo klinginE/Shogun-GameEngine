@@ -109,7 +109,7 @@ class Universe : public sg::GameWorld {
 
             qT.gravity();
             for (int i = 0; i < NUM_STARS; i++) {
-                stars[i].translate(stars[i].getVel()*((float) tslu.asMilliseconds())*TIME_MULTIPLIER);
+                stars[i].move(stars[i].getVel()*((float) tslu.asMilliseconds())*TIME_MULTIPLIER);
                 stars[i].setMinDispRadius(min_disp_radius);
             }
 
@@ -133,7 +133,7 @@ class Universe : public sg::GameWorld {
                 if (stars[i].getDeletionStatus())
                     continue;
 
-                sf::Vector2f pos = stars[i].getPos();
+                sf::Vector2f pos = stars[i].getPosition();
                 if (pos.x < minX) minX = pos.x;
                 if (pos.y < minY) minY = pos.y;
                 if (pos.x > maxX) maxX = pos.x;

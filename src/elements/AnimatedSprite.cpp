@@ -10,31 +10,31 @@ namespace sg {
     sf::Sprite()
     {
 
-        this->frameDelay = 0.0f;
+        this->frameDelay = sf::Time::Zero;
+        this->timePast = sf::Time::Zero;
         this->frameIndex = 0;
-        this->timePast = 0.0f;
         this->playing = false;
 
     }
 
-    AnimatedSprite::AnimatedSprite(float fd) :
+    AnimatedSprite::AnimatedSprite(sf::Time fd) :
     sf::Sprite()
     {
 
         this->frameDelay = fd;
+        this->timePast = sf::Time::Zero;
         this->frameIndex = 0;
-        this->timePast = 0.0f;
         this->playing = false;
 
     }
 
-    AnimatedSprite::AnimatedSprite(float fd, const sf::Texture &t) :
+    AnimatedSprite::AnimatedSprite(sf::Time fd, const sf::Texture &t) :
     sf::Sprite(t)
     {
 
         this->frameDelay = fd;
+        this->timePast = sf::Time::Zero;
         this->frameIndex = 0;
-        this->timePast = 0.0f;
         this->playing = false;
 
     }
@@ -43,9 +43,9 @@ namespace sg {
 
         this->rects.clear();
         this->surfaces.clear();
-        this->frameDelay = 0.0f;
+        this->frameDelay = sf::Time::Zero;
+        this->timePast = sf::Time::Zero;
         this->frameIndex = 0;
-        this->timePast = 0.0f;
         this->playing = false;
 
     }
@@ -67,18 +67,18 @@ namespace sg {
     const sf::IntRect &AnimatedSprite::getFrameRect(uint32_t idx) const {
 
         if (idx >= this->getNumOfFrames())
-            throw std::out_of_range ("getFrameRect(): Not a vaild rect index.");
+            throw std::out_of_range("getFrameRect(): Not a vaild rect index.");
         return this->rects[idx];
 
     }
 
-    float AnimatedSprite::getFrameDelay() const {
+    sf::Time AnimatedSprite::getFrameDelay() const {
 
         return this->frameDelay;
 
     }
 
-    void AnimatedSprite::setFrameDelay(float fd) {
+    void AnimatedSprite::setFrameDelay(sf::Time fd) {
 
         this->frameDelay = fd;
 
@@ -90,7 +90,7 @@ namespace sg {
 
     }
 
-    float AnimatedSprite::getTimePast() const {
+    sf::Time AnimatedSprite::getTimePast() const {
 
         return this->timePast;
 
@@ -102,7 +102,7 @@ namespace sg {
 
     }
 
-    std::vector<sf::IntRect>::size_type AnimatedSprite::addFrame(const sf::IntRect &newRect, const BoundingShape &bs) {
+    std::vector<sf::IntRect>::size_type AnimatedSprite::addFrame(sf::IntRect &newRect, BoundingShape &bs) {
 
         this->rects.push_back(newRect);
         this->surfaces.push_back(&bs);
@@ -110,23 +110,24 @@ namespace sg {
 
     }
 
-    std::pair<sf::IntRect &, const BoundingShape *> AnimatedSprite::removeFrame(uint32_t idx) {
+    std::pair<sf::IntRect &, BoundingShape *> AnimatedSprite::removeFrame(uint32_t idx) {
 
         if (idx >= this->getNumOfFrames())
             throw std::out_of_range("removeFrame(): Not a vaild index.");
 
         sf::IntRect *r = &this->rects[idx];
-        const BoundingShape *bs = this->surfaces[idx];
+        BoundingShape *bs = this->surfaces[idx];
         this->rects.erase(this->rects.begin() + idx);
         this->surfaces.erase(this->surfaces.begin() + idx);
 
-        return std::pair<sf::IntRect &, const BoundingShape *>((*r), bs);
+        return std::pair<sf::IntRect &, BoundingShape *>((*r), bs);
 
     }
 
     void AnimatedSprite::start() {
 
         this->playing = true;
+        this->timePast = sf::Time::Zero;
 
     }
 
@@ -139,12 +140,11 @@ namespace sg {
     void AnimatedSprite::restart() {
 
         this->frameIndex = 0;
-        this->timePast = 0.0;
-        this->playing = true;
+        this->start();
 
     }
 
-    void AnimatedSprite::update(float tslu) {
+    void AnimatedSprite::update(sf::Time tslu) {
 
         if (!this->playing || this->getNumOfFrames() <= 0)
             return;
@@ -152,7 +152,7 @@ namespace sg {
         this->timePast += tslu;
         if (this->timePast >= this->frameDelay) {
 
-            this->timePast = 0.0;
+            this->timePast = sf::Time::Zero;
             this->frameIndex = ((this->frameIndex + 1) % this->getNumOfFrames());
             this->setTextureRect(this->rects[this->frameIndex]);
 
@@ -160,105 +160,100 @@ namespace sg {
 
     }
 
+    void AnimatedSprite::setOrigin(float x, float y) {
+
+        sf::Sprite::setOrigin(x, y);
+        for (std::vector<BoundingShape *>::iterator it = this->surfaces.begin(); it != this->surfaces.end(); ++it)
+            (*it)->setOrigin(sf::Vector2f(x, y));
+
+    }
+
+    void AnimatedSprite::setOrigin(const sf::Vector2f &origin) {
+
+        sf::Sprite::setOrigin(origin);
+        for (std::vector<BoundingShape *>::iterator it = this->surfaces.begin(); it != this->surfaces.end(); ++it)
+            (*it)->setOrigin(origin);
+
+    }
+
+    void AnimatedSprite::setPosition(float x, float y) {
+
+        sf::Sprite::setPosition(x, y);
+        for (std::vector<BoundingShape *>::iterator it = this->surfaces.begin(); it != this->surfaces.end(); ++it)
+            (*it)->setPosition(sf::Vector2f(x, y));
+
+    }
+
+    void AnimatedSprite::setPosition(const sf::Vector2f &position) {
+
+        sf::Sprite::setPosition(position);
+        for (std::vector<BoundingShape *>::iterator it = this->surfaces.begin(); it != this->surfaces.end(); ++it)
+            (*it)->setPosition(position);
+
+    }
+
+    void AnimatedSprite::move(float offsetX, float offsetY) {
+
+        sf::Sprite::move(offsetX, offsetY);
+        for (std::vector<BoundingShape *>::iterator it = this->surfaces.begin(); it != this->surfaces.end(); ++it)
+            (*it)->move(sf::Vector2f(offsetX, offsetY));
+
+    }
+
+    void AnimatedSprite::move(const sf::Vector2f &offset) {
+
+        sf::Sprite::move(offset);
+        for (std::vector<BoundingShape *>::iterator it = this->surfaces.begin(); it != this->surfaces.end(); ++it)
+            (*it)->move(offset);
+
+    }
+
+
     void AnimatedSprite::setRotation(float angle) {
 
         sf::Sprite::setRotation(angle);
-        for (std::vector<const BoundingShape *>::const_iterator it = this->surfaces.begin(); it != this->surfaces.end(); ++it)
-            for (uint32_t i = 0; i <= (*it)->getNumOfShapes(); i++) {
-
-                //This const cast is dangerous as it could have undefined behavior
-                sf::Shape *curShape = const_cast<sf::Shape *>((*it)->getShape(i));
-                const sf::Vector2f &temp = curShape->getOrigin();
-                curShape->setOrigin(this->getOrigin());
-                curShape->setRotation(angle);
-                curShape->setOrigin(temp);
-
-            }
+        for (std::vector<BoundingShape *>::iterator it = this->surfaces.begin(); it != this->surfaces.end(); ++it)
+            (*it)->setRotation(angle);
 
     }
 
     void AnimatedSprite::rotate(float angle) {
 
         sf::Sprite::rotate(angle);
-        for (std::vector<const BoundingShape *>::const_iterator it = this->surfaces.begin(); it != this->surfaces.end(); ++it)
-            for (uint32_t i = 0; i <= (*it)->getNumOfShapes(); i++) {
-
-                //This const cast is dangerous as it could have undefined behavior
-                sf::Shape *curShape = const_cast<sf::Shape *>((*it)->getShape(i));
-                const sf::Vector2f temp = curShape->getOrigin();
-                curShape->setOrigin(this->getOrigin());
-                curShape->rotate(angle);
-                curShape->setOrigin(temp);
-
-            }
+        for (std::vector<BoundingShape *>::iterator it = this->surfaces.begin(); it != this->surfaces.end(); ++it)
+            (*it)->rotate(angle);
 
     }
 
     void AnimatedSprite::setScale(float factorX, float factorY) {
 
         sf::Sprite::setScale(factorX, factorY);
-        for (std::vector<const BoundingShape *>::const_iterator it = this->surfaces.begin(); it != this->surfaces.end(); ++it)
-            for (uint32_t i = 0; i <= (*it)->getNumOfShapes(); i++) {
-
-                //This const cast is dangerous as it could have undefined behavior
-                sf::Shape *curShape = const_cast<sf::Shape *>((*it)->getShape(i));
-                const sf::Vector2f temp = curShape->getOrigin();
-                curShape->setOrigin(this->getOrigin());
-                curShape->setScale(factorX, factorY);
-                curShape->setOrigin(temp);
-
-            }
-
-    }
-
-    void AnimatedSprite::scale(float factorX, float factorY) {
-
-        sf::Sprite::scale(factorX, factorY);
-        for (std::vector<const BoundingShape *>::const_iterator it = this->surfaces.begin(); it != this->surfaces.end(); ++it)
-            for (uint32_t i = 0; i <= (*it)->getNumOfShapes(); i++) {
-
-                //This const cast is dangerous as it could have undefined behavior
-                sf::Shape *curShape = const_cast<sf::Shape *>((*it)->getShape(i));
-                const sf::Vector2f temp = curShape->getOrigin();
-                curShape->setOrigin(this->getOrigin());
-                curShape->scale(factorX, factorY);
-                curShape->setOrigin(temp);
-
-            }
+        for (std::vector<BoundingShape *>::iterator it = this->surfaces.begin(); it != this->surfaces.end(); ++it)
+            (*it)->setScale(sf::Vector2f(factorX, factorY));
 
     }
 
     void AnimatedSprite::setScale(const sf::Vector2f &factor) {
 
         sf::Sprite::setScale(factor);
-        for (std::vector<const BoundingShape *>::const_iterator it = this->surfaces.begin(); it != this->surfaces.end(); ++it)
-            for (uint32_t i = 0; i <= (*it)->getNumOfShapes(); i++) {
+        for (std::vector<BoundingShape *>::iterator it = this->surfaces.begin(); it != this->surfaces.end(); ++it)
+            (*it)->setScale(factor);
 
-                //This const cast is dangerous as it could have undefined behavior
-                sf::Shape *curShape = const_cast<sf::Shape *>((*it)->getShape(i));
-                const sf::Vector2f temp = curShape->getOrigin();
-                curShape->setOrigin(this->getOrigin());
-                curShape->setScale(factor);
-                curShape->setOrigin(temp);
+    }
 
-            }
+    void AnimatedSprite::scale(float factorX, float factorY) {
+
+        sf::Sprite::scale(factorX, factorY);
+        for (std::vector<BoundingShape *>::iterator it = this->surfaces.begin(); it != this->surfaces.end(); ++it)
+            (*it)->scale(sf::Vector2f(factorX, factorY));
 
     }
 
     void AnimatedSprite::scale(const sf::Vector2f &factor) {
 
         sf::Sprite::scale(factor);
-        for (std::vector<const BoundingShape *>::const_iterator it = this->surfaces.begin(); it != this->surfaces.end(); ++it)
-            for (uint32_t i = 0; i <= (*it)->getNumOfShapes(); i++) {
-
-                //This const cast is dangerous as it could have undefined behavior
-                sf::Shape *curShape = const_cast<sf::Shape *>((*it)->getShape(i));
-                const sf::Vector2f temp = curShape->getOrigin();
-                curShape->setOrigin(this->getOrigin());
-                curShape->scale(factor);
-                curShape->setOrigin(temp);
-
-            }
+        for (std::vector<BoundingShape *>::iterator it = this->surfaces.begin(); it != this->surfaces.end(); ++it)
+            (*it)->scale(factor);
 
     }
 

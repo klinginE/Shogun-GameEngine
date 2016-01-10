@@ -187,7 +187,7 @@ class QuadTree {
                 auto com_iter = com_stack->begin();
 
                 do {
-                    sf::Vector2f diff = *(com_iter) - this->star->getPos();
+                    sf::Vector2f diff = *(com_iter) - this->star->getPosition();
                     if (diff.x == 0 && diff.y == 0)
                         continue;
                     float dist_squared = diff.x*diff.x + diff.y*diff.y;
@@ -208,7 +208,7 @@ class QuadTree {
 
             if (__override || numberOfStars > 1) {
 
-                sf::Vector2f pos = newStar->getPos();
+                sf::Vector2f pos = newStar->getPosition();
 
                 center_of_mass = (center_of_mass*mass + pos*newStar->getMass())/((float) (mass + newStar->getMass()));
 
@@ -278,7 +278,7 @@ class QuadTree {
             
                 assert(this->star != NULL);
                 
-                sf::Vector2f pos = newStar->getPos();
+                sf::Vector2f pos = newStar->getPosition();
 
                 center_of_mass = (center_of_mass*mass + pos*newStar->getMass())/(mass + newStar->getMass());
                 
@@ -293,7 +293,7 @@ class QuadTree {
             else {
 
                 star = newStar;
-                center_of_mass = newStar->getPos();
+                center_of_mass = newStar->getPosition();
                 mass = newStar->getMass();
                 numberOfStars += 1;
             }
