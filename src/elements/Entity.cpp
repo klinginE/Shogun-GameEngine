@@ -11,6 +11,7 @@ namespace sg {
     {
 
         this->isCollidable = true;
+        this->deletion = false;
 
     }
 
@@ -19,6 +20,7 @@ namespace sg {
     {
 
         this->isCollidable = setCollidable;
+        this->deletion = false;
 
     }
 
@@ -62,7 +64,8 @@ namespace sg {
 
             }
 
-        this->handleCollision(e, collisionVectors);
+        if (isCollides)
+            this->handleCollision(e, collisionVectors);
 
         return isCollides;
 
@@ -302,6 +305,13 @@ namespace sg {
         this->sprites.erase(this->sprites.begin() + idx);
         return r;
 
+    }
+
+    void Entity::setDeletionStatus(bool newDeletionStatus) {
+        deletion = newDeletionStatus;
+    }
+    bool Entity::getDeletionStatus() {
+        return deletion;
     }
 
 }

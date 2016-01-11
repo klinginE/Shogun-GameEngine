@@ -20,6 +20,7 @@ namespace sg {
 
         private:
             void expandSurfaceBounds(sf::FloatRect &, sf::FloatRect);
+            bool deletion;
 
         protected:
             std::vector<sf::Drawable *> sprites;
@@ -46,6 +47,8 @@ namespace sg {
             sf::FloatRect getTextureBounds(bool=true);
             std::vector<sf::Drawable *>::size_type addSprite(sf::Drawable &);
             sf::Drawable *removeSprite(uint32_t);
+            void setDeletionStatus(bool);
+            bool getDeletionStatus();
             virtual void update(sf::Time tslu) {
 
                 for (std::vector<sf::Drawable *>::iterator it = this->sprites.begin() ; it != this->sprites.end(); ++it)

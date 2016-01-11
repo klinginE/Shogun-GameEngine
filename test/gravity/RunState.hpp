@@ -26,8 +26,8 @@ class RunState : public sg::GameState {
             
             // Initialize window
             window.setWorld(dynamic_cast<sg::GameWorld *>(&universe));
-            window.setSizeInWorld(sf::Vector2f((float) sg::GameLoop::inst().getRenderWindow().getSize().x,
-                                               (float) sg::GameLoop::inst().getRenderWindow().getSize().y));
+            window.setSizeInWorld(sf::Vector2f((float) sg::GameLoop::inst().getRenderWindow().getSize().x*INITIAL_ZOOM,
+                                               (float) sg::GameLoop::inst().getRenderWindow().getSize().y*INITIAL_ZOOM));
 
             // add game world and window
             accessGameWorlds().push_back(dynamic_cast<sg::GameWorld *>(&universe));
@@ -44,7 +44,7 @@ class RunState : public sg::GameState {
 
         void render() {
             
-            universe.setDispRadius(0.01f*window.getSizeInWorld().x);
+            universe.setMinDispRadius(MIN_DISP_RADIUS_RATIO*window.getSizeInWorld().x);
 
             sg::GameState::render();
         };

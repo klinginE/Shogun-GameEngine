@@ -43,6 +43,14 @@ namespace sg {
         // process input
         if (inputActive && inputManager)
             inputManager->processInput();
+        // delete entities that should be removed
+        auto shouldBeRemoved = [](Entity * s) {
+            if (s->getDeletionStatus())
+                return true;
+            else
+                return false;
+        };
+        entities.erase(std::remove_if(entities.begin(), entities.end(), shouldBeRemoved), entities.end());
         // update all entities
         for (auto entityIter = entities.begin();
              entityIter != entities.end(); ++entityIter) {
@@ -81,7 +89,7 @@ namespace sg {
             if (!e1->getIsCollidable())
                 continue;
 
-            for (auto i2 = i1;
+            for (auto i2 = i1 + 1;
                  i2 != entities.end() && scanMin(*i2) <= scanMax(e1);
                  ++i2) {
                 
