@@ -281,8 +281,9 @@ namespace sg {
         }
 
         const sf::CircleShape &circle = dynamic_cast<const sf::CircleShape &>(poly1);
-        if (circle.getScale().x != circle.getScale().y ||
-            globalTrans1.getScale().x != globalTrans1.getScale().y)
+        float eps = std::numeric_limits<float>::epsilon();
+        if (fabs(circle.getScale().x - circle.getScale().y) >= eps ||
+            fabs(globalTrans1.getScale().x - globalTrans1.getScale().y) >= eps)
             return this->collides_ptp(dynamic_cast<const sf::Shape &>(this->approximateCircle(circle, globalTrans1)), poly2, least, globalTrans1, globalTrans2);
 
         sf::Vector2f center = globalTrans1.getTransform().transformPoint(circle.getTransform().transformPoint(sf::Vector2f(circle.getRadius(), circle.getRadius())));
@@ -387,21 +388,22 @@ namespace sg {
 
         const sf::CircleShape &circle1 = dynamic_cast<const sf::CircleShape &>(poly1);
         const sf::CircleShape &circle2 = dynamic_cast<const sf::CircleShape &>(poly2);
-        if ((circle1.getScale().x != circle1.getScale().y ||
-             globalTrans1.getScale().x != globalTrans1.getScale().y) &&
-            (circle2.getScale().x != circle2.getScale().y ||
-             globalTrans2.getScale().x != globalTrans2.getScale().y))
+        float eps = std::numeric_limits<float>::epsilon();
+        if ((fabs(circle1.getScale().x - circle1.getScale().y) >= eps ||
+             fabs(globalTrans1.getScale().x - globalTrans1.getScale().y) >= eps) &&
+            (fabs(circle2.getScale().x - circle2.getScale().y) >= eps ||
+             fabs(globalTrans2.getScale().x - globalTrans2.getScale().y)))
             return this->collides_ptp(dynamic_cast<const sf::Shape &>(this->approximateCircle(circle1, globalTrans1)), dynamic_cast<const sf::Shape &>(this->approximateCircle(circle2, globalTrans2)), least, globalTrans1, globalTrans2);
 
-        else if (!(circle1.getScale().x != circle1.getScale().y ||
-                   globalTrans1.getScale().x != globalTrans1.getScale().y) &&
-                 (circle2.getScale().x != circle2.getScale().y ||
-                  globalTrans2.getScale().x != globalTrans2.getScale().y))
+        else if (!(fabs(circle1.getScale().x - circle1.getScale().y) >= eps ||
+                   fabs(globalTrans1.getScale().x - globalTrans1.getScale().y) >= eps) &&
+                 (fabs(circle2.getScale().x - circle2.getScale().y) >= eps ||
+                  fabs(globalTrans2.getScale().x - globalTrans2.getScale().y) >= eps))
             return this->collides_ctp(poly1, dynamic_cast<const sf::Shape &>(this->approximateCircle(circle2, globalTrans2)), least, globalTrans1, globalTrans2);
-        else if ((circle1.getScale().x != circle1.getScale().y ||
-                  globalTrans1.getScale().x != globalTrans1.getScale().y) &&
-                 !(circle2.getScale().x != circle2.getScale().y ||
-                   globalTrans2.getScale().x != globalTrans2.getScale().y)) {
+        else if ((fabs(circle1.getScale().x - circle1.getScale().y) >= eps ||
+                  fabs(globalTrans1.getScale().x - globalTrans1.getScale().y) >= eps) &&
+                 !(fabs(circle2.getScale().x - circle2.getScale().y) >= eps ||
+                   fabs(globalTrans2.getScale().x - globalTrans2.getScale().y) >= eps)) {
             bool r = this->collides_ctp(poly2, dynamic_cast<const sf::Shape &>(this->approximateCircle(circle1, globalTrans1)), least, globalTrans2, globalTrans1);
             least.x = -least.x;
             least.y = -least.y;
