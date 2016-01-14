@@ -11,21 +11,34 @@
 
 //SHOGUN includes
 #include"AnimatedSprite.hpp"
-#include"BoundedSprite.hpp"
 #include"../management/GameLoop.hpp"
 
 namespace sg {
 
+    typedef struct {
+
+        sf::Drawable *d;
+        sf::Transformable *t;
+
+    } Component;
+
     class Entity: public sf::Transformable {
 
         private:
-            void expandSurfaceBounds(sf::FloatRect &, sf::FloatRect);
+            void expandSurfaceBounds(sf::FloatRect &, sf::FloatRect) const;
             bool deletion;
 
         protected:
-            std::vector<sf::Drawable *> sprites;
+            std::vector<Component *> components;
             bool isCollidable;
             virtual void handleCollision(Entity &, const std::vector<sf::Vector2f> &) {}
+            virtual void render() {
+
+                // render sprites
+                for (std::vector<Component *>::iterator it = this->components.begin() ; it != this->components.end(); ++it)
+                    GameLoop::inst().getRenderWindow().draw(*((*it)->d));
+
+            }
 
         public:
             Entity();
@@ -34,44 +47,29 @@ namespace sg {
             bool collides(sg::Entity &);// calls handleCollision
             bool getIsCollidable() const;
             void setIsCollidable(bool);
-            std::vector<sf::Drawable *>::size_type getNumOfSprites() const;
-            const sf::Drawable *getSprite(uint32_t) const;
-            void setOriginSprite(uint32_t, const sf::Vector2f &);
-            void setPositionSprite(uint32_t, const sf::Vector2f &);
-            void moveSprite(uint32_t, const sf::Vector2f &);
-            void setRotationSprite(uint32_t, float, bool=true);
-            void rotateSprite(uint32_t, float, bool=true);
-            void setScaleSprite(uint32_t, const sf::Vector2f &);
-            void scaleSprite(uint32_t, const sf::Vector2f &);
-            sf::FloatRect getSurfaceBounds(bool=true);
-            sf::FloatRect getTextureBounds(bool=true);
-            std::vector<sf::Drawable *>::size_type addSprite(sf::Drawable &);
-            sf::Drawable *removeSprite(uint32_t);
-            void setDeletionStatus(bool);
             bool getDeletionStatus();
+            void setDeletionStatus(bool);
+            std::vector<Component *>::size_type getNumOfComponents() const;
+            const Component *getComponent(uint32_t) const;
+            void setOriginComponent(uint32_t, const sf::Vector2f &);
+            void setPositionComponent(uint32_t, const sf::Vector2f &);
+            void moveComponent(uint32_t, const sf::Vector2f &);
+            void setRotationComponent(uint32_t, float, bool=true);
+            void rotateComponent(uint32_t, float, bool=true);
+            void setScaleComponent(uint32_t, const sf::Vector2f &);
+            void scaleComponent(uint32_t, const sf::Vector2f &);
+            sf::FloatRect getSurfaceBounds(bool=true) const;
+            sf::FloatRect getTextureBounds(bool=true) const;
+            std::vector<Component *>::size_type addComponent(Component &);
+            Component *removeComponent(uint32_t);
             virtual void update(sf::Time tslu) {
 
-                for (std::vector<sf::Drawable *>::iterator it = this->sprites.begin() ; it != this->sprites.end(); ++it)
-                    if (AnimatedSprite *s = dynamic_cast<AnimatedSprite *>((*it)))
+                for (std::vector<Component *>::iterator it = this->components.begin() ; it != this->components.end(); ++it)
+                    if (AnimatedSprite *s = dynamic_cast<AnimatedSprite *>((*it)->t))
                         s->update(tslu);
-        
+
             }
-            virtual void draw() {
-
-                // Transform view to draw entity in the correct place
-                sf::View saveView = GameLoop::inst().getRenderWindow().getView();
-                sf::View drawView = saveView;
-                drawView.setCenter(this->getInverseTransform().transformPoint(saveView.getCenter()));
-                GameLoop::inst().getRenderWindow().setView(drawView);
-
-                // Draw sprites
-                for (std::vector<sf::Drawable *>::iterator it = this->sprites.begin() ; it != this->sprites.end(); ++it)
-                    GameLoop::inst().getRenderWindow().draw(*(*it));
-
-                // Set view back to the way it was before
-                GameLoop::inst().getRenderWindow().setView(saveView);
-        
-            }
+            void draw();
 
     };
 

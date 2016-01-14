@@ -1,15 +1,13 @@
 //C++ includes
-#include<stdexcept>
-#include<typeinfo>
-#include<iostream>
-#include<math.h>
+#include <stdexcept>
+#include <typeinfo>
+#include <limits>
+#include <math.h>
 
 //SHOGUN includes
-#include"BoundingShape.hpp"
+#include "BoundingShape.hpp"
 
 namespace sg {
-
-    BoundingShape::BoundingShape() {}
 
     BoundingShape::~BoundingShape() {
 
@@ -50,29 +48,51 @@ namespace sg {
 
     }
 
+    void BoundingShape::setOrigin(float x, float y) {
+
+        this->setOrigin(sf::Vector2f(x, y));
+
+    }
+
     void BoundingShape::setOrigin(const sf::Vector2f &origin) {
 
+        sf::Transformable::setOrigin(origin);
         for (std::vector<sf::Shape *>::iterator it = this->shapes.begin(); it != this->shapes.end(); ++it)
             (*it)->setOrigin(origin);
 
     }
 
+    void BoundingShape::setPosition(float x, float y) {
+
+        this->setPosition(sf::Vector2f(x, y));
+
+    }
+
     void BoundingShape::setPosition(const sf::Vector2f &newPos) {
 
+        sf::Transformable::setPosition(newPos);
         for (std::vector<sf::Shape *>::iterator it = this->shapes.begin(); it != this->shapes.end(); ++it)
             (*it)->setPosition(newPos);
 
     }
 
-    void BoundingShape::move(const sf::Vector2f &delta) {
+    void BoundingShape::move(float offsetX, float offsetY) {
 
+        this->move(sf::Vector2f(offsetX, offsetY));
+
+    }
+
+    void BoundingShape::move(const sf::Vector2f &offset) {
+
+        sf::Transformable::move(offset);
         for (std::vector<sf::Shape *>::iterator it = this->shapes.begin(); it != this->shapes.end(); ++it)
-            (*it)->move(delta);
+            (*it)->move(offset);
 
     }
 
     void BoundingShape::setRotation(float angle) {
 
+        sf::Transformable::setRotation(angle);
         for (std::vector<sf::Shape *>::iterator it = this->shapes.begin(); it != this->shapes.end(); ++it)
             (*it)->setRotation(angle);
 
@@ -80,20 +100,35 @@ namespace sg {
 
     void BoundingShape::rotate(float angle) {
 
+        sf::Transformable::rotate(angle);
         for (std::vector<sf::Shape *>::iterator it = this->shapes.begin(); it != this->shapes.end(); ++it)
             (*it)->rotate(angle);
 
     }
 
+    void BoundingShape::setScale(float factorX, float factorY) {
+
+        this->setScale(sf::Vector2f(factorX, factorY));
+
+    }
+
     void BoundingShape::setScale(const sf::Vector2f &factor) {
 
+        sf::Transformable::setScale(factor);
         for (std::vector<sf::Shape *>::iterator it = this->shapes.begin(); it != this->shapes.end(); ++it)
             (*it)->setScale(factor);
 
     }
 
+    void BoundingShape::scale(float factorX, float factorY) {
+
+        this->scale(sf::Vector2f(factorX, factorY));
+
+    }
+
     void BoundingShape::scale(const sf::Vector2f &factor) {
 
+        sf::Transformable::scale(factor);
         for (std::vector<sf::Shape *>::iterator it = this->shapes.begin(); it != this->shapes.end(); ++it)
             (*it)->scale(factor);
 
@@ -164,7 +199,7 @@ namespace sg {
         sf::Vector2f currentVertex = globalTrans.getTransform().transformPoint(poly.getTransform().transformPoint(poly.getPoint(i)));
         sf::Vector2f adjacentVertex = globalTrans.getTransform().transformPoint(poly.getTransform().transformPoint(poly.getPoint(j)));
         sf::Vector2f unitNormal(adjacentVertex.x - currentVertex.x, adjacentVertex.y - currentVertex.y);
-        float magnitude = static_cast<float>(std::sqrt(unitNormal.x * unitNormal.x + unitNormal.y * unitNormal.y));
+        float magnitude = static_cast<float>(sqrt(unitNormal.x * unitNormal.x + unitNormal.y * unitNormal.y));
         unitNormal.x /= magnitude;
         unitNormal.y /= magnitude;
         //Rotate by 90
@@ -251,7 +286,7 @@ namespace sg {
             else
                 return false;
 
-            if (std::fabs(gap) < std::fabs(minGap)) {
+            if (fabs(gap) < fabs(minGap)) {
 
                 minGap = gap;
                 least.x = unitNormal.x * minGap;
@@ -309,7 +344,7 @@ namespace sg {
                 minDist = distance;
                 circleNormal.x = xDiff;
                 circleNormal.y = yDiff;
-                float mag = static_cast<float>(std::sqrt(distance));
+                float mag = static_cast<float>(sqrt(distance));
                 circleNormal.x /= mag;
                 circleNormal.y /= mag;
 
@@ -357,7 +392,7 @@ namespace sg {
             else
                 return false;
 
-            if (std::fabs(gap) < std::fabs(minGap)) {
+            if (fabs(gap) < fabs(minGap)) {
 
                 minGap = gap;
                 least.x = unitNormal.x * minGap;
@@ -428,8 +463,8 @@ namespace sg {
             sf::Vector2f centerVect2(center1.x - center2.x, center1.y - center2.y);
 
             //calculate Magnitudes
-            float centerVectMag1 = static_cast<float>(std::sqrt(centerVect1.x * centerVect1.x + centerVect1.y * centerVect1.y));
-            float centerVectMag2 = static_cast<float>(std::sqrt(centerVect2.x * centerVect2.x + centerVect2.y * centerVect2.y));
+            float centerVectMag1 = static_cast<float>(sqrt(centerVect1.x * centerVect1.x + centerVect1.y * centerVect1.y));
+            float centerVectMag2 = static_cast<float>(sqrt(centerVect2.x * centerVect2.x + centerVect2.y * centerVect2.y));
 
             //Locate Points on circles
             sf::Vector2f circlePoint1((centerVect1.x / centerVectMag1 * globalR1) + center1.x,
@@ -465,9 +500,9 @@ namespace sg {
                     if (this->collides_ctc(*s0, *s1, v, globalTrans1, globalTrans2)) {
 
                         isCollide = true;
-                        if (std::fabs(v.x) > std::fabs(least.x))
+                        if (fabs(v.x) > fabs(least.x))
                             least.x = v.x;
-                        if (std::fabs(v.y) > std::fabs(least.y))
+                        if (fabs(v.y) > fabs(least.y))
                             least.y = v.y;
 
                     }
@@ -478,9 +513,9 @@ namespace sg {
                     if (this->collides_ctp(*s0, *s1, v, globalTrans1, globalTrans2)) {
 
                         isCollide = true;
-                        if (std::fabs(v.x) > std::fabs(least.x))
+                        if (fabs(v.x) > fabs(least.x))
                             least.x = v.x;
-                        if (std::fabs(v.y) > std::fabs(least.y))
+                        if (fabs(v.y) > fabs(least.y))
                             least.y = v.y;
 
                     }
@@ -493,9 +528,9 @@ namespace sg {
                         v.x = -v.x;
                         v.y = -v.y;
                         isCollide = true;
-                        if (std::fabs(v.x) > std::fabs(least.x))
+                        if (fabs(v.x) > fabs(least.x))
                             least.x = v.x;
-                        if (std::fabs(v.y) > std::fabs(least.y))
+                        if (fabs(v.y) > fabs(least.y))
                             least.y = v.y;
 
                     }
@@ -505,9 +540,9 @@ namespace sg {
                     if (this->collides_ptp(*s0, *s1, v, globalTrans1, globalTrans2)) {
 
                         isCollide = true;
-                        if (std::fabs(v.x) > std::fabs(least.x))
+                        if (fabs(v.x) > fabs(least.x))
                             least.x = v.x;
-                        if (std::fabs(v.y) > std::fabs(least.y))
+                        if (fabs(v.y) > fabs(least.y))
                             least.y = v.y;
 
                     }

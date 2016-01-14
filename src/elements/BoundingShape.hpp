@@ -1,15 +1,15 @@
 #pragma once
 
 //C++ includes
-#include<vector>
-#include<stdint.h>
+#include <vector>
+#include <stdint.h>
 
 //SFML includes
-#include<SFML/Graphics.hpp>
+#include <SFML/Graphics.hpp>
 
 namespace sg {
 
-    class BoundingShape {
+    class BoundingShape : public sf::Transformable {
 
         private:
             //Private member variables
@@ -25,19 +25,23 @@ namespace sg {
 
         public:
             //Public member functions
-            BoundingShape();
             ~BoundingShape();
             std::vector<sf::Shape *>::size_type getNumOfShapes() const;
             const sf::Shape *getShape(uint32_t) const;
             std::vector<sf::Shape *>::size_type addShape(sf::Shape &);
             const sf::Shape *removeShape(uint32_t);
+            void setOrigin(float, float);
             void setOrigin(const sf::Vector2f &);
+            void setPosition(float, float);
             void setPosition(const sf::Vector2f &);
+            void move(float, float);
             void move(const sf::Vector2f &);
             void setRotation(float);
             void rotate(float);
             void setScale(const sf::Vector2f &);
+            void setScale(float, float);
             void scale(const sf::Vector2f &);
+            void scale(float, float);
             sf::FloatRect getLocalShapeBounds() const;
             sf::FloatRect getGlobalShapeBounds() const;
             bool collides(const BoundingShape &, sf::Vector2f &, const sf::Transformable &, const sf::Transformable &) const;

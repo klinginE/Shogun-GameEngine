@@ -13,7 +13,6 @@ $(MANAG_DIR)/GameWorld.cpp \
 $(MANAG_DIR)/InputManager.cpp \
 $(MANAG_DIR)/StateManager.cpp \
 $(ELEM_DIR)/AnimatedSprite.cpp \
-$(ELEM_DIR)/BoundedSprite.cpp \
 $(ELEM_DIR)/BoundingShape.cpp \
 $(ELEM_DIR)/Entity.cpp
 OBJECTS=$(notdir $(SOURCES:.cpp=.o))
