@@ -2,6 +2,7 @@
 #include <stdexcept>
 #include <typeinfo>
 #include <limits>
+#include <iostream>
 #include <math.h>
 
 //SHOGUN includes
@@ -57,8 +58,11 @@ namespace sg {
     void BoundingShape::setOrigin(const sf::Vector2f &origin) {
 
         sf::Transformable::setOrigin(origin);
-        for (std::vector<sf::Shape *>::iterator it = this->shapes.begin(); it != this->shapes.end(); ++it)
-            (*it)->setOrigin(origin);
+        #ifdef PARALLEL_ENABLED
+        #pragma omp parallel for
+        #endif
+        for (uint32_t i = 0; i < this->getNumOfShapes(); ++i)
+            this->shapes[i]->setOrigin(origin);
 
     }
 
@@ -71,8 +75,11 @@ namespace sg {
     void BoundingShape::setPosition(const sf::Vector2f &newPos) {
 
         sf::Transformable::setPosition(newPos);
-        for (std::vector<sf::Shape *>::iterator it = this->shapes.begin(); it != this->shapes.end(); ++it)
-            (*it)->setPosition(newPos);
+        #ifdef PARALLEL_ENABLED
+        #pragma omp parallel for
+        #endif
+        for (uint32_t i = 0; i < this->getNumOfShapes(); ++i)
+            this->shapes[i]->setPosition(newPos);
 
     }
 
@@ -85,24 +92,33 @@ namespace sg {
     void BoundingShape::move(const sf::Vector2f &offset) {
 
         sf::Transformable::move(offset);
-        for (std::vector<sf::Shape *>::iterator it = this->shapes.begin(); it != this->shapes.end(); ++it)
-            (*it)->move(offset);
+        #ifdef PARALLEL_ENABLED
+        #pragma omp parallel for
+        #endif
+        for (uint32_t i = 0; i < this->getNumOfShapes(); ++i)
+            this->shapes[i]->move(offset);
 
     }
 
     void BoundingShape::setRotation(float angle) {
 
         sf::Transformable::setRotation(angle);
-        for (std::vector<sf::Shape *>::iterator it = this->shapes.begin(); it != this->shapes.end(); ++it)
-            (*it)->setRotation(angle);
+        #ifdef PARALLEL_ENABLED
+        #pragma omp parallel for
+        #endif
+        for (uint32_t i = 0; i < this->getNumOfShapes(); ++i)
+            this->shapes[i]->setRotation(angle);
 
     }
 
     void BoundingShape::rotate(float angle) {
 
         sf::Transformable::rotate(angle);
-        for (std::vector<sf::Shape *>::iterator it = this->shapes.begin(); it != this->shapes.end(); ++it)
-            (*it)->rotate(angle);
+        #ifdef PARALLEL_ENABLED
+        #pragma omp parallel for
+        #endif
+        for (uint32_t i = 0; i < this->getNumOfShapes(); ++i)
+            this->shapes[i]->rotate(angle);
 
     }
 
@@ -115,8 +131,11 @@ namespace sg {
     void BoundingShape::setScale(const sf::Vector2f &factor) {
 
         sf::Transformable::setScale(factor);
-        for (std::vector<sf::Shape *>::iterator it = this->shapes.begin(); it != this->shapes.end(); ++it)
-            (*it)->setScale(factor);
+        #ifdef PARALLEL_ENABLED
+        #pragma omp parallel for
+        #endif
+        for (uint32_t i = 0; i < this->getNumOfShapes(); ++i)
+            this->shapes[i]->setScale(factor);
 
     }
 
@@ -129,19 +148,22 @@ namespace sg {
     void BoundingShape::scale(const sf::Vector2f &factor) {
 
         sf::Transformable::scale(factor);
-        for (std::vector<sf::Shape *>::iterator it = this->shapes.begin(); it != this->shapes.end(); ++it)
-            (*it)->scale(factor);
+        #ifdef PARALLEL_ENABLED
+        #pragma omp parallel for
+        #endif
+        for (uint32_t i = 0; i < this->getNumOfShapes(); ++i)
+            this->shapes[i]->scale(factor);
 
     }
 
-    sf::FloatRect BoundingShape::getShapeBounds(bool useLocal) const {
+    sf::FloatRect BoundingShape::getBounds(bool useLocal) const {
 
         float inf = std::numeric_limits<float>::infinity();
         sf::FloatRect bounds(inf, inf, -inf, -inf);
         for (std::vector<sf::Shape *>::const_iterator it = this->shapes.begin(); it != this->shapes.end(); ++it) {
 
             sf::Shape *s = (*it);
-            sf::FloatRect br(0.0f, 0.0f, 0.0f, 0.0f);
+            sf::FloatRect br;
             if (useLocal)
                 br = s->getLocalBounds();
             else
@@ -165,15 +187,15 @@ namespace sg {
 
     }
 
-    sf::FloatRect BoundingShape::getLocalShapeBounds() const {
+    sf::FloatRect BoundingShape::getLocalBounds() const {
 
-        return this->getShapeBounds(true);
+        return this->getBounds(true);
 
     }
 
-    sf::FloatRect BoundingShape::getGlobalShapeBounds() const {
+    sf::FloatRect BoundingShape::getGlobalBounds() const {
 
-        return this->getShapeBounds(false);
+        return this->getBounds(false);
 
     }
 
@@ -240,13 +262,19 @@ namespace sg {
         least.y = inf;
         float minGap = inf;
         uint32_t normalsLen = poly1.getPointCount() + poly2.getPointCount();
-        std::vector<sf::Vector2f> unitNormals(normalsLen);
+        sf::Vector2f *unitNormals = new sf::Vector2f[normalsLen];
 
+        #ifdef PARALLEL_ENABLED
+        #pragma omp parallel for
+        #endif
         for (uint32_t i = 0; i < poly1.getPointCount(); i++)
-            unitNormals.push_back(calculateUnitNormal(poly1, i, globalTrans1));
+            unitNormals[i] = calculateUnitNormal(poly1, i, globalTrans1);
 
+        #ifdef PARALLEL_ENABLED
+        #pragma omp parallel for
+        #endif
         for (uint32_t i = 0; i < poly2.getPointCount(); i++)
-            unitNormals.push_back(calculateUnitNormal(poly2, i, globalTrans2));
+            unitNormals[i + poly1.getPointCount()] = calculateUnitNormal(poly2, i, globalTrans2);
 
         for (uint32_t i = 0; i < normalsLen; i++) {
 
@@ -254,25 +282,71 @@ namespace sg {
  
             float minPoint1 = inf;
             float maxPoint1 = -inf;
+            #ifdef PARALLEL_ENABLED
+            #pragma omp parallel for
+            #endif
             for (uint32_t k = 0; k < poly1.getPointCount(); k++) {
 
                 float point = projectPoint(poly1, unitNormal, k, globalTrans1);
-                if (point < minPoint1)
+                #ifdef PARALLEL_ENABLED
+                #pragma omp flush(minPoint1)
+                #endif
+                if (point < minPoint1) {
+
+                    #ifdef PARALLEL_ENABLED
+                    #pragma omp critical
+                    if (point < minPoint1)
+                    #endif
                     minPoint1 = point;
-                if (point > maxPoint1)
+
+                }
+                #ifdef PARALLEL_ENABLED
+                #pragma omp flush(maxPoint1)
+                #endif
+                if (point > maxPoint1) {
+
+                    #ifdef PARALLEL_ENABLED
+                    #pragma omp critical
+                    if (point > maxPoint1)
+                    #endif
                     maxPoint1 = point;
+
+                }
 
             }
 
             float minPoint2 = inf;
             float maxPoint2 = -inf;
+            #ifdef PARALLEL_ENABLED
+            #pragma omp parallel for
+            #endif
             for (uint32_t k = 0; k < poly2.getPointCount(); k++) {
 
                 float point = projectPoint(poly2, unitNormal, k, globalTrans2);
-                if (point < minPoint2)
+                #ifdef PARALLEL_ENABLED
+                #pragma omp flush(minPoint2)
+                #endif
+                if (point < minPoint2) {
+
+                    #ifdef PARALLEL_ENABLED
+                    #pragma omp critical
+                    if (point < minPoint2)
+                    #endif
                     minPoint2 = point;
-                if (point > maxPoint2)
+
+                }
+                #ifdef PARALLEL_ENABLED
+                #pragma omp flush(maxPoint2)
+                #endif
+                if (point > maxPoint2) {
+
+                    #ifdef PARALLEL_ENABLED
+                    #pragma omp critical
+                    if (point > maxPoint2)
+                    #endif
                     maxPoint2 = point;
+
+                }
 
             }
 
@@ -283,8 +357,12 @@ namespace sg {
             else if ((maxPoint2 >= minPoint1 && maxPoint2 <= maxPoint1) ||//max2 is inside 1
                      (minPoint1 >= minPoint2 && minPoint1 <= maxPoint2))  //min1 is inside 2
                 gap = maxPoint2 - minPoint1;
-            else
+            else {
+
+                delete [] unitNormals;
                 return false;
+
+            }
 
             if (fabs(gap) < fabs(minGap)) {
 
@@ -296,6 +374,7 @@ namespace sg {
 
         }
 
+        delete [] unitNormals;
         return true;
 
     }
@@ -330,15 +409,22 @@ namespace sg {
         least.y = inf;
         float minGap = inf;
         float globalR = circle.getRadius() * circle.getScale().x * globalTrans1.getScale().x;
-        uint32_t normalsLen = poly2.getPointCount() + 1;
-        std::vector<sf::Vector2f> unitNormals(normalsLen);
+        std::size_t normalsLen = poly2.getPointCount() + 1;
+        sf::Vector2f *unitNormals = new sf::Vector2f[normalsLen];
 
+        #ifdef PARALLEL_ENABLED
+        #pragma omp parallel for
+        #endif
         for (uint32_t i = 0; i < poly2.getPointCount(); i++) {
 
             sf::Vector2f currentVertex = globalTrans2.getTransform().transformPoint(poly2.getTransform().transformPoint(poly2.getPoint(i)));
             float xDiff = (currentVertex.x - center.x);
             float yDiff = (currentVertex.y - center.y);
             float distance = xDiff * xDiff + yDiff * yDiff;
+            #ifdef PARALLEL_ENABLED
+            #pragma omp critical
+            {
+            #endif
             if (distance < minDist) {
 
                 minDist = distance;
@@ -349,11 +435,14 @@ namespace sg {
                 circleNormal.y /= mag;
 
             }
+            #ifdef PARALLEL_ENABLED
+            }
+            #endif
 
-            unitNormals.push_back(calculateUnitNormal(poly2, i, globalTrans2));
+            unitNormals[i] = calculateUnitNormal(poly2, i, globalTrans2);
 
         }
-        unitNormals.push_back(circleNormal);
+        unitNormals[normalsLen - 1] = circleNormal;
 
         for (uint32_t i = 0; i < normalsLen; i++) {
 
@@ -372,13 +461,36 @@ namespace sg {
 
             float minPoint2 = inf;
             float maxPoint2 = -inf;
+            #ifdef PARALLEL_ENABLED
+            #pragma omp parallel for
+            #endif
             for (uint32_t k = 0; k < poly2.getPointCount(); k++) {
 
                 float point = projectPoint(poly2, unitNormal, k, globalTrans2);
-                if (point < minPoint2)
+                #ifdef PARALLEL_ENABLED
+                #pragma omp flush(minPoint2)
+                #endif
+                if (point < minPoint2) {
+
+                    #ifdef PARALLEL_ENABLED
+                    #pragma omp critical
+                    if (point < minPoint2)
+                    #endif
                     minPoint2 = point;
-                if (point > maxPoint2)
+
+                }
+                #ifdef PARALLEL_ENABLED
+                #pragma omp flush(maxPoint2)
+                #endif
+                if (point > maxPoint2) {
+
+                    #ifdef PARALLEL_ENABLED
+                    #pragma omp critical
+                    if (point > maxPoint2)
+                    #endif
                     maxPoint2 = point;
+
+                }
 
             }
 
@@ -389,8 +501,12 @@ namespace sg {
             else if ((maxPoint2 >= minPoint1 && maxPoint2 <= maxPoint1) ||//max2 is inside 1
                      (minPoint1 >= minPoint2 && minPoint1 <= maxPoint2))  //min1 is inside 2
                 gap = maxPoint2 - minPoint1;
-            else
+            else {
+
+                delete [] unitNormals;
                 return false;
+
+            }
 
             if (fabs(gap) < fabs(minGap)) {
 
@@ -402,6 +518,7 @@ namespace sg {
 
         }
 
+        delete [] unitNormals;
         return true;
 
     }

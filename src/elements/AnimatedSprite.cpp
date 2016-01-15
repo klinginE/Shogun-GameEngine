@@ -162,49 +162,52 @@ namespace sg {
 
     void AnimatedSprite::setOrigin(float x, float y) {
 
-        sf::Sprite::setOrigin(x, y);
-        for (std::vector<BoundingShape *>::iterator it = this->surfaces.begin(); it != this->surfaces.end(); ++it)
-            (*it)->setOrigin(sf::Vector2f(x, y));
+        this->setOrigin(sf::Vector2f(x, y));
 
     }
 
     void AnimatedSprite::setOrigin(const sf::Vector2f &origin) {
 
         sf::Sprite::setOrigin(origin);
-        for (std::vector<BoundingShape *>::iterator it = this->surfaces.begin(); it != this->surfaces.end(); ++it)
-            (*it)->setOrigin(origin);
+        #ifdef PARALLEL_ENABLED
+        #pragma omp parallel for
+        #endif
+        for (uint32_t i = 0; i < surfaces.size(); ++i)
+            this->surfaces[i]->setOrigin(origin);
 
     }
 
     void AnimatedSprite::setPosition(float x, float y) {
 
-        sf::Sprite::setPosition(x, y);
-        for (std::vector<BoundingShape *>::iterator it = this->surfaces.begin(); it != this->surfaces.end(); ++it)
-            (*it)->setPosition(sf::Vector2f(x, y));
+        this->setPosition(sf::Vector2f(x, y));
 
     }
 
     void AnimatedSprite::setPosition(const sf::Vector2f &position) {
 
         sf::Sprite::setPosition(position);
-        for (std::vector<BoundingShape *>::iterator it = this->surfaces.begin(); it != this->surfaces.end(); ++it)
-            (*it)->setPosition(position);
+        #ifdef PARALLEL_ENABLED
+        #pragma omp parallel for
+        #endif
+        for (uint32_t i = 0; i < surfaces.size(); ++i)
+            this->surfaces[i]->setPosition(position);
 
     }
 
     void AnimatedSprite::move(float offsetX, float offsetY) {
 
-        sf::Sprite::move(offsetX, offsetY);
-        for (std::vector<BoundingShape *>::iterator it = this->surfaces.begin(); it != this->surfaces.end(); ++it)
-            (*it)->move(sf::Vector2f(offsetX, offsetY));
+        this->move(sf::Vector2f(offsetX, offsetY));
 
     }
 
     void AnimatedSprite::move(const sf::Vector2f &offset) {
 
         sf::Sprite::move(offset);
-        for (std::vector<BoundingShape *>::iterator it = this->surfaces.begin(); it != this->surfaces.end(); ++it)
-            (*it)->move(offset);
+        #ifdef PARALLEL_ENABLED
+        #pragma omp parallel for
+        #endif
+        for (uint32_t i = 0; i < surfaces.size(); ++i)
+            this->surfaces[i]->move(offset);
 
     }
 
@@ -212,48 +215,56 @@ namespace sg {
     void AnimatedSprite::setRotation(float angle) {
 
         sf::Sprite::setRotation(angle);
-        for (std::vector<BoundingShape *>::iterator it = this->surfaces.begin(); it != this->surfaces.end(); ++it)
-            (*it)->setRotation(angle);
+        #ifdef PARALLEL_ENABLED
+        #pragma omp parallel for
+        #endif
+        for (uint32_t i = 0; i < surfaces.size(); ++i)
+            this->surfaces[i]->setRotation(angle);
 
     }
 
     void AnimatedSprite::rotate(float angle) {
 
         sf::Sprite::rotate(angle);
-        for (std::vector<BoundingShape *>::iterator it = this->surfaces.begin(); it != this->surfaces.end(); ++it)
-            (*it)->rotate(angle);
+        #ifdef PARALLEL_ENABLED
+        #pragma omp parallel for
+        #endif
+        for (uint32_t i = 0; i < surfaces.size(); ++i)
+            this->surfaces[i]->rotate(angle);
 
     }
 
     void AnimatedSprite::setScale(float factorX, float factorY) {
 
-        sf::Sprite::setScale(factorX, factorY);
-        for (std::vector<BoundingShape *>::iterator it = this->surfaces.begin(); it != this->surfaces.end(); ++it)
-            (*it)->setScale(sf::Vector2f(factorX, factorY));
+        this->setScale(sf::Vector2f(factorX, factorY));
 
     }
 
     void AnimatedSprite::setScale(const sf::Vector2f &factor) {
 
         sf::Sprite::setScale(factor);
-        for (std::vector<BoundingShape *>::iterator it = this->surfaces.begin(); it != this->surfaces.end(); ++it)
-            (*it)->setScale(factor);
+        #ifdef PARALLEL_ENABLED
+        #pragma omp parallel for
+        #endif
+        for (uint32_t i = 0; i < surfaces.size(); ++i)
+            this->surfaces[i]->setScale(factor);
 
     }
 
     void AnimatedSprite::scale(float factorX, float factorY) {
 
-        sf::Sprite::scale(factorX, factorY);
-        for (std::vector<BoundingShape *>::iterator it = this->surfaces.begin(); it != this->surfaces.end(); ++it)
-            (*it)->scale(sf::Vector2f(factorX, factorY));
+        this->scale(sf::Vector2f(factorX, factorY));
 
     }
 
     void AnimatedSprite::scale(const sf::Vector2f &factor) {
 
         sf::Sprite::scale(factor);
-        for (std::vector<BoundingShape *>::iterator it = this->surfaces.begin(); it != this->surfaces.end(); ++it)
-            (*it)->scale(factor);
+        #ifdef PARALLEL_ENABLED
+        #pragma omp parallel for
+        #endif
+        for (uint32_t i = 0; i < surfaces.size(); ++i)
+            this->surfaces[i]->scale(factor);
 
     }
 

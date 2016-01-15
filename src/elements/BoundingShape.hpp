@@ -15,7 +15,7 @@ namespace sg {
             //Private member variables
             std::vector<sf::Shape *> shapes;
             //Private member functions
-            sf::FloatRect getShapeBounds(bool) const;
+            sf::FloatRect getBounds(bool) const;
             const sf::ConvexShape approximateCircle(const sf::CircleShape &, const sf::Transformable &) const;
             sf::Vector2f calculateUnitNormal(const sf::Shape &, uint32_t, const sf::Transformable &) const;
             float projectPoint(const sf::Shape &, const sf::Vector2f &, uint32_t, const sf::Transformable &) const;
@@ -42,8 +42,8 @@ namespace sg {
             void setScale(float, float);
             void scale(const sf::Vector2f &);
             void scale(float, float);
-            sf::FloatRect getLocalShapeBounds() const;
-            sf::FloatRect getGlobalShapeBounds() const;
+            sf::FloatRect getLocalBounds() const;
+            sf::FloatRect getGlobalBounds() const;
             bool collides(const BoundingShape &, sf::Vector2f &, const sf::Transformable &, const sf::Transformable &) const;
 
     };

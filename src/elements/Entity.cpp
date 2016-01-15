@@ -44,6 +44,8 @@ namespace sg {
 
                 sf::Transformable *t0 = (*it)->t;
                 const sf::Transformable *t1 = e.getComponent(i)->t;
+                sf::RectangleShape tempRs0;
+                sf::RectangleShape tempRs1;
                 BoundingShape tempShape0;
                 BoundingShape tempShape1;
                 const BoundingShape *s0 = NULL;
@@ -65,12 +67,12 @@ namespace sg {
                         t0Bounds = t->getLocalBounds();
                     else
                         continue;
-                    sf::RectangleShape rs(sf::Vector2f(t0Bounds.width, t0Bounds.height));
-                    rs.setOrigin(t0->getOrigin());
-                    rs.setPosition(sf::Vector2f(t0->getPosition().x + t0Bounds.left, t0->getPosition().y + t0Bounds.top));
-                    rs.setRotation(t0->getRotation());
-                    rs.setScale(t0->getScale());
-                    tempShape0.addShape(rs);
+                    tempRs0.setSize(sf::Vector2f(t0Bounds.width, t0Bounds.height));
+                    tempRs0.setOrigin(t0->getOrigin());
+                    tempRs0.setPosition(sf::Vector2f(t0->getPosition().x + t0Bounds.left, t0->getPosition().y + t0Bounds.top));
+                    tempRs0.setRotation(t0->getRotation());
+                    tempRs0.setScale(t0->getScale());
+                    tempShape0.addShape(tempRs0);
                     s0 = &tempShape0;
 
                 }
@@ -91,12 +93,11 @@ namespace sg {
                         t1Bounds = t->getLocalBounds();
                     else
                         continue;
-                    sf::RectangleShape rs(sf::Vector2f(t1Bounds.width, t1Bounds.height));
-                    rs.setOrigin(t1->getOrigin());
-                    rs.setPosition(sf::Vector2f(t1->getPosition().x + t1Bounds.left, t1->getPosition().y + t1Bounds.top));
-                    rs.setRotation(t1->getRotation());
-                    rs.setScale(t1->getScale());
-                    tempShape1.addShape(rs);
+                    tempRs1.setOrigin(t1->getOrigin());
+                    tempRs1.setPosition(sf::Vector2f(t1->getPosition().x + t1Bounds.left, t1->getPosition().y + t1Bounds.top));
+                    tempRs1.setRotation(t1->getRotation());
+                    tempRs1.setScale(t1->getScale());
+                    tempShape1.addShape(tempRs1);
                     s1 = &tempShape1;
 
                 }
@@ -301,9 +302,9 @@ namespace sg {
             sf::FloatRect currentBounds(0.0f, 0.0f, 0.0f, 0.0f);
             if (AnimatedSprite *as = dynamic_cast<AnimatedSprite *>((*it)->t)) {
                 if (useGlobal)
-                    currentBounds = as->getFrameBound(as->getFrameIndex())->getGlobalShapeBounds();
+                    currentBounds = as->getFrameBound(as->getFrameIndex())->getGlobalBounds();
                 else
-                    currentBounds = as->getFrameBound(as->getFrameIndex())->getLocalShapeBounds();
+                    currentBounds = as->getFrameBound(as->getFrameIndex())->getLocalBounds();
             }
             else if (Entity *e = dynamic_cast<Entity *>((*it)->t)) {
                 if (useGlobal)
@@ -390,7 +391,7 @@ namespace sg {
 
     std::vector<Component *>::size_type Entity::addComponent(Component &newComponent) {
 
-        if (newComponent.t == this)
+        if (dynamic_cast<void *>(newComponent.t) == dynamic_cast<void *>(this))
             throw std::invalid_argument("Component\'s sf::Transfromable is equal to this");
         if (newComponent.d != NULL || newComponent.t != NULL)
             this->components.push_back(&newComponent);

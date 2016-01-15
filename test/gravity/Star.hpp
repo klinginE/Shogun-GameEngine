@@ -7,7 +7,6 @@
 #include <Entity.hpp>
 #include <GameLoop.hpp>
 #include <BoundingShape.hpp>
-#include <BoundedSprite.hpp>
 
 // standard includes
 #include <cstdlib>
@@ -23,6 +22,7 @@ class Star : public sg::Entity {
 //    sg::BoundingShape boundingShape = sg::BoundingShape();
 //    sg::BoundedSprite boundedSprite = sg::BoundedSprite();
     sf::CircleShape circleShape = sf::CircleShape();
+    sg::Component c0;
 
     public:
         Star() : sg::Entity() {
@@ -37,7 +37,9 @@ class Star : public sg::Entity {
 //            boundedSprite.setSurface(boundingShape);
 //            boundedSprite.setTexture(circleShape);
 //            boundedSprite.setPosition(sf::Vector2f(-getRadius(), -getRadius()));
-            this->addSprite(circleShape);
+            c0.d = &circleShape;
+            c0.t = NULL;
+            this->addComponent(c0);
         };
 
         float getMass() {

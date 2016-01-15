@@ -1,6 +1,8 @@
 CC=g++
 AR=ar cr
 CFLAGS=-fPIC -c -g -Wall -pedantic -std=c++11
+OPENMP_FLAGS=-fopenmp
+OPENMP_DEFINES=-DPARALLEL_ENABLED
 LIBFLAGS=
 SFML_FLAGS=-lsfml-graphics -lsfml-window -lsfml-system
 MANAG_DIR=../src/management
@@ -20,7 +22,12 @@ LIBRARY=shogun
 
 all: compile_objects compile_library clean
 
+no_parallel: compile_objects_no_parallel compile_library clean
+
 compile_objects:
+	$(CC) $(CFLAGS) $(OPENMP_FLAGS) $(OPENMP_DEFINES) $(SOURCES) $(SFML_FLAGS)
+
+compile_objects_no_parallel:
 	$(CC) $(CFLAGS) $(SOURCES) $(SFML_FLAGS)
 
 compile_library:
