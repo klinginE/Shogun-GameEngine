@@ -11,6 +11,7 @@
 
 //SHOGUN includes
 #include"AnimatedSprite.hpp"
+#include"BoundingShape.hpp"
 #include"../management/GameLoop.hpp"
 
 namespace sg {

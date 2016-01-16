@@ -3,6 +3,7 @@
 
 //SHOGUN includes
 #include"AnimatedSprite.hpp"
+#include"Entity.hpp"
 
 namespace sg {
 
@@ -50,13 +51,13 @@ namespace sg {
 
     }
 
-    std::vector<sf::IntRect>::size_type AnimatedSprite::getNumOfFrames() const {
+    std::vector<sf::IntRect *>::size_type AnimatedSprite::getNumOfFrames() const {
 
         return this->rects.size();
 
     }
 
-    const BoundingShape *AnimatedSprite::getFrameBound(uint32_t idx) const {
+    const sf::Transformable *AnimatedSprite::getFrameBound(uint32_t idx) const {
 
         if (idx >= this->getNumOfFrames())
             return NULL;
@@ -64,10 +65,10 @@ namespace sg {
 
     }
 
-    const sf::IntRect &AnimatedSprite::getFrameRect(uint32_t idx) const {
+    const sf::IntRect *AnimatedSprite::getFrameRect(uint32_t idx) const {
 
         if (idx >= this->getNumOfFrames())
-            throw std::out_of_range("getFrameRect(): Not a vaild rect index.");
+            return NULL;
         return this->rects[idx];
 
     }
@@ -102,25 +103,31 @@ namespace sg {
 
     }
 
-    std::vector<sf::IntRect>::size_type AnimatedSprite::addFrame(sf::IntRect &newRect, BoundingShape &bs) {
+    std::vector<sf::IntRect *>::size_type AnimatedSprite::addFrame(sf::IntRect &newRect, sf::Transformable &newTrans) {
 
-        this->rects.push_back(newRect);
-        this->surfaces.push_back(&bs);
+        if (dynamic_cast<Entity *>(&newTrans))
+            throw std::invalid_argument("sf::Transfromable cannot be an Entity");
+        if (dynamic_cast<AnimatedSprite *>(&newTrans))
+            throw std::invalid_argument("sf::Transfromable cannot be an animatedSprite");
+
+        this->rects.push_back(&newRect);
+        this->surfaces.push_back(&newTrans);
+
         return (this->getNumOfFrames() - 1);
 
     }
 
-    std::pair<sf::IntRect &, BoundingShape *> AnimatedSprite::removeFrame(uint32_t idx) {
+    std::pair<sf::IntRect *, sf::Transformable *> AnimatedSprite::removeFrame(uint32_t idx) {
 
         if (idx >= this->getNumOfFrames())
             throw std::out_of_range("removeFrame(): Not a vaild index.");
 
-        sf::IntRect *r = &this->rects[idx];
-        BoundingShape *bs = this->surfaces[idx];
+        sf::IntRect *r = this->rects[idx];
+        sf::Transformable *t = this->surfaces[idx];
         this->rects.erase(this->rects.begin() + idx);
         this->surfaces.erase(this->surfaces.begin() + idx);
 
-        return std::pair<sf::IntRect &, BoundingShape *>((*r), bs);
+        return std::pair<sf::IntRect *, sf::Transformable *>(r, t);
 
     }
 
@@ -154,7 +161,7 @@ namespace sg {
 
             this->timePast = sf::Time::Zero;
             this->frameIndex = ((this->frameIndex + 1) % this->getNumOfFrames());
-            this->setTextureRect(this->rects[this->frameIndex]);
+            this->setTextureRect((*this->rects[this->frameIndex]));
 
         }
 

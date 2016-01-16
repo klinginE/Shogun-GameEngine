@@ -8,16 +8,13 @@
 //SFML includes
 #include<SFML/Graphics.hpp>
 
-//Shogun includes
-#include"BoundingShape.hpp"
-
 namespace sg {
 
     class AnimatedSprite : public sf::Sprite {
 
         private:
-            std::vector<sf::IntRect> rects;
-            std::vector<BoundingShape *> surfaces;
+            std::vector<sf::IntRect *> rects;
+            std::vector<sf::Transformable *> surfaces;
             sf::Time frameDelay;
             sf::Time timePast;
             uint32_t frameIndex;
@@ -29,15 +26,15 @@ namespace sg {
             AnimatedSprite(sf::Time, const sf::Texture &);
             ~AnimatedSprite();
             std::vector<sf::IntRect>::size_type getNumOfFrames() const;
-            const BoundingShape *getFrameBound(uint32_t) const;
-            const sf::IntRect &getFrameRect(uint32_t) const;
+            const sf::Transformable *getFrameBound(uint32_t) const;
+            const sf::IntRect *getFrameRect(uint32_t) const;
             sf::Time getFrameDelay() const;
             void setFrameDelay(sf::Time);
             uint32_t getFrameIndex() const;
             sf::Time getTimePast() const;
             bool getIsPlaying() const;
-            std::vector<sf::IntRect>::size_type addFrame(sf::IntRect &, BoundingShape &);
-            std::pair<sf::IntRect &, BoundingShape *> removeFrame(uint32_t);
+            std::vector<sf::IntRect *>::size_type addFrame(sf::IntRect &, sf::Transformable &);
+            std::pair<sf::IntRect *, sf::Transformable *> removeFrame(uint32_t);
             void start();
             void stop();
             void restart();

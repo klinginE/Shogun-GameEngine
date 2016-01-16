@@ -32,6 +32,10 @@ namespace sg {
 
     std::vector<sf::Shape *>::size_type BoundingShape::addShape(sf::Shape &newShape) {
 
+        newShape.setOrigin(this->getOrigin());
+        newShape.setPosition(this->getPosition());
+        newShape.setRotation(this->getRotation());
+        newShape.setScale(this->getScale());
         this->shapes.push_back(&newShape);
         return (this->getNumOfShapes() - 1);
 

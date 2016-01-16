@@ -42,31 +42,31 @@ namespace sg {
         for (std::vector<Component *>::iterator it = this->components.begin(); it != this->components.end(); ++it)
             for (uint32_t i = 0; i < e.getNumOfComponents(); i++) {
 
-                sf::Transformable *t0 = (*it)->t;
+                const sf::Transformable *t0 = (*it)->t;
+                if (const AnimatedSprite *as = dynamic_cast<const AnimatedSprite *>(t0))
+                    t0 = as->getFrameBound(as->getFrameIndex());
+
                 const sf::Transformable *t1 = e.getComponent(i)->t;
+                if (const AnimatedSprite *as = dynamic_cast<const AnimatedSprite *>(t1))
+                    t1 = as->getFrameBound(as->getFrameIndex());
+
                 sf::RectangleShape tempRs0;
-                sf::RectangleShape tempRs1;
                 BoundingShape tempShape0;
-                BoundingShape tempShape1;
                 const BoundingShape *s0 = NULL;
-                const BoundingShape *s1 = NULL;
-                if (BoundingShape *bs = dynamic_cast<BoundingShape *>(t0))
+                if (const BoundingShape *bs = dynamic_cast<const BoundingShape *>(t0))
                     s0 = bs;
-                else if (AnimatedSprite *as = dynamic_cast<AnimatedSprite *>(t0))
-                    s0 = dynamic_cast<const BoundingShape *>(as->getFrameBound(as->getFrameIndex()));
                 else {
 
                     sf::FloatRect t0Bounds;
-                    if (Entity *et = dynamic_cast<Entity *>(t0))
-                        t0Bounds = et->getSurfaceBounds(false);
-                    else if (sf::Sprite *s = dynamic_cast<sf::Sprite *>(t0))
+                    if (const sf::Sprite *s = dynamic_cast<const sf::Sprite *>(t0))
                         t0Bounds = s->getLocalBounds();
-                    else if (sf::Shape *sh = dynamic_cast<sf::Shape *>(t0))
+                    else if (const sf::Shape *sh = dynamic_cast<const sf::Shape *>(t0))
                         t0Bounds = sh->getLocalBounds();
-                    else if (sf::Text *t = dynamic_cast<sf::Text *>(t0))
+                    else if (const sf::Text *t = dynamic_cast<const sf::Text *>(t0))
                         t0Bounds = t->getLocalBounds();
                     else
                         continue;
+
                     tempRs0.setSize(sf::Vector2f(t0Bounds.width, t0Bounds.height));
                     tempRs0.setOrigin(t0->getOrigin());
                     tempRs0.setPosition(sf::Vector2f(t0->getPosition().x + t0Bounds.left, t0->getPosition().y + t0Bounds.top));
@@ -76,16 +76,16 @@ namespace sg {
                     s0 = &tempShape0;
 
                 }
+
+                sf::RectangleShape tempRs1;
+                BoundingShape tempShape1;
+                const BoundingShape *s1 = NULL;
                 if (const BoundingShape *bs = dynamic_cast<const BoundingShape *>(t1))
                     s1 = bs;
-                else if (const AnimatedSprite *as = dynamic_cast<const AnimatedSprite *>(t1))
-                    s1 = dynamic_cast<const BoundingShape *>(as->getFrameBound(as->getFrameIndex()));
                 else {
 
                     sf::FloatRect t1Bounds;
-                    if (const Entity *et = dynamic_cast<const Entity *>(t1))
-                        t1Bounds = et->getSurfaceBounds(false);
-                    else if (const sf::Sprite *s = dynamic_cast<const sf::Sprite *>(t1))
+                    if (const sf::Sprite *s = dynamic_cast<const sf::Sprite *>(t1))
                         t1Bounds = s->getLocalBounds();
                     else if (const sf::Shape *sh = dynamic_cast<const sf::Shape *>(t1))
                         t1Bounds = sh->getLocalBounds();
@@ -93,6 +93,8 @@ namespace sg {
                         t1Bounds = t->getLocalBounds();
                     else
                         continue;
+
+                    tempRs1.setSize(sf::Vector2f(t1Bounds.width, t1Bounds.height));
                     tempRs1.setOrigin(t1->getOrigin());
                     tempRs1.setPosition(sf::Vector2f(t1->getPosition().x + t1Bounds.left, t1->getPosition().y + t1Bounds.top));
                     tempRs1.setRotation(t1->getRotation());
@@ -296,35 +298,33 @@ namespace sg {
     sf::FloatRect Entity::getSurfaceBounds(bool useGlobal) const {
 
         float inf = std::numeric_limits<float>::infinity();
-        sf::FloatRect bounds(inf, inf, -inf, -inf);
+        sf::FloatRect bounds = sf::FloatRect(inf, inf, -inf, -inf);
         for (std::vector<Component *>::const_iterator it = this->components.begin(); it != this->components.end(); ++it) {
 
-            sf::FloatRect currentBounds(0.0f, 0.0f, 0.0f, 0.0f);
-            if (AnimatedSprite *as = dynamic_cast<AnimatedSprite *>((*it)->t)) {
+            const sf::Transformable *t = (*it)->t;
+            if (const AnimatedSprite *as = dynamic_cast<const AnimatedSprite *>(t))
+                t = as->getFrameBound(as->getFrameIndex());
+
+            sf::FloatRect currentBounds;
+            if (const BoundingShape *bs = dynamic_cast<const BoundingShape *>(t)) {
                 if (useGlobal)
-                    currentBounds = as->getFrameBound(as->getFrameIndex())->getGlobalBounds();
+                    currentBounds = bs->getGlobalBounds();
                 else
-                    currentBounds = as->getFrameBound(as->getFrameIndex())->getLocalBounds();
+                    currentBounds = bs->getLocalBounds();
             }
-            else if (Entity *e = dynamic_cast<Entity *>((*it)->t)) {
-                if (useGlobal)
-                    currentBounds = e->getSurfaceBounds(true);
-                else
-                    currentBounds = e->getSurfaceBounds(false);
-            }
-            else if (sf::Sprite *s = dynamic_cast<sf::Sprite *>((*it)->t)) {
+            else if (const sf::Sprite *s = dynamic_cast<const sf::Sprite *>(t)) {
                 if (useGlobal)
                     currentBounds = s->getGlobalBounds();
                 else
                     currentBounds = s->getLocalBounds();
             }
-            else if (sf::Shape *sh = dynamic_cast<sf::Shape *>((*it)->t)) {
+            else if (const sf::Shape *sh = dynamic_cast<const sf::Shape *>(t)) {
                 if (useGlobal)
                     currentBounds = sh->getGlobalBounds();
                 else
                     currentBounds = sh->getLocalBounds();
             }
-            else if (sf::Text *t = dynamic_cast<sf::Text *>((*it)->t)) {
+            else if (const sf::Text *t = dynamic_cast<const sf::Text *>(t)) {
                 if (useGlobal)
                     currentBounds = t->getGlobalBounds();
                 else
@@ -391,10 +391,12 @@ namespace sg {
 
     std::vector<Component *>::size_type Entity::addComponent(Component &newComponent) {
 
-        if (dynamic_cast<void *>(newComponent.t) == dynamic_cast<void *>(this))
-            throw std::invalid_argument("Component\'s sf::Transfromable is equal to this");
+        if (dynamic_cast<Entity *>(newComponent.t))
+            throw std::invalid_argument("Component\'s sf::Transfromable cannot be an Entity");
+
         if (newComponent.d != NULL || newComponent.t != NULL)
             this->components.push_back(&newComponent);
+
         return (this->getNumOfComponents() - 1);
 
     }
@@ -403,8 +405,10 @@ namespace sg {
 
         if (idx >= this->getNumOfComponents())
             return NULL;
+
         Component *r = this->components[idx];
         this->components.erase(this->components.begin() + idx);
+
         return r;
 
     }
