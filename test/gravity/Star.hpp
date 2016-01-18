@@ -66,7 +66,6 @@ class Star : public sg::Entity {
         void render() {
             
             sf::View view = sg::GameLoop::inst().getRenderWindow().getView();
-            sf::View saveview = sg::GameLoop::inst().getRenderWindow().getView();
 
             sf::Vector2f viewSize = view.getSize();
 
