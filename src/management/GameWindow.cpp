@@ -131,12 +131,12 @@ namespace sg {
 
             Entity *e = *entityIter;
 
-            auto b = e->getTextureBounds();
+            auto b = e->getTextureBounds(true);
 
-            if ((b.left <= this->positionInWorld.x + this->sizeInWorld.x/2)
+            if (/*true || */((b.left <= this->positionInWorld.x + this->sizeInWorld.x/2)
             &&  (b.top <= this->positionInWorld.y + this->sizeInWorld.y/2)
             &&  (b.left + b.width >= this->positionInWorld.x - this->sizeInWorld.x/2)
-            &&  (b.top + b.height >= this->positionInWorld.y - this->sizeInWorld.y/2)) {
+            &&  (b.top + b.height >= this->positionInWorld.y - this->sizeInWorld.y/2))) {
 
                 // add to render queue
                 renderQueue.push(e);

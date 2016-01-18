@@ -415,17 +415,8 @@ namespace sg {
 
     void Entity::draw() {
 
-        // Transform view to draw entity in the correct place
-        sf::View saveView = GameLoop::inst().getRenderWindow().getView();
-        sf::View drawView = saveView;
-        drawView.setCenter(this->getInverseTransform().transformPoint(saveView.getCenter()));
-        GameLoop::inst().getRenderWindow().setView(drawView);
-
         this->render();
 
-        // Set view back to the way it was before
-        GameLoop::inst().getRenderWindow().setView(saveView);
-    
     }
 
 }

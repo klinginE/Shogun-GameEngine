@@ -70,6 +70,32 @@ class Star : public sg::Entity {
             min_disp_radius = newRadius;
         };
 
+        void render() {
+            
+            sf::View view = sg::GameLoop::inst().getRenderWindow().getView();
+            sf::View saveview = sg::GameLoop::inst().getRenderWindow().getView();
+
+            sf::Vector2f viewSize = view.getSize();
+
+            float viewsize_threshold = 500.0f;
+
+            if (viewSize.x > viewsize_threshold) {
+                float sizeRatio = viewsize_threshold/viewSize.x;
+                //this->scale(1.0f/sizeRatio);
+                this->setScale(1.0f/sizeRatio, 1.0f/sizeRatio);
+            }
+
+//            this->scale(10.0f, 10.0f);
+            
+//            sg::GameLoop::inst().getRenderWindow().setView(view);
+
+            sg::Entity::render();
+            
+            this->setScale(1.0f, 1.0f);
+            
+//            sg::GameLoop::inst().getRenderWindow().setView(saveview);
+        };
+
 //        void draw() {
 //            
 ////            if (this->getDeletionStatus())

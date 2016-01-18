@@ -36,8 +36,36 @@ namespace sg {
             virtual void render() {
 
                 // render sprites
-                for (std::vector<Component *>::iterator it = this->components.begin() ; it != this->components.end(); ++it)
-                    GameLoop::inst().getRenderWindow().draw(*((*it)->d));
+                for (std::vector<Component *>::iterator it = this->components.begin() ; it != this->components.end(); ++it) {
+
+                    if (sf::Transformable *t = dynamic_cast<sf::Transformable *>((*it)->d)) {
+
+                        sf::Vector2f savePosition = t->getPosition();
+                        float saveRotation = t->getRotation();
+                        sf::Vector2f saveScale = t->getScale();
+
+                        t->move(this->getPosition() - this->getOrigin());
+                        t->rotate(this->getRotation());
+                        t->scale(this->getScale());
+
+                        GameLoop::inst().getRenderWindow().draw(*dynamic_cast<sf::Drawable *>(t));
+
+                        t->setPosition(savePosition);
+                        t->setRotation(saveRotation);
+                        t->setScale(saveScale);
+
+                    }
+                    else if (sf::VertexArray *va = dynamic_cast<sf::VertexArray *>((*it)->d)) {
+
+                        sf::VertexArray transArray;
+                        transArray.resize(va->getVertexCount());
+                        for (std::size_t i = 0; i < va->getVertexCount(); ++i)
+                            transArray.append(sf::Vertex(this->getTransform().transformPoint((*va)[i].position), (*va)[i].color, (*va)[i].texCoords));
+                        GameLoop::inst().getRenderWindow().draw(transArray);
+
+                    }
+
+                }
 
             }
 
