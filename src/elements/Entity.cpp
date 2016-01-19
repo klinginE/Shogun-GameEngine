@@ -10,6 +10,7 @@ namespace sg {
     sf::Transformable()
     {
 
+        //this->owner = NULL;
         this->isCollidable = true;
         this->deletion = false;
 
@@ -19,6 +20,7 @@ namespace sg {
     sf::Transformable()
     {
 
+        //this->owner = NULL;
         this->isCollidable = setCollidable;
         this->deletion = false;
 
@@ -26,9 +28,11 @@ namespace sg {
 
     Entity::~Entity() {
 
+        //this->owner = NULL;
         this->isCollidable = false;
         this->deletion = false;
         this->components.clear();
+        //this->possessions.clear();
 
     }
 
@@ -158,6 +162,26 @@ namespace sg {
         return this->components[idx];
 
     }
+
+//    std::vector<Entity *>::size_type Entity::getNumOfPossessions() const {
+//
+//        return this->possessions.size();
+//
+//    }
+//
+//    const Entity *Entity::getPossession(uint32_t idx) const {
+//
+//        if (idx >= this->getNumOfPossessions())
+//            return NULL;
+//        return this->possessions[idx];
+//
+//    }
+//
+//    const Entity *Entity::getOwner() const {
+//
+//        return this->owner;
+//
+//    }
 
     void Entity::setOriginComponent(uint32_t idx, const sf::Vector2f &origin) {
 
@@ -412,6 +436,38 @@ namespace sg {
         return r;
 
     }
+
+//    std::vector<Entity *>::size_type Entity::addPossession(Entity &newPossession) {
+//
+//       const Entity *currentAncestor = this;
+//       while (currentAncestor != NULL) {
+//
+//           if (currentAncestor == &newPossession)
+//               return (this->getNumOfComponents() - 1);
+//
+//           currentAncestor = currentAncestor->getOwner();
+//
+//       }
+//
+//       newPossession.owner = this;
+//       this->possessions.push_back(&newPossession);
+//
+//       return (this->getNumOfComponents() - 1);
+//
+//    }
+//
+//    Entity *Entity::removePossession(uint32_t idx) {
+//
+//        if (idx >= this->getNumOfPossessions())
+//            return NULL;
+//
+//        Entity *r = this->possessions[idx];
+//        this->possessions.erase(this->possessions.begin() + idx);
+//        r.owner = NULL;
+//
+//        return r;
+//
+//    }
 
     void Entity::draw() {
 

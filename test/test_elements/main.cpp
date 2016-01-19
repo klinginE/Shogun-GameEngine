@@ -10,7 +10,7 @@ void testBoundingShape() {
     std::cout << "bs0 number of shapes: " << bs0.getNumOfShapes() << std::endl;
     std::cout << std::endl;
 
-    //test get shape with no shape
+    //test get invalid shape
     std::cout << "TESTING GET 10th shape" << std::endl;
     const sf::Shape *badShape = bs0.getShape(9);
     if (badShape == NULL)
@@ -31,164 +31,282 @@ void testBoundingShape() {
     std::cout << "bs0 number of shapes: " << bs0.getNumOfShapes() << std::endl;
     std::cout << std::endl;
 
+    //test get valid shape
+    std::cout << "TESTING GET 0th SHAPE" << std::endl;
+    const sf::Shape *goodShape = bs0.getShape(0);
+    if (goodShape == &shape0)
+        std::cout << "success!, addedShape is same as shape0" << std::endl;
+    else
+        std::cout << "failure!" << std::endl;
+    std::cout << std::endl;
+
+    //test remove invalid shape
+    std::cout << "TESTING REMOVE 10th SHAPE" << std::endl;
+    badShape = bs0.removeShape(9);
+    if (badShape == NULL)
+        std::cout << "success!, shape is NULL" << std::endl;
+    else
+        std::cout << "failure!" << std::endl;
+    std::cout << std::endl;
+
+    //test remove valid shape
+    std::cout << "TESTING REMOVE 0th SHAPE" << std::endl;
+    sf::Shape *removedShape = bs0.removeShape(0);
+    if (removedShape == &shape0)
+        std::cout << "success!, removedShape is same as shape0" << std::endl;
+    else
+        std::cout << "failure!" << std::endl;
+    std::cout << std::endl;
+
+    //test set origin (float, float) with no shapes
+    std::cout << "TESTING SET ORIGIN (float, float) with no shapes" << std::endl;
+    bs0.setOrigin(5.0f, 7.0f);
+    std::cout << "Origin.x: " << bs0.getOrigin().x << ", Origin.y: " << bs0.getOrigin().y << std::endl << std::endl;
+
+    //test set origin (sf::Vector2f) with no shapes
+    std::cout << "TESTING SET ORIGIN (sf::Vector2f) with no shapes" << std::endl;
+    bs0.setOrigin(sf::Vector2f(5.0f, 7.0f));
+    std::cout << "Origin.x: " << bs0.getOrigin().x << ", Origin.y: " << bs0.getOrigin().y << std::endl << std::endl;
+
+    //test set position (float, float) with no shapes
+    std::cout << "TESTING SET POSITION (float, float) with no shapes" << std::endl;
+    bs0.setPosition(9.0f, 2.0f);
+    std::cout << "Position.x: " << bs0.getPosition().x << ", Position.y: " << bs0.getPosition().y << std::endl << std::endl;
+
+    //test set position (sf::Vector2f) with no shapes
+    std::cout << "TESTING SET POSITION (sf::Vector2f) with no shapes" << std::endl;
+    bs0.setPosition(sf::Vector2f(9.0f, 2.0f));
+    std::cout << "Position.x: " << bs0.getPosition().x << ", Position.y: " << bs0.getPosition().y << std::endl << std::endl;
+
+    //test move (float, float) with no shapes
+    std::cout << "TESTING MOVE (float, float) with no shapes" << std::endl;
+    bs0.move(1.0f, 3.0f);
+    std::cout << "Position.x: " << bs0.getPosition().x << ", Position.y: " << bs0.getPosition().y << std::endl << std::endl;
+
+    //test move (sf::Vector2f) with no shapes
+    std::cout << "TESTING MOVE (sf::Vector2f) with no shapes" << std::endl;
+    bs0.move(sf::Vector2f(1.0f, 3.0f));
+    std::cout << "Position.x: " << bs0.getPosition().x << ", Position.y: " << bs0.getPosition().y << std::endl << std::endl;
+
+    //test set rotation (float) with no shapes
+    std::cout << "TESTING SET ROTATION (float, float) with no shapes" << std::endl;
+    bs0.setRotation(15.0f);
+    std::cout << "Rotation: " << bs0.getRotation() << std::endl << std::endl;
+
+    //test rotate (float) with no shapes
+    std::cout << "TESTING ROTATE (float) with no shapes" << std::endl;
+    bs0.rotate(30.0f);
+    std::cout << "Rotation: " << bs0.getRotation() << std::endl << std::endl;
+
+    //test set scale (float, float) with no shapes
+    std::cout << "TESTING SET SCALE (float, float) with no shapes" << std::endl;
+    bs0.setScale(2.0f, 3.0f);
+    std::cout << "Scale.x: " << bs0.getScale().x << ", Scale.y: " << bs0.getScale().y << std::endl << std::endl;
+
+    //test set scale (sf::Vector2f) with no shapes
+    std::cout << "TESTING SET SCALE (sf::Vector2f) with no shapes" << std::endl;
+    bs0.setScale(sf::Vector2f(5.0f, 4.0f));
+    std::cout << "Scale.x: " << bs0.getScale().x << ", Scale.y: " << bs0.getScale().y << std::endl << std::endl;
+
+    //test scale (float, float) with no shapes
+    std::cout << "TESTING SCALE (float, float) with no shapes" << std::endl;
+    bs0.scale(1.0f, 0.5f);
+    std::cout << "Scale.x: " << bs0.getScale().x << ", Scale.y: " << bs0.getScale().y << std::endl << std::endl;
+
+    //test scale (sf::Vector2f) with no shapes
+    std::cout << "TESTING SCALE (sf::Vector2f) with no shapes" << std::endl;
+    bs0.scale(sf::Vector2f(2.0f, 1.0f));
+    std::cout << "Scale.x: " << bs0.getScale().x << ", Scale.y: " << bs0.getScale().y << std::endl << std::endl;
+
+    //test local bounds without shapes
+    std::cout << "TESTING local bounds without shapes" << std::endl;
+    sf::FloatRect fr = bs0.getLocalBounds();
+    std::cout << "bounds.left:    " << fr.left << std::endl;
+    std::cout << "bounds.top:     " << fr.top << std::endl;
+    std::cout << "bounds.width:   " << fr.width << std::endl;
+    std::cout << "bounds.height:  " << fr.height << std::endl << std::endl;
+
+    //test global bounds without shapes
+    std::cout << "TESTING global bounds without shapes" << std::endl;
+    fr = bs0.getGlobalBounds();
+    std::cout << "bounds.left:    " << fr.left << std::endl;
+    std::cout << "bounds.top:     " << fr.top << std::endl;
+    std::cout << "bounds.width:   " << fr.width << std::endl;
+    std::cout << "bounds.height:  " << fr.height << std::endl << std::endl;
+
+    bs0.setOrigin(0.0f, 0.0f);
+    bs0.setPosition(0.0f, 0.0f);
+    bs0.setRotation(0.0f);
+    bs0.setScale(1.0f, 1.0f);
+    bs0.addShape(*removedShape);
+
+    sf::ConvexShape shape1(4);
+    shape1.setPoint(0, sf::Vector2f(-5.0f, -5.0f));
+    shape1.setPoint(1, sf::Vector2f(5.0f, -5.0f));
+    shape1.setPoint(2, sf::Vector2f(5.0f, 5.0f));
+    shape1.setPoint(3, sf::Vector2f(-5.0f, 5.0f));
+    bs0.addShape(shape1);
+
+    sf::ConvexShape shape2(4);
+    shape2.setPoint(0, sf::Vector2f(-5.0f, -5.0f));
+    shape2.setPoint(1, sf::Vector2f(5.0f, -5.0f));
+    shape2.setPoint(2, sf::Vector2f(5.0f, 5.0f));
+    shape2.setPoint(3, sf::Vector2f(-5.0f, 5.0f));
+    bs0.addShape(shape2);
+
+    //test set origin (float, float) with shapes
+    std::cout << "TESTING SET ORIGIN (float, float) with shapes" << std::endl;
+    bs0.setOrigin(5.0f, 7.0f);
+    std::cout << "Origin.x: " << bs0.getOrigin().x << ", Origin.y: " << bs0.getOrigin().y << std::endl;
+    std::cout << "shape 0 Origin.x: " << bs0.getShape(0)->getOrigin().x << ", shape 0 Origin.y: " << bs0.getShape(0)->getOrigin().y << std::endl;
+    std::cout << "shape 1 Origin.x: " << bs0.getShape(1)->getOrigin().x << ", shape 1 Origin.y: " << bs0.getShape(1)->getOrigin().y << std::endl;
+    std::cout << "shape 2 Origin.x: " << bs0.getShape(2)->getOrigin().x << ", shape 2 Origin.y: " << bs0.getShape(2)->getOrigin().y << std::endl;
+    std::cout << "shape 0 trans Origin.x: " << bs0.getShape(0)->getOrigin().x + bs0.getOrigin().x << ", shape 0 trans Origin.y: " << bs0.getShape(0)->getOrigin().y + bs0.getOrigin().y << std::endl;
+    std::cout << "shape 1 trans Origin.x: " << bs0.getShape(1)->getOrigin().x + bs0.getOrigin().x << ", shape 1 trans Origin.y: " << bs0.getShape(1)->getOrigin().y + bs0.getOrigin().y << std::endl;
+    std::cout << "shape 0 trans Origin.x: " << bs0.getShape(2)->getOrigin().x + bs0.getOrigin().x << ", shape 2 trans Origin.y: " << bs0.getShape(2)->getOrigin().y + bs0.getOrigin().y << std::endl << std::endl;
+
+    //test set origin (sf::Vector2f) with shapes
+    std::cout << "TESTING SET ORIGIN (sf::Vector2f) with shapes" << std::endl;
+    bs0.setOrigin(sf::Vector2f(5.0f, 7.0f));
+    std::cout << "Origin.x: " << bs0.getOrigin().x << ", Origin.y: " << bs0.getOrigin().y << std::endl;
+    std::cout << "shape 0 Origin.x: " << bs0.getShape(0)->getOrigin().x << ", shape 0 Origin.y: " << bs0.getShape(0)->getOrigin().y << std::endl;
+    std::cout << "shape 1 Origin.x: " << bs0.getShape(1)->getOrigin().x << ", shape 1 Origin.y: " << bs0.getShape(1)->getOrigin().y << std::endl;
+    std::cout << "shape 2 Origin.x: " << bs0.getShape(2)->getOrigin().x << ", shape 2 Origin.y: " << bs0.getShape(2)->getOrigin().y << std::endl;
+    std::cout << "shape 0 trans Origin.x: " << bs0.getShape(0)->getOrigin().x + bs0.getOrigin().x << ", shape 0 trans Origin.y: " << bs0.getShape(0)->getOrigin().y + bs0.getOrigin().y << std::endl;
+    std::cout << "shape 1 trans Origin.x: " << bs0.getShape(1)->getOrigin().x + bs0.getOrigin().x << ", shape 1 trans Origin.y: " << bs0.getShape(1)->getOrigin().y + bs0.getOrigin().y << std::endl;
+    std::cout << "shape 0 trans Origin.x: " << bs0.getShape(2)->getOrigin().x + bs0.getOrigin().x << ", shape 2 trans Origin.y: " << bs0.getShape(2)->getOrigin().y + bs0.getOrigin().y << std::endl << std::endl;
+
+    //test set position (float, float) with shapes
+    std::cout << "TESTING SET POSITION (float, float) with shapes" << std::endl;
+    bs0.setPosition(9.0f, 2.0f);
+    std::cout << "Position.x: " << bs0.getPosition().x << ", Position.y: " << bs0.getPosition().y << std::endl;
+    std::cout << "shape 0 Position.x: " << bs0.getShape(0)->getPosition().x << ", shape 0 Position.y: " << bs0.getShape(0)->getPosition().y << std::endl;
+    std::cout << "shape 1 Position.x: " << bs0.getShape(1)->getPosition().x << ", shape 1 Position.y: " << bs0.getShape(1)->getPosition().y << std::endl;
+    std::cout << "shape 2 Position.x: " << bs0.getShape(2)->getPosition().x << ", shape 2 Position.y: " << bs0.getShape(2)->getPosition().y << std::endl;
+    std::cout << "shape 0 trans Position.x: " << bs0.getShape(0)->getPosition().x + bs0.getPosition().x << ", shape 0 trans Position.y: " << bs0.getShape(0)->getPosition().y + bs0.getPosition().y << std::endl;
+    std::cout << "shape 1 trans Position.x: " << bs0.getShape(1)->getPosition().x + bs0.getPosition().x << ", shape 1 trans Position.y: " << bs0.getShape(1)->getPosition().y + bs0.getPosition().y << std::endl;
+    std::cout << "shape 0 trans Position.x: " << bs0.getShape(2)->getPosition().x + bs0.getPosition().x << ", shape 2 trans Position.y: " << bs0.getShape(2)->getPosition().y + bs0.getPosition().y << std::endl << std::endl;
+
+    //test set position (sf::Vector2f) with shapes
+    std::cout << "TESTING SET POSITION (sf::Vector2f) with no shapes" << std::endl;
+    bs0.setPosition(sf::Vector2f(9.0f, 2.0f));
+    std::cout << "Position.x: " << bs0.getPosition().x << ", Position.y: " << bs0.getPosition().y << std::endl;
+    std::cout << "shape 0 Position.x: " << bs0.getShape(0)->getPosition().x << ", shape 0 Position.y: " << bs0.getShape(0)->getPosition().y << std::endl;
+    std::cout << "shape 1 Position.x: " << bs0.getShape(1)->getPosition().x << ", shape 1 Position.y: " << bs0.getShape(1)->getPosition().y << std::endl;
+    std::cout << "shape 2 Position.x: " << bs0.getShape(2)->getPosition().x << ", shape 2 Position.y: " << bs0.getShape(2)->getPosition().y << std::endl;
+    std::cout << "shape 0 trans Position.x: " << bs0.getShape(0)->getPosition().x + bs0.getPosition().x << ", shape 0 trans Position.y: " << bs0.getShape(0)->getPosition().y + bs0.getPosition().y << std::endl;
+    std::cout << "shape 1 trans Position.x: " << bs0.getShape(1)->getPosition().x + bs0.getPosition().x << ", shape 1 trans Position.y: " << bs0.getShape(1)->getPosition().y + bs0.getPosition().y << std::endl;
+    std::cout << "shape 0 trans Position.x: " << bs0.getShape(2)->getPosition().x + bs0.getPosition().x << ", shape 2 trans Position.y: " << bs0.getShape(2)->getPosition().y + bs0.getPosition().y << std::endl << std::endl;
+
+    //test move (float, float) with shapes
+    std::cout << "TESTING MOVE (float, float) with shapes" << std::endl;
+    bs0.move(1.0f, 3.0f);
+    std::cout << "Position.x: " << bs0.getPosition().x << ", Position.y: " << bs0.getPosition().y << std::endl;
+    std::cout << "shape 0 Position.x: " << bs0.getShape(0)->getPosition().x << ", shape 0 Position.y: " << bs0.getShape(0)->getPosition().y << std::endl;
+    std::cout << "shape 1 Position.x: " << bs0.getShape(1)->getPosition().x << ", shape 1 Position.y: " << bs0.getShape(1)->getPosition().y << std::endl;
+    std::cout << "shape 2 Position.x: " << bs0.getShape(2)->getPosition().x << ", shape 2 Position.y: " << bs0.getShape(2)->getPosition().y << std::endl;
+    std::cout << "shape 0 trans Position.x: " << bs0.getShape(0)->getPosition().x + bs0.getPosition().x << ", shape 0 trans Position.y: " << bs0.getShape(0)->getPosition().y + bs0.getPosition().y << std::endl;
+    std::cout << "shape 1 trans Position.x: " << bs0.getShape(1)->getPosition().x + bs0.getPosition().x << ", shape 1 trans Position.y: " << bs0.getShape(1)->getPosition().y + bs0.getPosition().y << std::endl;
+    std::cout << "shape 0 trans Position.x: " << bs0.getShape(2)->getPosition().x + bs0.getPosition().x << ", shape 2 trans Position.y: " << bs0.getShape(2)->getPosition().y + bs0.getPosition().y << std::endl << std::endl;
+
+    //test move (sf::Vector2f) with shapes
+    std::cout << "TESTING MOVE (sf::Vector2f) with shapes" << std::endl;
+    bs0.move(sf::Vector2f(1.0f, 3.0f));
+    std::cout << "Position.x: " << bs0.getPosition().x << ", Position.y: " << bs0.getPosition().y << std::endl;
+    std::cout << "shape 0 Position.x: " << bs0.getShape(0)->getPosition().x << ", shape 0 Position.y: " << bs0.getShape(0)->getPosition().y << std::endl;
+    std::cout << "shape 1 Position.x: " << bs0.getShape(1)->getPosition().x << ", shape 1 Position.y: " << bs0.getShape(1)->getPosition().y << std::endl;
+    std::cout << "shape 2 Position.x: " << bs0.getShape(2)->getPosition().x << ", shape 2 Position.y: " << bs0.getShape(2)->getPosition().y << std::endl;
+    std::cout << "shape 0 trans Position.x: " << bs0.getShape(0)->getPosition().x + bs0.getPosition().x << ", shape 0 trans Position.y: " << bs0.getShape(0)->getPosition().y + bs0.getPosition().y << std::endl;
+    std::cout << "shape 1 trans Position.x: " << bs0.getShape(1)->getPosition().x + bs0.getPosition().x << ", shape 1 trans Position.y: " << bs0.getShape(1)->getPosition().y + bs0.getPosition().y << std::endl;
+    std::cout << "shape 0 trans Position.x: " << bs0.getShape(2)->getPosition().x + bs0.getPosition().x << ", shape 2 trans Position.y: " << bs0.getShape(2)->getPosition().y + bs0.getPosition().y << std::endl << std::endl;
+
+    //test set rotation (float) with shapes
+    std::cout << "TESTING SET ROTATION (float, float) with shapes" << std::endl;
+    bs0.setRotation(15.0f);
+    std::cout << "Rotation: " << bs0.getRotation() << std::endl;
+    std::cout << "shape 0 rotation: " << bs0.getShape(0)->getRotation() << std::endl;
+    std::cout << "shape 1 rotation: " << bs0.getShape(1)->getRotation() << std::endl;
+    std::cout << "shape 2 rotation: " << bs0.getShape(2)->getRotation() << std::endl;
+    std::cout << "shape 0 trans rotation: " << bs0.getShape(0)->getRotation() + bs0.getRotation() << std::endl;
+    std::cout << "shape 1 trans rotation: " << bs0.getShape(1)->getRotation() + bs0.getRotation() << std::endl;
+    std::cout << "shape 2 trans rotation: " << bs0.getShape(2)->getRotation() + bs0.getRotation() << std::endl << std::endl;
+
+    //test rotate (float) with shapes
+    std::cout << "TESTING ROTATE (float) with shapes" << std::endl;
+    bs0.rotate(30.0f);
+    std::cout << "Rotation: " << bs0.getRotation() << std::endl;
+    std::cout << "shape 0 rotation: " << bs0.getShape(0)->getRotation() << std::endl;
+    std::cout << "shape 1 rotation: " << bs0.getShape(1)->getRotation() << std::endl;
+    std::cout << "shape 2 rotation: " << bs0.getShape(2)->getRotation() << std::endl;
+    std::cout << "shape 0 trans rotation: " << bs0.getShape(0)->getRotation() + bs0.getRotation() << std::endl;
+    std::cout << "shape 1 trans rotation: " << bs0.getShape(1)->getRotation() + bs0.getRotation() << std::endl;
+    std::cout << "shape 2 trans rotation: " << bs0.getShape(2)->getRotation() + bs0.getRotation() << std::endl << std::endl;
+
+    //test set scale (float, float) with shapes
+    std::cout << "TESTING SET SCALE (float, float) with shapes" << std::endl;
+    bs0.setScale(2.0f, 3.0f);
+    std::cout << "Scale.x: " << bs0.getScale().x << ", Scale.y: " << bs0.getScale().y << std::endl;
+    std::cout << "shape 0 scale.x: " << bs0.getShape(0)->getScale().x << ", shape 0 scale.y: " << bs0.getShape(0)->getScale().y << std::endl;
+    std::cout << "shape 1 scale.x: " << bs0.getShape(1)->getScale().x << ", shape 1 scale.y: " << bs0.getShape(1)->getScale().y << std::endl;
+    std::cout << "shape 2 scale.x: " << bs0.getShape(2)->getScale().x << ", shape 2 scale.y: " << bs0.getShape(2)->getScale().y << std::endl;
+    std::cout << "shape 0 trans scale.x: " << bs0.getShape(0)->getScale().x * bs0.getScale().x << ", shape 0 trans scale.y: " << bs0.getShape(0)->getScale().y * bs0.getScale().y << std::endl;
+    std::cout << "shape 1 trans scale.x: " << bs0.getShape(1)->getScale().x * bs0.getScale().x << ", shape 1 trans scale.y: " << bs0.getShape(1)->getScale().y * bs0.getScale().y << std::endl;
+    std::cout << "shape 0 trans scale.x: " << bs0.getShape(2)->getScale().x * bs0.getScale().x << ", shape 2 trans scale.y: " << bs0.getShape(2)->getScale().y * bs0.getScale().y << std::endl << std::endl;
+
+    //test set scale (sf::Vector2f) with shapes
+    std::cout << "TESTING SET SCALE (sf::Vector2f) with shapes" << std::endl;
+    bs0.setScale(sf::Vector2f(5.0f, 4.0f));
+    std::cout << "Scale.x: " << bs0.getScale().x << ", Scale.y: " << bs0.getScale().y << std::endl;
+    std::cout << "shape 0 scale.x: " << bs0.getShape(0)->getScale().x << ", shape 0 scale.y: " << bs0.getShape(0)->getScale().y << std::endl;
+    std::cout << "shape 1 scale.x: " << bs0.getShape(1)->getScale().x << ", shape 1 scale.y: " << bs0.getShape(1)->getScale().y << std::endl;
+    std::cout << "shape 2 scale.x: " << bs0.getShape(2)->getScale().x << ", shape 2 scale.y: " << bs0.getShape(2)->getScale().y << std::endl;
+    std::cout << "shape 0 trans scale.x: " << bs0.getShape(0)->getScale().x * bs0.getScale().x << ", shape 0 trans scale.y: " << bs0.getShape(0)->getScale().y * bs0.getScale().y << std::endl;
+    std::cout << "shape 1 trans scale.x: " << bs0.getShape(1)->getScale().x * bs0.getScale().x << ", shape 1 trans scale.y: " << bs0.getShape(1)->getScale().y * bs0.getScale().y << std::endl;
+    std::cout << "shape 0 trans scale.x: " << bs0.getShape(2)->getScale().x * bs0.getScale().x << ", shape 2 trans scale.y: " << bs0.getShape(2)->getScale().y * bs0.getScale().y << std::endl << std::endl;
+
+    //test scale (float, float) with shapes
+    std::cout << "TESTING SCALE (float, float) with shapes" << std::endl;
+    bs0.scale(1.0f, 0.5f);
+    std::cout << "Scale.x: " << bs0.getScale().x << ", Scale.y: " << bs0.getScale().y << std::endl;
+    std::cout << "shape 0 scale.x: " << bs0.getShape(0)->getScale().x << ", shape 0 scale.y: " << bs0.getShape(0)->getScale().y << std::endl;
+    std::cout << "shape 1 scale.x: " << bs0.getShape(1)->getScale().x << ", shape 1 scale.y: " << bs0.getShape(1)->getScale().y << std::endl;
+    std::cout << "shape 2 scale.x: " << bs0.getShape(2)->getScale().x << ", shape 2 scale.y: " << bs0.getShape(2)->getScale().y << std::endl;
+    std::cout << "shape 0 trans scale.x: " << bs0.getShape(0)->getScale().x * bs0.getScale().x << ", shape 0 trans scale.y: " << bs0.getShape(0)->getScale().y * bs0.getScale().y << std::endl;
+    std::cout << "shape 1 trans scale.x: " << bs0.getShape(1)->getScale().x * bs0.getScale().x << ", shape 1 trans scale.y: " << bs0.getShape(1)->getScale().y * bs0.getScale().y << std::endl;
+    std::cout << "shape 0 trans scale.x: " << bs0.getShape(2)->getScale().x * bs0.getScale().x << ", shape 2 trans scale.y: " << bs0.getShape(2)->getScale().y * bs0.getScale().y << std::endl << std::endl;
+
+    //test scale (sf::Vector2f) with shapes
+    std::cout << "TESTING SCALE (sf::Vector2f) with shapes" << std::endl;
+    bs0.scale(sf::Vector2f(2.0f, 1.0f));
+    std::cout << "Scale.x: " << bs0.getScale().x << ", Scale.y: " << bs0.getScale().y << std::endl;
+    std::cout << "shape 0 scale.x: " << bs0.getShape(0)->getScale().x << ", shape 0 scale.y: " << bs0.getShape(0)->getScale().y << std::endl;
+    std::cout << "shape 1 scale.x: " << bs0.getShape(1)->getScale().x << ", shape 1 scale.y: " << bs0.getShape(1)->getScale().y << std::endl;
+    std::cout << "shape 2 scale.x: " << bs0.getShape(2)->getScale().x << ", shape 2 scale.y: " << bs0.getShape(2)->getScale().y << std::endl;
+    std::cout << "shape 0 trans scale.x: " << bs0.getShape(0)->getScale().x * bs0.getScale().x << ", shape 0 trans scale.y: " << bs0.getShape(0)->getScale().y * bs0.getScale().y << std::endl;
+    std::cout << "shape 1 trans scale.x: " << bs0.getShape(1)->getScale().x * bs0.getScale().x << ", shape 1 trans scale.y: " << bs0.getShape(1)->getScale().y * bs0.getScale().y << std::endl;
+    std::cout << "shape 0 trans scale.x: " << bs0.getShape(2)->getScale().x * bs0.getScale().x << ", shape 2 trans scale.y: " << bs0.getShape(2)->getScale().y * bs0.getScale().y << std::endl << std::endl;
+
+    //test local bounds with shapes
+    std::cout << "TESTING local bounds with shapes" << std::endl;
+    fr = bs0.getLocalBounds();
+    std::cout << "bounds.left:    " << fr.left << std::endl;
+    std::cout << "bounds.top:     " << fr.top << std::endl;
+    std::cout << "bounds.width:   " << fr.width << std::endl;
+    std::cout << "bounds.height:  " << fr.height << std::endl << std::endl;
+
+    //test global bounds with shapes
+    std::cout << "TESTING global bounds with shapes" << std::endl;
+    fr = bs0.getGlobalBounds();
+    std::cout << "bounds.left:    " << fr.left << std::endl;
+    std::cout << "bounds.top:     " << fr.top << std::endl;
+    std::cout << "bounds.width:   " << fr.width << std::endl;
+    std::cout << "bounds.height:  " << fr.height << std::endl << std::endl;
+
 }
 
 int main() {
 
     testBoundingShape();
-
-    /*sg::BoundingShape bs0;
-    std::cout << "bs0 getNumOfShapes: " << bs0.getNumOfShapes() << std::endl;
-    sf::ConvexShape s0;
-    s0.setPosition(sf::Vector2f(8.0f, 0.0f));
-    s0.setPointCount(4);
-    s0.setPoint(0, sf::Vector2f(-2.0f, 0.0f));
-    s0.setPoint(1, sf::Vector2f(2.0f, 0.0f));
-    s0.setPoint(2, sf::Vector2f(10.0f, 10.0f));
-    s0.setPoint(3, sf::Vector2f(-10.0f, 10.0f));
-    //s0.scale(sf::Vector2f(2.0f, 2.0f));
-    bs0.addShape(s0);
-    std::cout << bs0.getNumOfShapes() << std::endl;
-    std::cout << "x: " << bs0.getShape(0)->getPoint(0).x << ", y: " << bs0.getShape(0)->getPoint(0).y << std::endl;
-    std::cout << "x: " << bs0.getShape(0)->getPoint(1).x << ", y: " << bs0.getShape(0)->getPoint(1).y << std::endl;
-    std::cout << "x: " << bs0.getShape(0)->getPoint(2).x << ", y: " << bs0.getShape(0)->getPoint(2).y << std::endl;
-    std::cout << "x: " << bs0.getShape(0)->getPoint(3).x << ", y: " << bs0.getShape(0)->getPoint(3).y << std::endl << std::endl;
-
-    sg::BoundingShape bs1;
-    std::cout << "bs1 getNumOfShapes: " << bs1.getNumOfShapes() << std::endl;
-    sf::ConvexShape s1;
-    s1.setPosition(sf::Vector2f(0.0f, 0.0f));
-    s1.setPointCount(4);
-    s1.setPoint(0, sf::Vector2f(0.0f, 0.0f));
-    s1.setPoint(1, sf::Vector2f(100.0f, 0.0f));
-    s1.setPoint(2, sf::Vector2f(10.0f, 100.0f));
-    s1.setPoint(3, sf::Vector2f(0.0f, 100.0f));
-    bs1.addShape(s1);
-    std::cout << "bs1 getNumOfShapes: " << bs1.getNumOfShapes() << std::endl;
-    std::cout << "x: " << bs1.getShape(0)->getPoint(0).x << ", y: " << bs1.getShape(0)->getPoint(0).y << std::endl;
-    std::cout << "x: " << bs1.getShape(0)->getPoint(1).x << ", y: " << bs1.getShape(0)->getPoint(1).y << std::endl;
-    std::cout << "x: " << bs1.getShape(0)->getPoint(2).x << ", y: " << bs1.getShape(0)->getPoint(2).y << std::endl;
-    std::cout << "x: " << bs1.getShape(0)->getPoint(3).x << ", y: " << bs1.getShape(0)->getPoint(3).y << std::endl;
-    sf::Vector2f v1(0.0f, 0.0f);
-    std::cout << "collides?: " << bs0.collides(bs1, v1) << std::endl;
-    std::cout << "v1.x: " << v1.x << " v1.y: " << v1.y << std::endl << std::endl; 
-
-    sf::CircleShape s2;
-    s2.setPosition(sf::Vector2f(0.0f, 0.0f));
-    s2.setRadius(5.0f);
-    bs1.addShape(s2);
-    std::cout << "bs1 getNumOfShapes: " << bs1.getNumOfShapes() << std::endl;
-    const sf::ConvexShape rm = *dynamic_cast<const sf::ConvexShape *>(bs1.removeShape(0));
-    std::cout << "bs1 getNumOfShapes: " << bs1.getNumOfShapes() << std::endl;
-    std::cout << "rm.x: " << rm.getPoint(0).x << ", rm.y: " << rm.getPoint(0).y << std::endl;
-    std::cout << "rm.x: " << rm.getPoint(1).x << ", rm.y: " << rm.getPoint(1).y << std::endl;
-    std::cout << "rm.x: " << rm.getPoint(2).x << ", rm.y: " << rm.getPoint(2).y << std::endl;
-    std::cout << "rm.x: " << rm.getPoint(3).x << ", rm.y: " << rm.getPoint(3).y << std::endl;
-    std::cout << "bs1 addShape: " << bs1.addShape(rm) << std::endl;
-    sf::Vector2f v2(0.0f, 0.0f);
-    std::cout << "collides b0_to_b1?: " << bs0.collides(bs1, v2) << std::endl;
-    std::cout << "v2.x: " << v2.x << " v2.y: " << v2.y << std::endl;
-    std::cout << "collides b1_to_b0?: " << bs1.collides(bs0, v2) << std::endl;
-    std::cout << "v2.x: " << v2.x << " v2.y: " << v2.y << std::endl << std::endl;
-
-    sf::ConvexShape testShape;
-    testShape.setPosition(sf::Vector2f(2.0f, 0.0f));
-    testShape.setOrigin(sf::Vector2f(10.0f, 15.0f));
-    testShape.setPointCount(4);
-    testShape.setPoint(0, sf::Vector2f(2.0f, 0.0f));
-    testShape.setPoint(1, sf::Vector2f(6.0f, 0.0f));
-    testShape.setPoint(2, sf::Vector2f(8.0f, 8.0f));
-    testShape.setPoint(3, sf::Vector2f(0.0f, 8.0f));
-    for (uint32_t i = 0; i < 4; i++)
-        std::cout << "testShape x: " << testShape.getPoint(i).x << ", y: " << testShape.getPoint(i).y << std::endl;
-    std::cout << std::endl;
-    for (uint32_t i = 0; i < 4; i++) {
-        sf::Vector2f testPoint = testShape.getTransform().transformPoint(testShape.getPoint(i));
-        std::cout << "testShape x: " << testPoint.x << ", y: " << testPoint.y << std::endl;
-    }
-    std::cout << std::endl;
-    testShape.scale(sf::Vector2f(2.0f, 2.0f));
-    std::cout << "test pos x: " << testShape.getPosition().x << " y: " << testShape.getPosition().y << std::endl;
-    for (uint32_t i = 0; i < 4; i++) {
-        sf::Vector2f testPoint = testShape.getTransform().transformPoint(testShape.getPoint(i));
-        std::cout << "testShape x: " << testPoint.x << ", y: " << testPoint.y << std::endl;
-    }
-    std::cout << std::endl;
-    testShape.move(sf::Vector2f(5.0, 2.0));
-    std::cout << "test pos x: " << testShape.getPosition().x << " y: " << testShape.getPosition().y << std::endl;
-    for (uint32_t i = 0; i < 4; i++) {
-        sf::Vector2f testPoint = testShape.getPoint(i);
-        std::cout << "testShape x: " << testPoint.x << ", y: " << testPoint.y << std::endl;
-    }
-    std::cout << std::endl;*/
-
-    /*sf::CircleShape posShape;
-    posShape.setOrigin(0.0f, 0.0f);
-    posShape.setPosition(sf::Vector2f(0.0f, 0.0f));
-    posShape.setRadius(10.0f);
-    //posShape.setPointCount(4);
-    //posShape.setPoint(0, sf::Vector2f(-5.0f, -5.0f));
-    //posShape.setPoint(1, sf::Vector2f(5.0f, -5.0f));
-    //posShape.setPoint(2, sf::Vector2f(5.0f, 5.0f));
-    //posShape.setPoint(3, sf::Vector2f(-5.0f, 5.0f));
-    //posShape.setRotation(45);
-    posShape.setScale(2.0f, 2.0f);
-    posShape.setOrigin(10.0f, 10.0f);
-    posShape.move(10.0f, 0.0f);
-    std::cout << "posShape origin:" << std::endl;
-    std::cout << "x: " << posShape.getOrigin().x << " y: " << posShape.getOrigin().y << std::endl;
-    std::cout << "posShape position:" << std::endl;
-    std::cout << "x: " << posShape.getPosition().x << " y: " << posShape.getPosition().y << std::endl;
-    std::cout << "posShape radius:" << std::endl;
-    std::cout << "r: " << posShape.getRadius() << std::endl;
-    std::cout << "r: " << posShape.getRadius() * posShape.getScale().x << std::endl;*/
-    /*std::cout << "posShape relative transformed points: " << std::endl;
-    for (uint32_t i = 0; i < posShape.getPointCount(); i++) {
-        sf::Vector2f currentPoint = posShape.getPoint(i);
-        currentPoint.x += posShape.getPosition().x;
-        currentPoint.y += posShape.getPosition().y;
-        sf::Vector2f testPoint = posShape.getTransform().transformPoint(currentPoint);
-        testPoint.x -= posShape.getPosition().x;
-        testPoint.y -= posShape.getPosition().y;
-        std::cout << "posShape x: " << testPoint.x << ", y: " << testPoint.y << std::endl;
-    }*/
-    /*std::cout << "posShape absolute transformed points: " << std::endl;
-    for (uint32_t i = 0; i < posShape.getPointCount(); i++) {
-        sf::Vector2f currentPoint = posShape.getPoint(i);
-        sf::Vector2f testPoint = posShape.getTransform().transformPoint(currentPoint);
-        std::cout << "posShape x: " << testPoint.x << ", y: " << testPoint.y << std::endl;
-    }
-    std::cout << "posShape global bounds:" << std:: endl;
-    sf::FloatRect posShape_b = posShape.getGlobalBounds();
-    std::cout << "left:   " << posShape_b.left << std::endl;
-    std::cout << "top:    " << posShape_b.top << std::endl;
-    std::cout << "width:  " << posShape_b.width << std::endl;
-    std::cout << "height: " << posShape_b.height << std::endl;
-    std::cout << "posShape local bounds:" << std:: endl;
-    posShape_b = posShape.getLocalBounds();
-    std::cout << "left:   " << posShape_b.left << std::endl;
-    std::cout << "top:    " << posShape_b.top << std::endl;
-    std::cout << "width:  " << posShape_b.width << std::endl;
-    std::cout << "height: " << posShape_b.height << std::endl;*/
-
-    /*std::cout << "Rotate s0 by 180 degs" << std::endl;
-    posShpe.setRotation(180.0f);
-    //s0.setOrigin(0.0f, 0.0f);
-    s0_b = s0.getGlobalBounds();
-    std::cout << "top:    " << s0_b.top << std::endl;
-    std::cout << "left:   " << s0_b.left << std::endl;
-    std::cout << "width:  " << s0_b.width << std::endl;
-    std::cout << "height: " << s0_b.height << std::endl;
-    std::cout << "scale s0 x by 2.0 and y by 2.0" << std::endl;
-    //s0.setOrigin(0.0f, 0.0f);
-    s0.scale(2.0f, 2.0f);
-    s0.setOrigin(0.0f, 0.0f);
-    s0_b = s0.getGlobalBounds();
-    std::cout << "top:    " << s0_b.top << std::endl;
-    std::cout << "left:   " << s0_b.left << std::endl;
-    std::cout << "width:  " << s0_b.width << std::endl;
-    std::cout << "height: " << s0_b.height << std::endl;
-    std::cout << std::endl;*/
 
     return 0;
 

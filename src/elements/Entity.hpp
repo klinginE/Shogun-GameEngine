@@ -16,12 +16,13 @@
 
 namespace sg {
 
-    typedef struct {
+    class Component {
 
-        sf::Drawable *d;
-        sf::Transformable *t;
+        public:
+            sf::Drawable *d = NULL;
+            sf::Transformable *t = NULL;
 
-    } Component;
+    };
 
     class Entity: public sf::Transformable {
 
@@ -31,6 +32,8 @@ namespace sg {
 
         protected:
             std::vector<Component *> components;
+            //std::vector<Entity *> possessions;
+            //Entity *owner;
             bool isCollidable;
             virtual void handleCollision(Entity &, const std::vector<sf::Vector2f> &) {}
             virtual void render() {
@@ -80,6 +83,9 @@ namespace sg {
             void setDeletionStatus(bool);
             std::vector<Component *>::size_type getNumOfComponents() const;
             const Component *getComponent(uint32_t) const;
+            //std::vector<Entity *>::size_type getNumOfPossessions() const;
+            //const Entity *getPossession(uint32_t) const;
+            //const Entity *getOwner() const;
             void setOriginComponent(uint32_t, const sf::Vector2f &);
             void setPositionComponent(uint32_t, const sf::Vector2f &);
             void moveComponent(uint32_t, const sf::Vector2f &);
@@ -91,6 +97,8 @@ namespace sg {
             sf::FloatRect getTextureBounds(bool=true) const;
             std::vector<Component *>::size_type addComponent(Component &);
             Component *removeComponent(uint32_t);
+            //std::vector<Entity *>::size_type addPossession(Entity &);
+            //Entity *removePossession(uint32_t);
             virtual void update(sf::Time tslu) {
 
                 for (std::vector<Component *>::iterator it = this->components.begin() ; it != this->components.end(); ++it)

@@ -9,7 +9,7 @@
 // Shogun includes
 #include <GameWorld.hpp>
 
-#define GRAV_CONST 1.0f
+#define GRAV_CONST 100.0f
 //#define GRAV_CONST 1.0f
 #define STARS_WIDTH 81
 #define STARS_HEIGHT 81
