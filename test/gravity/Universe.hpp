@@ -9,21 +9,13 @@
 // Shogun includes
 #include <GameWorld.hpp>
 
-#define GRAV_CONST 100.0f
-//#define GRAV_CONST 1.0f
+#define GRAV_CONST 500.0f
 #define STARS_WIDTH 81
 #define STARS_HEIGHT 81
 #define NUM_STARS STARS_WIDTH*STARS_HEIGHT
-//#define NUM_STARS_ACROSS 100
-//#define NUM_STARS 5000
-//#define NUM_STARS_ACROSS 5000
-//#define STAR_SPACING 500.0f
-
-//#define UNIVERSE_WIDTH 3000
-//#define UNIVERSE_HEIGHT 3000
 
 #define TIME_MULTIPLIER 0.01f
-#define GRAVITY_SMOOTHING 1000000.0f
+#define GRAVITY_SMOOTHING 10000.0f
 
 #define RING_WIDTH (100.0f)
 #define RING_START (30.0f)
@@ -55,36 +47,8 @@ class Universe : public sg::GameWorld {
             deactivateInput();
             deactivateCollisions();
             
-            //sf::Vector2f centerPos(UNIVERSE_WIDTH/2.0f, UNIVERSE_HEIGHT/2.0f);
             sf::Vector2f centerPos(0, 0);
             
-//            stars[0].move(centerPos);
-//            stars[0].setMass(100.0f);
-//            addEntity(dynamic_cast<sg::Entity *>(&stars[0]));
-
-
-/*
-            for (int i = 0; i < NUM_STARS; i++) {
-
-                // random position
-                float ang = ((float) std::rand()) / (((float) RAND_MAX)/(2.0f*M_PI));
-                float dist = ((float) std::rand()) / (((float) RAND_MAX)/RING_WIDTH);
-                dist += RING_START;
-                sf::Vector2f pos((float) dist*cos(ang), (float) dist*sin(ang));
-                stars[i].move(pos);
-
-                // Random velocity
-                sf::Vector2f distVec = pos - centerPos;
-                sf::Vector2f vel(-distVec.y, distVec.x);
-                vel /= dist;
-                //vel *= ((float) std::rand()) / (((float) RAND_MAX)/(INITIAL_VELOCITY/dist));
-                vel *= INITIAL_VELOCITY/dist;
-                if (INITIAL_VELOCITY_ON)
-                    stars[i].setVel(vel);
-
-                addEntity(dynamic_cast<sg::Entity *>(&stars[i]));
-            }
-*/
             for (int i = 0; i < STARS_WIDTH; i++) {
                 for (int j = 0; j < STARS_HEIGHT; j++) {
                     
