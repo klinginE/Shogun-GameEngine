@@ -110,6 +110,11 @@ namespace sg {
         if (dynamic_cast<AnimatedSprite *>(&newTrans))
             throw std::invalid_argument("sf::Transfromable cannot be an animatedSprite");
 
+        newTrans.setOrigin(this->getOrigin());
+        newTrans.setPosition(this->getPosition());
+        newTrans.setRotation(this->getRotation());
+        newTrans.setScale(this->getScale());
+
         this->rects.push_back(&newRect);
         this->surfaces.push_back(&newTrans);
 

@@ -557,6 +557,12 @@ namespace sg {
         least.x = 0.0f;
         least.y = 0.0f;
         bool isCollide = false;
+        sf::Transform combinedGlobalTrans1 = sf::Transform::Identity;
+	combinedGlobalTrans1 = combinedGlobalTrans1.combine(globalTrans1);
+        combinedGlobalTrans1 = combinedGlobalTrans1.combine(this->getTransform());
+        sf::Transform combinedGlobalTrans2 = sf::Transform::Identity;
+        combinedGlobalTrans2 = combinedGlobalTrans2.combine(globalTrans2);
+        combinedGlobalTrans2 = combinedGlobalTrans2.combine(bs.getTransform());
         for (std::vector<sf::Shape *>::const_iterator it = this->shapes.begin(); it != this->shapes.end(); ++it)
             for (uint32_t i = 0; i < bs.getNumOfShapes(); i++) {
 
@@ -566,7 +572,7 @@ namespace sg {
                 sf::Vector2f v(0.0f, 0.0f);
                 if ((dynamic_cast<const sf::CircleShape *>(s0)) &&
                     (dynamic_cast<const sf::CircleShape *>(s1))) {
-                    if (this->collides_ctc(*s0, *s1, v, globalTrans1, globalTrans2)) {
+                    if (this->collides_ctc(*s0, *s1, v, combinedGlobalTrans1, combinedGlobalTrans2)) {
 
                         isCollide = true;
                         if (fabs(v.x) > fabs(least.x))
@@ -579,7 +585,7 @@ namespace sg {
                 //Circle to polygon
                 else if ((dynamic_cast<const sf::CircleShape *>(s0)) &&
                          !(dynamic_cast<const sf::CircleShape *>(s1))) {
-                    if (this->collides_ctp(*s0, *s1, v, globalTrans1, globalTrans2)) {
+                    if (this->collides_ctp(*s0, *s1, v, combinedGlobalTrans1, combinedGlobalTrans2)) {
 
                         isCollide = true;
                         if (fabs(v.x) > fabs(least.x))
@@ -592,7 +598,7 @@ namespace sg {
                 //polygon to circle
                 else if (!(dynamic_cast<const sf::CircleShape *>(s0)) &&
                          (dynamic_cast<const sf::CircleShape *>(s1))) {
-                    if (this->collides_ctp(*s1, *s0, v, globalTrans2, globalTrans1)) {
+                    if (this->collides_ctp(*s1, *s0, v, combinedGlobalTrans2, combinedGlobalTrans1)) {
 
                         v.x = -v.x;
                         v.y = -v.y;
@@ -606,7 +612,7 @@ namespace sg {
                 }
                 //polygon to polygon
                 else {
-                    if (this->collides_ptp(*s0, *s1, v, globalTrans1, globalTrans2)) {
+                    if (this->collides_ptp(*s0, *s1, v, combinedGlobalTrans1, combinedGlobalTrans2)) {
 
                         isCollide = true;
                         if (fabs(v.x) > fabs(least.x))
