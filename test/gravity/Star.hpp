@@ -31,9 +31,14 @@ class Star : public sg::Entity {
 
             circleShape.setRadius(getRadius());
             circleShape.setFillColor(sf::Color(150, 150, 150, (int) 255 * ALPHA));
+            //circleShape.setPosition(50.0f, 50.0f);
+            //circleShape.scale(20.0f, 10.0f);
+            //circleShape.rotate(45.0f);
             c0.d = &circleShape;
-            c0.t = NULL;
             this->addComponent(c0);
+            //this->rotate(45.0f);
+            //this->setPosition(1000.0f, 10.0f);
+
         };
 
         float getMass() {
@@ -73,12 +78,12 @@ class Star : public sg::Entity {
 
             if (viewSize.x > viewsize_threshold) {
                 float sizeRatio = viewsize_threshold/viewSize.x;
-                this->setScale(1.0f/sizeRatio, 1.0f/sizeRatio);
+                this->setScaleComponent(0, sf::Vector2f(1.0f/sizeRatio, 1.0f/sizeRatio));
             }
 
-            sg::Entity::render();
+            sg::Entity::draw();
             
-            this->setScale(1.0f, 1.0f);
+            this->setScaleComponent(0, sf::Vector2f(1.0f, 1.0f));
             
         };
         

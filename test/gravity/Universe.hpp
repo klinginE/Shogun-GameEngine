@@ -9,7 +9,7 @@
 // Shogun includes
 #include <GameWorld.hpp>
 
-#define GRAV_CONST 500.0f
+#define GRAV_CONST 1.0f
 #define STARS_WIDTH 81
 #define STARS_HEIGHT 81
 #define NUM_STARS STARS_WIDTH*STARS_HEIGHT
@@ -48,7 +48,7 @@ class Universe : public sg::GameWorld {
             deactivateCollisions();
             
             sf::Vector2f centerPos(0, 0);
-            
+
             for (int i = 0; i < STARS_WIDTH; i++) {
                 for (int j = 0; j < STARS_HEIGHT; j++) {
                     

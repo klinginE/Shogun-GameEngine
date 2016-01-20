@@ -10,7 +10,7 @@ namespace sg {
     sf::Transformable()
     {
 
-        //this->owner = NULL;
+        this->owner = NULL;
         this->isCollidable = true;
         this->deletion = false;
 
@@ -20,7 +20,7 @@ namespace sg {
     sf::Transformable()
     {
 
-        //this->owner = NULL;
+        this->owner = NULL;
         this->isCollidable = setCollidable;
         this->deletion = false;
 
@@ -28,11 +28,11 @@ namespace sg {
 
     Entity::~Entity() {
 
-        //this->owner = NULL;
+        this->owner = NULL;
         this->isCollidable = false;
         this->deletion = false;
         this->components.clear();
-        //this->possessions.clear();
+        this->possessions.clear();
 
     }
 
@@ -43,6 +43,10 @@ namespace sg {
 
         bool isCollides = false;
         std::vector<sf::Vector2f> collisionVectors;
+        sf::Transform trans0;
+        sf::Transform trans1;
+        this->getGlobalTransform(trans0);
+        e.getGlobalTransform(trans1);
         for (std::vector<Component *>::iterator it = this->components.begin(); it != this->components.end(); ++it)
             for (uint32_t i = 0; i < e.getNumOfComponents(); i++) {
 
@@ -109,7 +113,7 @@ namespace sg {
                 }
 
                 sf::Vector2f v(0.0f, 0.0f);
-                if (s0 != NULL && s1 != NULL && s0->collides((*s1), v, dynamic_cast<const sf::Transformable &>((*this)), dynamic_cast<const sf::Transformable &>(e))) {
+                if (s0 != NULL && s1 != NULL && s0->collides((*s1), v, trans0, trans1)) {
 
                     isCollides = true;
                     collisionVectors.push_back(v);
@@ -163,25 +167,44 @@ namespace sg {
 
     }
 
-//    std::vector<Entity *>::size_type Entity::getNumOfPossessions() const {
-//
-//        return this->possessions.size();
-//
-//    }
-//
-//    const Entity *Entity::getPossession(uint32_t idx) const {
-//
-//        if (idx >= this->getNumOfPossessions())
-//            return NULL;
-//        return this->possessions[idx];
-//
-//    }
-//
-//    const Entity *Entity::getOwner() const {
-//
-//        return this->owner;
-//
-//    }
+    std::vector<Entity *>::size_type Entity::getNumOfPossessions() const {
+
+        return this->possessions.size();
+
+    }
+
+    const Entity *Entity::getPossession(uint32_t idx) const {
+
+        if (idx >= this->getNumOfPossessions())
+            return NULL;
+        return this->possessions[idx];
+
+    }
+
+    const Entity *Entity::getOwner() const {
+
+        return this->owner;
+
+    }
+
+    void Entity::getGlobalTransform(sf::Transform &globalTransform) const {
+
+        std::stack<const sf::Transform *> transforms;
+        const Entity *currentAncestor = this;
+        while (currentAncestor != NULL) {
+
+            transforms.push(&currentAncestor->getTransform());
+            currentAncestor = currentAncestor->getOwner();
+
+        }
+        while (!transforms.empty()) {
+
+            globalTransform = globalTransform.combine((*transforms.top()));
+            transforms.pop();
+
+        }
+
+    }
 
     void Entity::setOriginComponent(uint32_t idx, const sf::Vector2f &origin) {
 
@@ -357,8 +380,13 @@ namespace sg {
             else
                 continue;
 
-            if (useGlobal)
-                currentBounds = this->getTransform().transformRect(currentBounds);
+            if (useGlobal) {
+
+                sf::Transform globalTransform;
+                this->getGlobalTransform(globalTransform);
+                currentBounds = globalTransform.transformRect(currentBounds);
+
+            }
             this->expandSurfaceBounds(bounds, currentBounds);
 
         }
@@ -400,8 +428,13 @@ namespace sg {
             else
                 continue;
 
-            if (useGlobal)
-                currentBounds = this->getTransform().transformRect(currentBounds);
+            if (useGlobal) {
+
+                sf::Transform globalTransform;
+                this->getGlobalTransform(globalTransform);
+                currentBounds = globalTransform.transformRect(currentBounds);
+
+            }
             this->expandSurfaceBounds(bounds, currentBounds);
 
         }
@@ -437,41 +470,62 @@ namespace sg {
 
     }
 
-//    std::vector<Entity *>::size_type Entity::addPossession(Entity &newPossession) {
-//
-//       const Entity *currentAncestor = this;
-//       while (currentAncestor != NULL) {
-//
-//           if (currentAncestor == &newPossession)
-//               return (this->getNumOfComponents() - 1);
-//
-//           currentAncestor = currentAncestor->getOwner();
-//
-//       }
-//
-//       newPossession.owner = this;
-//       this->possessions.push_back(&newPossession);
-//
-//       return (this->getNumOfComponents() - 1);
-//
-//    }
-//
-//    Entity *Entity::removePossession(uint32_t idx) {
-//
-//        if (idx >= this->getNumOfPossessions())
-//            return NULL;
-//
-//        Entity *r = this->possessions[idx];
-//        this->possessions.erase(this->possessions.begin() + idx);
-//        r.owner = NULL;
-//
-//        return r;
-//
-//    }
+    std::vector<Entity *>::size_type Entity::addPossession(Entity &newPossession) {
 
-    void Entity::draw() {
+       const Entity *currentAncestor = this;
+       while (currentAncestor != NULL) {
 
-        this->render();
+           if (currentAncestor == &newPossession)
+               return (this->getNumOfComponents() - 1);
+
+           currentAncestor = currentAncestor->getOwner();
+
+       }
+
+       if (newPossession.owner != NULL)
+           newPossession.owner->removePossession(&newPossession);
+       newPossession.owner = this;
+       this->possessions.push_back(&newPossession);
+
+       return (this->getNumOfComponents() - 1);
+
+    }
+
+    Entity *Entity::removePossession(uint32_t idx) {
+
+        if (idx >= this->getNumOfPossessions())
+            return NULL;
+
+        Entity *r = this->possessions[idx];
+        this->possessions.erase(this->possessions.begin() + idx);
+        r->owner = NULL;
+
+        return r;
+
+    }
+
+    int Entity::removePossession(Entity *removePossession) {
+
+        if (removePossession == NULL)
+            return -1;
+
+        uint32_t i;
+        for (i = 0; i < this->getNumOfPossessions(); ++i) {
+
+            if (this->possessions[i] == removePossession) {
+
+                this->possessions.erase(this->possessions.begin() + i);
+                removePossession->owner = NULL;
+                break;
+
+            }
+
+        }
+
+        if (i < this->getNumOfPossessions())
+            return i;
+
+        return -1;
 
     }
 

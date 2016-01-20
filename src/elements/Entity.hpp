@@ -27,50 +27,20 @@ namespace sg {
     class Entity: public sf::Transformable {
 
         private:
-            void expandSurfaceBounds(sf::FloatRect &, sf::FloatRect) const;
+            //Private member variables
             bool deletion;
+            //Private member functions
+            void expandSurfaceBounds(sf::FloatRect &, sf::FloatRect) const;
+            void getGlobalTransform(sf::Transform &) const;
 
         protected:
+            //Protected member variables
             std::vector<Component *> components;
-            //std::vector<Entity *> possessions;
-            //Entity *owner;
+            std::vector<Entity *> possessions;
+            Entity *owner;
             bool isCollidable;
+            //Protected member functions
             virtual void handleCollision(Entity &, const std::vector<sf::Vector2f> &) {}
-            virtual void render() {
-
-                // render sprites
-                for (std::vector<Component *>::iterator it = this->components.begin() ; it != this->components.end(); ++it) {
-
-                    if (sf::Transformable *t = dynamic_cast<sf::Transformable *>((*it)->d)) {
-
-                        sf::Vector2f savePosition = t->getPosition();
-                        float saveRotation = t->getRotation();
-                        sf::Vector2f saveScale = t->getScale();
-
-                        t->move(this->getPosition() - this->getOrigin());
-                        t->rotate(this->getRotation());
-                        t->scale(this->getScale());
-
-                        GameLoop::inst().getRenderWindow().draw(*dynamic_cast<sf::Drawable *>(t));
-
-                        t->setPosition(savePosition);
-                        t->setRotation(saveRotation);
-                        t->setScale(saveScale);
-
-                    }
-                    else if (sf::VertexArray *va = dynamic_cast<sf::VertexArray *>((*it)->d)) {
-
-                        sf::VertexArray transArray;
-                        transArray.resize(va->getVertexCount());
-                        for (std::size_t i = 0; i < va->getVertexCount(); ++i)
-                            transArray.append(sf::Vertex(this->getTransform().transformPoint((*va)[i].position), (*va)[i].color, (*va)[i].texCoords));
-                        GameLoop::inst().getRenderWindow().draw(transArray);
-
-                    }
-
-                }
-
-            }
 
         public:
             Entity();
@@ -83,9 +53,9 @@ namespace sg {
             void setDeletionStatus(bool);
             std::vector<Component *>::size_type getNumOfComponents() const;
             const Component *getComponent(uint32_t) const;
-            //std::vector<Entity *>::size_type getNumOfPossessions() const;
-            //const Entity *getPossession(uint32_t) const;
-            //const Entity *getOwner() const;
+            std::vector<Entity *>::size_type getNumOfPossessions() const;
+            const Entity *getPossession(uint32_t) const;
+            const Entity *getOwner() const;
             void setOriginComponent(uint32_t, const sf::Vector2f &);
             void setPositionComponent(uint32_t, const sf::Vector2f &);
             void moveComponent(uint32_t, const sf::Vector2f &);
@@ -97,8 +67,9 @@ namespace sg {
             sf::FloatRect getTextureBounds(bool=true) const;
             std::vector<Component *>::size_type addComponent(Component &);
             Component *removeComponent(uint32_t);
-            //std::vector<Entity *>::size_type addPossession(Entity &);
-            //Entity *removePossession(uint32_t);
+            std::vector<Entity *>::size_type addPossession(Entity &);
+            Entity *removePossession(uint32_t);
+            int removePossession(Entity *);
             virtual void update(sf::Time tslu) {
 
                 for (std::vector<Component *>::iterator it = this->components.begin() ; it != this->components.end(); ++it)
@@ -106,7 +77,18 @@ namespace sg {
                         s->update(tslu);
 
             }
-            void draw();
+            virtual void draw() {
+
+                sf::Transform globalTransform;
+                this->getGlobalTransform(globalTransform);
+                sf::RenderStates rs = sf::RenderStates::Default;
+                rs.transform = globalTransform;
+
+                // render sprites
+                for (std::vector<Component *>::iterator it = this->components.begin() ; it != this->components.end(); ++it)
+                    GameLoop::inst().getRenderWindow().draw(*(*it)->d, rs);
+
+            }
 
     };
 
