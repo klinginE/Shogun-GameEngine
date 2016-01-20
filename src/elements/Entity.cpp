@@ -43,8 +43,8 @@ namespace sg {
 
         bool isCollides = false;
         std::vector<sf::Vector2f> collisionVectors;
-        sf::Transform trans0;
-        sf::Transform trans1;
+        sf::Transform trans0 = sf::Transform::Identity;
+        sf::Transform trans1 = sf::Transform::Identity;
         this->getGlobalTransform(trans0);
         e.getGlobalTransform(trans1);
         for (std::vector<Component *>::iterator it = this->components.begin(); it != this->components.end(); ++it)
@@ -382,7 +382,7 @@ namespace sg {
 
             if (useGlobal) {
 
-                sf::Transform globalTransform;
+                sf::Transform globalTransform = sf::Transform::Identity;
                 this->getGlobalTransform(globalTransform);
                 currentBounds = globalTransform.transformRect(currentBounds);
 
@@ -430,7 +430,7 @@ namespace sg {
 
             if (useGlobal) {
 
-                sf::Transform globalTransform;
+                sf::Transform globalTransform = sf::Transform::Identity;
                 this->getGlobalTransform(globalTransform);
                 currentBounds = globalTransform.transformRect(currentBounds);
 
