@@ -125,7 +125,7 @@ namespace sg {
     std::pair<sf::IntRect *, sf::Transformable *> AnimatedSprite::removeFrame(uint32_t idx) {
 
         if (idx >= this->getNumOfFrames())
-            throw std::out_of_range("removeFrame(): Not a vaild index.");
+            throw std::out_of_range(std::string("In removeFrame(): ") + std::to_string(idx) + std::string(" is not a vaild frame index."));
 
         sf::IntRect *r = this->rects[idx];
         sf::Transformable *t = this->surfaces[idx];
@@ -162,13 +162,12 @@ namespace sg {
             return;
 
         this->timePast += tslu;
-        if (this->timePast >= this->frameDelay) {
-
-            this->timePast = sf::Time::Zero;
-            this->frameIndex = ((this->frameIndex + 1) % this->getNumOfFrames());
-            this->setTextureRect((*this->rects[this->frameIndex]));
-
-        }
+        float timePastAsSec = this->timePast.asSeconds();
+        float frameDelayAsSec = this->frameDelay.asSeconds();
+        uint32_t steps = static_cast<uint32_t>(floor(timePastAsSec / frameDelayAsSec));
+        this->timePast = sf::seconds(fmod(timePastAsSec, frameDelayAsSec));
+        this->frameIndex = ((this->frameIndex + steps) % this->getNumOfFrames());
+        this->setTextureRect((*this->rects[this->frameIndex]));
 
     }
 
