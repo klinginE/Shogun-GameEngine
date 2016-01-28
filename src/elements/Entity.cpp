@@ -47,10 +47,10 @@ namespace sg {
         sf::Transform trans1 = sf::Transform::Identity;
         this->getGlobalTransform(trans0);
         e.getGlobalTransform(trans1);
-        for (std::vector<Component *>::iterator it = this->components.begin(); it != this->components.end(); ++it)
+        for (const auto &it : this->components)
             for (uint32_t i = 0; i < e.getNumOfComponents(); i++) {
 
-                const sf::Transformable *t0 = (*it)->t;
+                const sf::Transformable *t0 = it->t;
                 if (const AnimatedSprite *as = dynamic_cast<const AnimatedSprite *>(t0))
                     t0 = as->getFrameBound(as->getFrameIndex());
 
@@ -199,7 +199,7 @@ namespace sg {
         }
         while (!transforms.empty()) {
 
-            globalTransform = globalTransform.combine((*transforms.top()));
+            globalTransform *= (*transforms.top());
             transforms.pop();
 
         }
@@ -346,9 +346,9 @@ namespace sg {
 
         float inf = std::numeric_limits<float>::infinity();
         sf::FloatRect bounds = sf::FloatRect(inf, inf, -inf, -inf);
-        for (std::vector<Component *>::const_iterator it = this->components.begin(); it != this->components.end(); ++it) {
+        for (const auto &it : this->components) {
 
-            const sf::Transformable *t = (*it)->t;
+            const sf::Transformable *t = it->t;
             if (const AnimatedSprite *as = dynamic_cast<const AnimatedSprite *>(t))
                 t = as->getFrameBound(as->getFrameIndex());
 
@@ -402,28 +402,28 @@ namespace sg {
 
         float inf = std::numeric_limits<float>::infinity();
         sf::FloatRect bounds(inf, inf, -inf, -inf);
-        for (std::vector<Component *>::const_iterator it = this->components.begin(); it != this->components.end(); ++it) {
+        for (const auto &it : this->components) {
 
             sf::FloatRect currentBounds(0.0f, 0.0f, 0.0f, 0.0f);
-            if (sf::Sprite *s = dynamic_cast<sf::Sprite *>((*it)->d)) {
+            if (sf::Sprite *s = dynamic_cast<sf::Sprite *>(it->d)) {
                 if (useGlobal)
                     currentBounds = s->getGlobalBounds();
                 else
                     currentBounds = s->getLocalBounds();
             }
-            else if (sf::Shape *sh = dynamic_cast<sf::Shape *>((*it)->d)) {
+            else if (sf::Shape *sh = dynamic_cast<sf::Shape *>(it->d)) {
                 if (useGlobal)
                     currentBounds = sh->getGlobalBounds();
                 else
                     currentBounds = sh->getLocalBounds();
             }
-            else if (sf::Text *t = dynamic_cast<sf::Text *>((*it)->d)) {
+            else if (sf::Text *t = dynamic_cast<sf::Text *>(it->d)) {
                 if (useGlobal)
                     currentBounds = t->getGlobalBounds();
                 else
                     currentBounds = t->getLocalBounds();
             }
-            else if (sf::VertexArray *va = dynamic_cast<sf::VertexArray *>((*it)->d))
+            else if (sf::VertexArray *va = dynamic_cast<sf::VertexArray *>(it->d))
                 currentBounds = va->getBounds();
             else
                 continue;

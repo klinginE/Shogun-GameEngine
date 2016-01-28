@@ -95,9 +95,9 @@ namespace sg {
 
         float inf = std::numeric_limits<float>::infinity();
         sf::FloatRect bounds(inf, inf, -inf, -inf);
-        for (std::vector<sf::Shape *>::const_iterator it = this->shapes.begin(); it != this->shapes.end(); ++it) {
+        for (const auto &it : this->shapes) {
 
-            sf::Shape *s = (*it);
+            sf::Shape *s = it;
             sf::FloatRect br;
             if (useLocal)
                 br = s->getLocalBounds();
@@ -563,10 +563,10 @@ namespace sg {
         sf::Transform combinedGlobalTrans2 = sf::Transform::Identity;
         combinedGlobalTrans2 = combinedGlobalTrans2.combine(globalTrans2);
         combinedGlobalTrans2 = combinedGlobalTrans2.combine(bs.getTransform());
-        for (std::vector<sf::Shape *>::const_iterator it = this->shapes.begin(); it != this->shapes.end(); ++it)
+        for (const auto &it : this->shapes)
             for (uint32_t i = 0; i < bs.getNumOfShapes(); i++) {
 
-                sf::Shape *s0 = (*it);
+                sf::Shape *s0 = it;
                 const sf::Shape *s1 = bs.getShape(i);
                 //Circle to Circle
                 sf::Vector2f v(0.0f, 0.0f);

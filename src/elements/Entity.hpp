@@ -72,21 +72,20 @@ namespace sg {
             int removePossession(Entity *);
             virtual void update(sf::Time tslu) {
 
-                for (std::vector<Component *>::iterator it = this->components.begin() ; it != this->components.end(); ++it)
-                    if (AnimatedSprite *s = dynamic_cast<AnimatedSprite *>((*it)->t))
+                for (const auto &it : this->components)
+                    if (AnimatedSprite *s = dynamic_cast<AnimatedSprite *>(it->t))
                         s->update(tslu);
 
             }
-            virtual void draw() {
+            virtual void draw(sf::RenderStates states=sf::RenderStates::Default) {
 
                 sf::Transform globalTransform;
                 this->getGlobalTransform(globalTransform);
-                sf::RenderStates rs = sf::RenderStates::Default;
-                rs.transform = globalTransform;
+                states.transform *= globalTransform;
 
                 // render sprites
-                for (std::vector<Component *>::iterator it = this->components.begin() ; it != this->components.end(); ++it)
-                    GameLoop::inst().getRenderWindow().draw(*(*it)->d, rs);
+                for (const auto &it : this->components)
+                    GameLoop::inst().getRenderWindow().draw(*it->d, states);
 
             }
 
