@@ -137,14 +137,22 @@ namespace sg {
     const sf::ConvexShape BoundingShape::approximateCircle(const sf::CircleShape &circle, const sf::Transform &globalTrans) const {
 
         sf::FloatRect gb = globalTrans.transformRect(circle.getGlobalBounds());
-        uint32_t n = static_cast<uint32_t>(ceil(gb.width * gb.height / 2.0f)) + 30;
+        uint32_t n = static_cast<uint32_t>(ceil(sqrt(gb.width * gb.height) / 2.0f)) + 30;
         sf::ConvexShape approxCircle(n);
-        approxCircle.setPoint(0, sf::Vector2f(2.0f * circle.getRadius(), circle.getRadius()));
-        float angle = 360.0f / static_cast<float>(n);
-        sf::Transform rotation;
-        rotation.rotate(angle, sf::Vector2f(circle.getRadius(), circle.getRadius()));
-        for (uint32_t i = 0; i < (n - 1); i++)
-            approxCircle.setPoint(i + 1, rotation.transformPoint(approxCircle.getPoint(i)));
+        float mult = 2.0f * M_PI / n - M_PI / 2.0f;
+        for (uint32_t i = 0; i < n; i++) {
+
+            float angle = i * mult;
+            sf::Vector2f v(std::cos(angle) * circle.getRadius(),
+                           std::sin(angle) * circle.getRadius());
+            v += sf::Vector2f(circle.getRadius(), circle.getRadius());
+            approxCircle.setPoint(i, v);
+
+        }
+        approxCircle.setOrigin(circle.getOrigin());
+        approxCircle.setPosition(circle.getPosition());
+        approxCircle.setRotation(circle.getRotation());
+        approxCircle.setScale(circle.getScale());
 
         return approxCircle;
 
@@ -330,9 +338,12 @@ namespace sg {
         }
 
         const sf::CircleShape &circle = dynamic_cast<const sf::CircleShape &>(poly1);
-        sf::FloatRect circleBounds = globalTrans1.transformRect(circle.getGlobalBounds());
+        sf::ConvexShape approxCircle = this->approximateCircle(circle, globalTrans1);
+        sf::FloatRect circleBounds = globalTrans1.transformRect(approxCircle.getGlobalBounds());
+        circleBounds.width = std::round(circleBounds.width);
+        circleBounds.height = std::round(circleBounds.height);
         if (circleBounds.width < circleBounds.height || circleBounds.width > circleBounds.height)
-            return this->collides_ptp(this->approximateCircle(circle, globalTrans1), poly2, least, globalTrans1, globalTrans2);
+            return this->collides_ptp(approxCircle, poly2, least, globalTrans1, globalTrans2);
 
         sf::Vector2f center = globalTrans1.transformPoint(circle.getTransform().transformPoint(sf::Vector2f(circle.getRadius(), circle.getRadius())));
         float inf = std::numeric_limits<float>::infinity();
@@ -359,9 +370,9 @@ namespace sg {
         for (uint32_t i = 0; i < poly2.getPointCount(); i++) {
 
             sf::Vector2f currentVertex = globalTrans2.transformPoint(poly2.getTransform().transformPoint(poly2.getPoint(i)));
-            xDiff = (currentVertex.x - center.x);
-            yDiff = (currentVertex.y - center.y);
-            distance = xDiff * xDiff + yDiff * yDiff;
+            float xDiff = (currentVertex.x - center.x);
+            float yDiff = (currentVertex.y - center.y);
+            float distance = xDiff * xDiff + yDiff * yDiff;
             #ifdef PARALLEL_ENABLED
             #pragma omp critical
             {
@@ -481,19 +492,24 @@ namespace sg {
 
         const sf::CircleShape &circle1 = dynamic_cast<const sf::CircleShape &>(poly1);
         const sf::CircleShape &circle2 = dynamic_cast<const sf::CircleShape &>(poly2);
-        sf::FloatRect circleBounds1 = globalTrans1.transformRect(circle1.getGlobalBounds());
-        sf::FloatRect circleBounds2 = globalTrans2.transformRect(circle2.getGlobalBounds());
+        sf::ConvexShape approxCircle1 = this->approximateCircle(circle1, globalTrans1);
+        sf::ConvexShape approxCircle2 = this->approximateCircle(circle2, globalTrans2);
+        sf::FloatRect circleBounds1 = globalTrans1.transformRect(approxCircle1.getGlobalBounds());
+        sf::FloatRect circleBounds2 = globalTrans2.transformRect(approxCircle2.getGlobalBounds());
+        circleBounds1.width = std::round(circleBounds1.width);
+        circleBounds1.height = std::round(circleBounds1.height);
+        circleBounds2.width = std::round(circleBounds2.width);
+        circleBounds2.height = std::round(circleBounds2.height);
         if ((circleBounds1.width < circleBounds1.height || circleBounds1.width > circleBounds1.height) &&
             (circleBounds2.width < circleBounds2.height || circleBounds2.width > circleBounds2.height))
-            return this->collides_ptp(this->approximateCircle(circle1, globalTrans1), this->approximateCircle(circle2, globalTrans2), least, globalTrans1, globalTrans2);
-
+            return this->collides_ptp(approxCircle1, approxCircle2, least, globalTrans1, globalTrans2);
         else if (!(circleBounds1.width < circleBounds1.height || circleBounds1.width > circleBounds1.height) &&
                  (circleBounds2.width < circleBounds2.height || circleBounds2.width > circleBounds2.height))
-            return this->collides_ctp(poly1, this->approximateCircle(circle2, globalTrans2), least, globalTrans1, globalTrans2);
+            return this->collides_ctp(poly1, approxCircle2, least, globalTrans1, globalTrans2);
         else if ((circleBounds1.width < circleBounds1.height || circleBounds1.width > circleBounds1.height) &&
                  !(circleBounds2.width < circleBounds2.height || circleBounds2.width > circleBounds2.height)) {
 
-            bool r = this->collides_ctp(poly2, this->approximateCircle(circle1, globalTrans1), least, globalTrans2, globalTrans1);
+            bool r = this->collides_ctp(poly2, approxCircle1, least, globalTrans2, globalTrans1);
             least.x = -least.x;
             least.y = -least.y;
 

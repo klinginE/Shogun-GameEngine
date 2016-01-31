@@ -21,7 +21,7 @@ namespace sg {
         for (std::list<GameWindow*>::iterator
              gameWindowIt=gameWindows.begin();
              gameWindowIt != gameWindows.end(); ++gameWindowIt) {
-            
+           
             GameWindow *gameWindow = *gameWindowIt;
             assert(gameWindow != NULL);
             gameWindow->render();

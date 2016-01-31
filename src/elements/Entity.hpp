@@ -5,6 +5,7 @@
 #include<vector>
 #include<math.h>
 #include<stdint.h>
+#include <typeinfo>
 
 //SFML includes
 #include<SFML/Graphics.hpp>
@@ -72,7 +73,7 @@ namespace sg {
             int removePossession(Entity *);
             virtual void update(sf::Time tslu) {
 
-                for (const auto &it : this->components)
+                for (auto &it : this->components)
                     if (AnimatedSprite *s = dynamic_cast<AnimatedSprite *>(it->t))
                         s->update(tslu);
 

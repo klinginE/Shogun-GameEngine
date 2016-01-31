@@ -60,16 +60,43 @@ namespace sg {
 
                 sf::RectangleShape tempRs0;
                 BoundingShape tempShape0;
+                sf::ConvexShape tempConvex0;
+                sf::CircleShape tempCircle0;
                 const BoundingShape *s0 = NULL;
                 if (const BoundingShape *bs = dynamic_cast<const BoundingShape *>(t0))
                     s0 = bs;
+                else if (const sf::Shape *sh = dynamic_cast<const sf::Shape *>(t0)) {
+
+                    if (const sf::CircleShape *cs = dynamic_cast<const sf::CircleShape *>(sh)) {
+
+                        tempCircle0.setOrigin(cs->getOrigin());
+                        tempCircle0.setPosition(cs->getPosition());
+                        tempCircle0.setRotation(cs->getRotation());
+                        tempCircle0.setScale(cs->getScale());
+                        tempCircle0.setRadius(cs->getRadius());
+                        tempShape0.addShape(tempCircle0);
+
+                    }
+                    else {
+                    
+                        tempConvex0.setOrigin(sh->getOrigin());
+                        tempConvex0.setPosition(sh->getPosition());
+                        tempConvex0.setRotation(sh->getRotation());
+                        tempConvex0.setScale(sh->getScale());
+                        tempConvex0.setPointCount(sh->getPointCount());
+                        for (uint32_t pi = 0; pi < sh->getPointCount(); ++pi)
+                            tempConvex0.setPoint(pi, sh->getPoint(pi));
+                        tempShape0.addShape(tempConvex0);
+
+                    }
+                    s0 = &tempShape0;
+
+                }
                 else {
 
                     sf::FloatRect t0Bounds;
                     if (const sf::Sprite *s = dynamic_cast<const sf::Sprite *>(t0))
                         t0Bounds = s->getLocalBounds();
-                    else if (const sf::Shape *sh = dynamic_cast<const sf::Shape *>(t0))
-                        t0Bounds = sh->getLocalBounds();
                     else if (const sf::Text *t = dynamic_cast<const sf::Text *>(t0))
                         t0Bounds = t->getLocalBounds();
                     else
@@ -87,16 +114,43 @@ namespace sg {
 
                 sf::RectangleShape tempRs1;
                 BoundingShape tempShape1;
+                sf::ConvexShape tempConvex1;
+                sf::CircleShape tempCircle1;
                 const BoundingShape *s1 = NULL;
                 if (const BoundingShape *bs = dynamic_cast<const BoundingShape *>(t1))
                     s1 = bs;
+                else if (const sf::Shape *sh = dynamic_cast<const sf::Shape *>(t1)) {
+
+                    if (const sf::CircleShape *cs = dynamic_cast<const sf::CircleShape *>(sh)) {
+
+                        tempCircle1.setOrigin(cs->getOrigin());
+                        tempCircle1.setPosition(cs->getPosition());
+                        tempCircle1.setRotation(cs->getRotation());
+                        tempCircle1.setScale(cs->getScale());
+                        tempCircle1.setRadius(cs->getRadius());
+                        tempShape1.addShape(tempCircle1);
+
+                    }
+                    else {
+                    
+                        tempConvex1.setOrigin(sh->getOrigin());
+                        tempConvex1.setPosition(sh->getPosition());
+                        tempConvex1.setRotation(sh->getRotation());
+                        tempConvex1.setScale(sh->getScale());
+                        tempConvex1.setPointCount(sh->getPointCount());
+                        for (uint32_t pi = 0; pi < sh->getPointCount(); ++pi)
+                            tempConvex1.setPoint(pi, sh->getPoint(pi));
+                        tempShape1.addShape(tempConvex1);
+
+                    }
+                    s1 = &tempShape1;
+
+                }
                 else {
 
                     sf::FloatRect t1Bounds;
                     if (const sf::Sprite *s = dynamic_cast<const sf::Sprite *>(t1))
                         t1Bounds = s->getLocalBounds();
-                    else if (const sf::Shape *sh = dynamic_cast<const sf::Shape *>(t1))
-                        t1Bounds = sh->getLocalBounds();
                     else if (const sf::Text *t = dynamic_cast<const sf::Text *>(t1))
                         t1Bounds = t->getLocalBounds();
                     else

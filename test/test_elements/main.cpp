@@ -1,7 +1,14 @@
 #include<BoundingShape.hpp>
 #include<AnimatedSprite.hpp>
+#include<GameLoop.hpp>
+#include<GameState.hpp>
+#include<StateManager.hpp>
+#include<GameWindow.hpp>
+#include<GameWorld.hpp>
+#include<Entity.hpp>
 #include<SFML/Graphics.hpp>
 #include<iostream>
+#include"TestEntityState.hpp"
 
 void testBoundingShape() {
 
@@ -575,10 +582,26 @@ void testAnimatedSprite() {
 
 }
 
+void testEntity() {
+
+    // Initialize gameloop
+    sg::GameLoop::inst().init(sf::Vector2u(600, 600),
+                              sf::String("Test Elements"));
+    sg::GameLoop::inst().getRenderWindow().setFramerateLimit(60);
+
+    TestEntityState tes;
+    sg::StateManager::inst().pushState(&tes);
+
+    // Start gameloop
+    sg::GameLoop::inst().start();
+
+}
+
 int main() {
 
     //testBoundingShape();
-    testAnimatedSprite();
+    //testAnimatedSprite();
+    testEntity();
 
     return 0;
 
