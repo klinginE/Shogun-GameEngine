@@ -21,10 +21,12 @@ class TestEntityState : public sg::GameState {
         {
 
             e0.setPosition(200.0f, 300.0f);
+            e0.rotate(15.0f);
             e1 = new TestBox(true);
             e1->fill(sf::Color::Red);
             e1->setPosition(400.0f, 300.0f);
             e1->rotate(-90.0f);
+            e0.addPossession(*e1);
 
             world0.addEntity(&e0);
             world0.addEntity(e1);

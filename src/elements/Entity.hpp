@@ -22,6 +22,14 @@ namespace sg {
         public:
             sf::Drawable *d = NULL;
             sf::Transformable *t = NULL;
+            Component() {
+            }
+            Component(sf::Drawable &d, sf::Transformable &t) {
+
+                this->d = &d;
+                this->t = &t;
+
+            }
 
     };
 
@@ -41,7 +49,7 @@ namespace sg {
             Entity *owner;
             bool isCollidable;
             //Protected member functions
-            virtual void handleCollision(Entity &, const std::vector<sf::Vector2f> &) {}
+            virtual void handleCollision(const Entity &, const std::vector<sf::Vector2f> &) {}
 
         public:
             Entity();
@@ -53,7 +61,7 @@ namespace sg {
             bool getDeletionStatus();
             void setDeletionStatus(bool);
             std::vector<Component *>::size_type getNumOfComponents() const;
-            const Component *getComponent(uint32_t) const;
+            std::pair<const sf::Drawable *, const sf::Transformable *>getComponent(uint32_t) const;
             std::vector<Entity *>::size_type getNumOfPossessions() const;
             const Entity *getPossession(uint32_t) const;
             const Entity *getOwner() const;
@@ -66,8 +74,10 @@ namespace sg {
             void scaleComponent(uint32_t, const sf::Vector2f &);
             sf::FloatRect getSurfaceBounds(bool=true) const;
             sf::FloatRect getTextureBounds(bool=true) const;
-            std::vector<Component *>::size_type addComponent(Component &);
-            Component *removeComponent(uint32_t);
+            std::vector<Component *>::size_type addDrawable(sf::Drawable &, bool=true);
+            std::vector<Component *>::size_type addTransformable(sf::Transformable &, bool=true);
+            std::vector<Component *>::size_type addComponent(sf::Drawable &, sf::Transformable &);
+            std::pair<sf::Drawable *, sf::Transformable *> removeComponent(uint32_t);
             std::vector<Entity *>::size_type addPossession(Entity &);
             Entity *removePossession(uint32_t);
             int removePossession(Entity *);
@@ -86,7 +96,8 @@ namespace sg {
 
                 // render sprites
                 for (const auto &it : this->components)
-                    GameLoop::inst().getRenderWindow().draw(*it->d, states);
+                    if(it->d)
+                        GameLoop::inst().getRenderWindow().draw(*it->d, states);
 
             }
 

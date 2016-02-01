@@ -31,6 +31,8 @@ namespace sg {
         this->owner = NULL;
         this->isCollidable = false;
         this->deletion = false;
+        for (const auto &it : this->components)
+            delete it;
         this->components.clear();
         this->possessions.clear();
 
@@ -42,7 +44,8 @@ namespace sg {
             return false;
 
         bool isCollides = false;
-        std::vector<sf::Vector2f> collisionVectors;
+        std::vector<sf::Vector2f> collisionVectors0;
+        std::vector<sf::Vector2f> collisionVectors1;
         sf::Transform trans0 = sf::Transform::Identity;
         sf::Transform trans1 = sf::Transform::Identity;
         this->getGlobalTransform(trans0);
@@ -51,12 +54,20 @@ namespace sg {
             for (uint32_t i = 0; i < e.getNumOfComponents(); i++) {
 
                 const sf::Transformable *t0 = it->t;
+                if (!t0)
+                    continue;
                 if (const AnimatedSprite *as = dynamic_cast<const AnimatedSprite *>(t0))
                     t0 = as->getFrameBound(as->getFrameIndex());
+                if (!t0)
+                    continue;
 
-                const sf::Transformable *t1 = e.getComponent(i)->t;
+                const sf::Transformable *t1 = e.getComponent(i).second;
+                if (!t1)
+                    continue;
                 if (const AnimatedSprite *as = dynamic_cast<const AnimatedSprite *>(t1))
                     t1 = as->getFrameBound(as->getFrameIndex());
+                if (!t1)
+                    continue;
 
                 sf::RectangleShape tempRs0;
                 BoundingShape tempShape0;
@@ -167,17 +178,38 @@ namespace sg {
                 }
 
                 sf::Vector2f v(0.0f, 0.0f);
-                if (s0 != NULL && s1 != NULL && s0->collides((*s1), v, trans0, trans1)) {
+                if (s0 != NULL && s1 != NULL) {
 
-                    isCollides = true;
-                    collisionVectors.push_back(v);
+                    sf::FloatRect bounds0 = s0->getGlobalBounds();
+                    bounds0 = trans0.transformRect(bounds0);
+                    bounds0.width += bounds0.left;
+                    bounds0.height += bounds0.top;
+                    sf::FloatRect bounds1 = s1->getGlobalBounds();
+                    bounds1 = trans1.transformRect(bounds1);
+                    bounds1.width += bounds0.left;
+                    bounds1.height += bounds1.top;
+                    if (bounds0.left <= bounds1.width &&
+                        bounds0.width >= bounds1.left &&
+                        bounds0.top <= bounds1.height &&
+                        bounds0.height >= bounds1.top &&
+                        s0->collides((*s1), v, trans0, trans1)) {
+
+                        isCollides = true;
+                        collisionVectors0.push_back(v);
+                        collisionVectors1.push_back(-v);
+
+                    }
 
                 }
 
             }
 
-        if (isCollides)
-            this->handleCollision(e, collisionVectors);
+        if (isCollides) {
+
+            this->handleCollision(e, collisionVectors0);
+            e.handleCollision(*this, collisionVectors1);
+
+        }
 
         return isCollides;
 
@@ -213,11 +245,11 @@ namespace sg {
 
     }
 
-    const Component *Entity::getComponent(uint32_t idx) const {
+    std::pair<const sf::Drawable *, const sf::Transformable *> Entity::getComponent(uint32_t idx) const {
 
         if (idx >= this->getNumOfComponents())
-            return NULL;
-        return this->components[idx];
+            return std::pair<const sf::Drawable *, const sf::Transformable *>(NULL, NULL);
+        return std::pair<const sf::Drawable *, const sf::Transformable *>(this->components[idx]->d, this->components[idx]->t);
 
     }
 
@@ -403,8 +435,12 @@ namespace sg {
         for (const auto &it : this->components) {
 
             const sf::Transformable *t = it->t;
+            if (!t)
+                continue;
             if (const AnimatedSprite *as = dynamic_cast<const AnimatedSprite *>(t))
                 t = as->getFrameBound(as->getFrameIndex());
+            if (!t)
+                continue;
 
             sf::FloatRect currentBounds;
             if (const BoundingShape *bs = dynamic_cast<const BoundingShape *>(t)) {
@@ -500,27 +536,57 @@ namespace sg {
 
     }
 
-    std::vector<Component *>::size_type Entity::addComponent(Component &newComponent) {
+    std::vector<Component *>::size_type Entity::addDrawable(sf::Drawable &newDrawable, bool makeTransformable) {
 
-        if (dynamic_cast<Entity *>(newComponent.t))
-            throw std::invalid_argument("Component\'s sf::Transfromable cannot be an Entity");
+        sf::Transformable *t = NULL;
+        if (makeTransformable && (t = dynamic_cast<sf::Transformable *>(&newDrawable)))
+            return this->addComponent(newDrawable, *t);
 
-        if (newComponent.d != NULL || newComponent.t != NULL)
-            this->components.push_back(&newComponent);
-
+        Component *c = new Component();
+        c->d = &newDrawable;
+        c->t = t;
+        this->components.push_back(c);
         return (this->getNumOfComponents() - 1);
 
     }
 
-    Component *Entity::removeComponent(uint32_t idx) {
+    std::vector<Component *>::size_type Entity::addTransformable(sf::Transformable &newTransformable, bool makeDrawable) {
+
+        sf::Drawable *d = NULL;
+        if (makeDrawable && (d = dynamic_cast<sf::Drawable *>(&newTransformable)))
+            return this->addComponent(*d, newTransformable);
+
+        Component *c = new Component();
+        c->d = d;
+        c->t = &newTransformable;
+        this->components.push_back(c);
+        return (this->getNumOfComponents() - 1);
+
+    }
+
+    std::vector<Component *>::size_type Entity::addComponent(sf::Drawable &newDrawable, sf::Transformable &newTransformable) {
+
+        if (dynamic_cast<Entity *>(&newTransformable))
+            throw std::invalid_argument("Component\'s sf::Transfromable cannot be an Entity");
+
+        this->components.push_back(new Component(newDrawable, newTransformable));
+        return (this->getNumOfComponents() - 1);
+
+    }
+
+    std::pair<sf::Drawable *, sf::Transformable *> Entity::removeComponent(uint32_t idx) {
 
         if (idx >= this->getNumOfComponents())
-            return NULL;
+            return std::pair<sf::Drawable *, sf::Transformable *>(NULL, NULL);
 
         Component *r = this->components[idx];
+        sf::Drawable *d = r->d;
+        sf::Transformable *t = r->t;
         this->components.erase(this->components.begin() + idx);
+        delete r;
+        r = NULL;
 
-        return r;
+        return std::pair<sf::Drawable *, sf::Transformable *>(d, t);
 
     }
 

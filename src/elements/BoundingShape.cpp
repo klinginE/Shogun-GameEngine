@@ -137,7 +137,7 @@ namespace sg {
     const sf::ConvexShape BoundingShape::approximateCircle(const sf::CircleShape &circle, const sf::Transform &globalTrans) const {
 
         sf::FloatRect gb = globalTrans.transformRect(circle.getGlobalBounds());
-        uint32_t n = static_cast<uint32_t>(ceil(sqrt(gb.width * gb.height) / 2.0f)) + 30;
+        uint32_t n = static_cast<uint32_t>(ceil(std::min(gb.width, gb.height))) + 30;
         sf::ConvexShape approxCircle(n);
         float mult = 2.0f * M_PI / n - M_PI / 2.0f;
         for (uint32_t i = 0; i < n; i++) {
@@ -338,12 +338,11 @@ namespace sg {
         }
 
         const sf::CircleShape &circle = dynamic_cast<const sf::CircleShape &>(poly1);
-        sf::ConvexShape approxCircle = this->approximateCircle(circle, globalTrans1);
-        sf::FloatRect circleBounds = globalTrans1.transformRect(approxCircle.getGlobalBounds());
+        sf::FloatRect circleBounds = globalTrans1.transformRect(circle.getGlobalBounds());
         circleBounds.width = std::round(circleBounds.width);
         circleBounds.height = std::round(circleBounds.height);
         if (circleBounds.width < circleBounds.height || circleBounds.width > circleBounds.height)
-            return this->collides_ptp(approxCircle, poly2, least, globalTrans1, globalTrans2);
+            return this->collides_ptp(this->approximateCircle(circle, globalTrans1), poly2, least, globalTrans1, globalTrans2);
 
         sf::Vector2f center = globalTrans1.transformPoint(circle.getTransform().transformPoint(sf::Vector2f(circle.getRadius(), circle.getRadius())));
         float inf = std::numeric_limits<float>::infinity();
@@ -492,24 +491,22 @@ namespace sg {
 
         const sf::CircleShape &circle1 = dynamic_cast<const sf::CircleShape &>(poly1);
         const sf::CircleShape &circle2 = dynamic_cast<const sf::CircleShape &>(poly2);
-        sf::ConvexShape approxCircle1 = this->approximateCircle(circle1, globalTrans1);
-        sf::ConvexShape approxCircle2 = this->approximateCircle(circle2, globalTrans2);
-        sf::FloatRect circleBounds1 = globalTrans1.transformRect(approxCircle1.getGlobalBounds());
-        sf::FloatRect circleBounds2 = globalTrans2.transformRect(approxCircle2.getGlobalBounds());
+        sf::FloatRect circleBounds1 = globalTrans1.transformRect(circle1.getGlobalBounds());
+        sf::FloatRect circleBounds2 = globalTrans2.transformRect(circle2.getGlobalBounds());
         circleBounds1.width = std::round(circleBounds1.width);
         circleBounds1.height = std::round(circleBounds1.height);
         circleBounds2.width = std::round(circleBounds2.width);
         circleBounds2.height = std::round(circleBounds2.height);
         if ((circleBounds1.width < circleBounds1.height || circleBounds1.width > circleBounds1.height) &&
             (circleBounds2.width < circleBounds2.height || circleBounds2.width > circleBounds2.height))
-            return this->collides_ptp(approxCircle1, approxCircle2, least, globalTrans1, globalTrans2);
+            return this->collides_ptp(this->approximateCircle(circle1, globalTrans1), this->approximateCircle(circle2, globalTrans2), least, globalTrans1, globalTrans2);
         else if (!(circleBounds1.width < circleBounds1.height || circleBounds1.width > circleBounds1.height) &&
                  (circleBounds2.width < circleBounds2.height || circleBounds2.width > circleBounds2.height))
-            return this->collides_ctp(poly1, approxCircle2, least, globalTrans1, globalTrans2);
+            return this->collides_ctp(poly1, this->approximateCircle(circle2, globalTrans2), least, globalTrans1, globalTrans2);
         else if ((circleBounds1.width < circleBounds1.height || circleBounds1.width > circleBounds1.height) &&
                  !(circleBounds2.width < circleBounds2.height || circleBounds2.width > circleBounds2.height)) {
 
-            bool r = this->collides_ctp(poly2, approxCircle1, least, globalTrans2, globalTrans1);
+            bool r = this->collides_ctp(poly2, this->approximateCircle(circle1, globalTrans1), least, globalTrans2, globalTrans1);
             least.x = -least.x;
             least.y = -least.y;
 
@@ -584,6 +581,21 @@ namespace sg {
 
                 sf::Shape *s0 = it;
                 const sf::Shape *s1 = bs.getShape(i);
+                sf::FloatRect bounds0 = s0->getGlobalBounds();
+                bounds0 = combinedGlobalTrans1.transformRect(bounds0);
+                bounds0.width += bounds0.left;
+                bounds0.height += bounds0.top;
+                sf::FloatRect bounds1 = s1->getGlobalBounds();
+                bounds1 = combinedGlobalTrans2.transformRect(bounds1);
+                bounds1.width += bounds1.left;
+                bounds1.height += bounds1.top;
+
+                if (!(bounds0.left <= bounds1.width &&
+                      bounds0.width >= bounds1.left &&
+                      bounds0.top <= bounds1.height &&
+                      bounds0.height >= bounds1.top))
+                    continue;
+
                 //Circle to Circle
                 sf::Vector2f v(0.0f, 0.0f);
                 if ((dynamic_cast<const sf::CircleShape *>(s0)) &&
@@ -597,6 +609,7 @@ namespace sg {
                             least.y = v.y;
 
                     }
+
                 }
                 //Circle to polygon
                 else if ((dynamic_cast<const sf::CircleShape *>(s0)) &&

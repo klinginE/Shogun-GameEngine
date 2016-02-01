@@ -20,7 +20,6 @@ class Star : public sg::Entity {
     float min_disp_radius;
     float mass;
     sf::CircleShape circleShape = sf::CircleShape();
-    sg::Component c0;
 
     public:
         Star() : sg::Entity() {
@@ -35,8 +34,7 @@ class Star : public sg::Entity {
             circleShape.move(1000.0f/5.0f, 0.0f);
             //circleShape.scale(20.0f, 10.0f);
             //circleShape.rotate(45.0f);
-            c0.d = &circleShape;
-            this->addComponent(c0);
+            this->addDrawable(circleShape);
             //this->rotate(45.0f);
             //this->setPosition(1000.0f, 0.0f);
             this->scale(5.0f, 2.0f);
