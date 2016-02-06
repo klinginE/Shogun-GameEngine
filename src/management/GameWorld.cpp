@@ -146,6 +146,7 @@ namespace sg {
 
     void GameWorld::setInputManager(InputManager * inputManager) {
         this->inputManager = inputManager;
+        this->inputActive = true;
     }
 
     bool verticalComparitor(Entity *e1, Entity *e2) {
