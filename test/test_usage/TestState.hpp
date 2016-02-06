@@ -59,8 +59,8 @@ class TestState : public sg::GameState {
                       << window.getSizeInWorld().y << std::endl;
             
             // add game world and window
-            accessGameWorlds().push_back(&world);
-            accessGameWindows().push_back(&window);
+            addWorld(world);
+            addWindow(window);
 
         };
 

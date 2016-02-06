@@ -1,6 +1,6 @@
 #pragma once
 
-#include <list>
+#include <vector>
 
 #include "GameWorld.hpp"
 #include "GameWindow.hpp"
@@ -10,9 +10,9 @@ namespace sg {
 
     class GameState {
     
-        std::list<GameWorld*> gameWorlds;
-        std::list<GameWindow*> gameWindows;
-        InputManager inputManager;
+        std::vector<GameWorld*> gameWorlds;
+        std::vector<GameWindow*> gameWindows;
+        InputManager *inputManager;
     
         public:
             GameState();
@@ -20,9 +20,17 @@ namespace sg {
             virtual void render();
             virtual void update(const sf::Time &tslu);
     
-            std::list<GameWorld*>  & accessGameWorlds();
-            std::list<GameWindow*> & accessGameWindows();
-            InputManager           & accessInputManager();
+            void addWindow(GameWindow &);
+            void addWorld(GameWorld &);
+            
+            const GameWindow * getWindow(uint32_t);
+            const GameWorld * getWorld(uint32_t);
+
+            std::size_t getNumWindows();
+            std::size_t getNumWorlds();
+
+            void setInputManager(InputManager &);
+            InputManager * getInputManager();
     };
     
 }
