@@ -39,18 +39,18 @@ class TestState : public sg::GameState {
             entity.move(sf::Vector2f(0, 0));
 
             // Initialize world
-            world.addEntity(&entity);
+            world.addEntity(entity);
 
             // Initialize input
             worldInput.addAction(sf::Keyboard::Left,  [=](){moveLeft();});
             worldInput.addAction(sf::Keyboard::Right, [=](){moveRight();});
             worldInput.addAction(sf::Keyboard::Up,    [=](){moveUp();});
             worldInput.addAction(sf::Keyboard::Down,  [=](){moveDown();});
-            world.setInputManager(&worldInput);
+            world.setInputManager(worldInput);
             world.activateInput();
             
             // Initialize window
-            window.setWorld(&world);
+            window.setWorld(world);
             window.setSizeInWorld(sf::Vector2f((float) sg::GameLoop::inst().getRenderWindow().getSize().x,
                                                (float) sg::GameLoop::inst().getRenderWindow().getSize().y));
 

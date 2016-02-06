@@ -26,9 +26,9 @@ namespace sg {
         
     }
 
-    GameWindow::GameWindow(GameWorld *world) {
+    GameWindow::GameWindow(const GameWorld &world) {
     
-        this->world = world;
+        this->world = &world;
     
         this->positionInScreen.x = 0;
         this->positionInScreen.y = 0;
@@ -43,14 +43,14 @@ namespace sg {
         this->updateView();
     }
     
-    GameWindow::GameWindow(GameWorld *world,
+    GameWindow::GameWindow(const GameWorld &world,
                            sf::Vector2f positionInScreen,
                            sf::Vector2f sizeInScreen,
                            sf::Vector2f positionInWorld,
                            sf::Vector2f sizeInWorld,
                            float rotationInWorld) {
         
-        this->world = world;
+        this->world = &world;
     
         this->positionInScreen = positionInScreen;
         this->sizeInScreen = sizeInScreen;
@@ -60,13 +60,13 @@ namespace sg {
     
         this->updateView();
     }
-    GameWindow::GameWindow(GameWorld *world,
+    GameWindow::GameWindow(const GameWorld &world,
                            sf::Vector2f positionInScreen,
                            sf::Vector2f sizeInScreen,
                            sf::Vector2f positionInWorld,
                            sf::Vector2f sizeInWorld) {
         
-        this->world = world;
+        this->world = &world;
     
         this->positionInScreen = positionInScreen;
         this->sizeInScreen = sizeInScreen;
@@ -77,12 +77,12 @@ namespace sg {
         this->updateView();
     }
     
-    GameWindow::GameWindow(GameWorld *world,
+    GameWindow::GameWindow(const GameWorld &world,
                            sf::Vector2f positionInWorld,
                            sf::Vector2f sizeInWorld,
                            float rotationInWorld) {
     
-        this->world = world;
+        this->world = &world;
     
         this->positionInScreen.x = 0;
         this->positionInScreen.y = 0;
@@ -95,11 +95,11 @@ namespace sg {
         this->updateView();
     }
     
-    GameWindow::GameWindow(GameWorld *world,
+    GameWindow::GameWindow(const GameWorld &world,
                            sf::Vector2f positionInScreen,
                            sf::Vector2f sizeInScreen) {
     
-        this->world = world;
+        this->world = &world;
     
         this->positionInScreen = positionInScreen;
         this->sizeInScreen = sizeInScreen;
@@ -165,10 +165,10 @@ namespace sg {
     
     }
     
-    void GameWindow::setWorld(GameWorld *newWorld) {
-        this->world = newWorld;
+    void GameWindow::setWorld(const GameWorld &newWorld) {
+        this->world = &newWorld;
     }
-    GameWorld *GameWindow::getWorld() {
+    const GameWorld *GameWindow::getWorld() {
         return this->world;
     }
     

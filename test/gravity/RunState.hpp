@@ -26,7 +26,7 @@ class RunState : public sg::GameState {
         RunState() {
             
             // Initialize window
-            window.setWorld(dynamic_cast<sg::GameWorld *>(&universe));
+            window.setWorld(universe);
             window.setSizeInWorld(sf::Vector2f((float) sg::GameLoop::inst().getRenderWindow().getSize().x*INITIAL_ZOOM,
                                                (float) sg::GameLoop::inst().getRenderWindow().getSize().y*INITIAL_ZOOM));
 

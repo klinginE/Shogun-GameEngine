@@ -20,8 +20,7 @@ int main() {
 
     // Initialize states
     RunState runState;
-    sg::StateManager::inst().pushState(
-            dynamic_cast<sg::GameState *>(&runState));
+    sg::StateManager::inst().pushState(runState);
 
     // Start gameloop
     sg::GameLoop::inst().start();

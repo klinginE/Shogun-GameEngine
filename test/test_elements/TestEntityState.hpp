@@ -29,13 +29,13 @@ class TestEntityState : public sg::GameState {
             e1->rotate(-90.0f);
             e0.addPossession(*e1);
 
-            world0.addEntity(&e0);
-            world0.addEntity(e1);
+            world0.addEntity(e0);
+            world0.addEntity(*e1);
 
             window0.setSizeInWorld(sf::Vector2f(static_cast<float>(sg::GameLoop::inst().getRenderWindow().getSize().x),
                                                 static_cast<float>(sg::GameLoop::inst().getRenderWindow().getSize().y)));
             window0.setPosInWorld(window0.getSizeInWorld() / 2.0f);
-            window0.setWorld(&world0);
+            window0.setWorld(world0);
 
             addWindow(window0);
             addWorld(world0);

@@ -18,7 +18,7 @@ int main() {
 
     // Initialize states
     TestState testState;
-    sg::StateManager::inst().pushState(&testState);
+    sg::StateManager::inst().pushState(testState);
 
     // Start gameloop
     sg::GameLoop::inst().start();
