@@ -34,12 +34,12 @@ class RunState : public sg::GameState {
             addWorld(universe);
             addWindow(window);
 
-            inputManager.addAction(sf::Keyboard::Right, [=](){increaseWindowSize();});
-            inputManager.addAction(sf::Keyboard::Left,  [=](){decreaseWindowSize();});
-            inputManager.addAction(sf::Keyboard::W,     [=](){moveUp();});
-            inputManager.addAction(sf::Keyboard::A,     [=](){moveLeft();});
-            inputManager.addAction(sf::Keyboard::S,     [=](){moveDown();});
-            inputManager.addAction(sf::Keyboard::D,     [=](){moveRight();});
+            inputManager.addAction(sf::Keyboard::Right, [=](sf::Time t){increaseWindowSize();});
+            inputManager.addAction(sf::Keyboard::Left,  [=](sf::Time t){decreaseWindowSize();});
+            inputManager.addAction(sf::Keyboard::W,     [=](sf::Time t){moveUp();});
+            inputManager.addAction(sf::Keyboard::A,     [=](sf::Time t){moveLeft();});
+            inputManager.addAction(sf::Keyboard::S,     [=](sf::Time t){moveDown();});
+            inputManager.addAction(sf::Keyboard::D,     [=](sf::Time t){moveRight();});
             setInputManager(inputManager);
 
         };

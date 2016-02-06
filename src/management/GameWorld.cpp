@@ -42,7 +42,7 @@ namespace sg {
     void GameWorld::update(const sf::Time &tslu) {
         // process input
         if (inputActive && inputManager)
-            inputManager->processInput();
+            inputManager->processInput(tslu);
         // delete entities that should be removed
         auto shouldBeRemoved = [](Entity * s) {
             if (s->getDeletionStatus())

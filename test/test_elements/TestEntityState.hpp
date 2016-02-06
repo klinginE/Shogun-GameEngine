@@ -40,14 +40,14 @@ class TestEntityState : public sg::GameState {
             addWindow(window0);
             addWorld(world0);
 
-            inputManager.addAction(sf::Keyboard::Right, [=](){moveRight1();});
-            inputManager.addAction(sf::Keyboard::Left,  [=](){moveLeft1();});
-            inputManager.addAction(sf::Keyboard::Up,    [=](){moveUp1();});
-            inputManager.addAction(sf::Keyboard::Down,  [=](){moveDown1();});
-            inputManager.addAction(sf::Keyboard::W,     [=](){moveUp0();});
-            inputManager.addAction(sf::Keyboard::A,     [=](){moveLeft0();});
-            inputManager.addAction(sf::Keyboard::S,     [=](){moveDown0();});
-            inputManager.addAction(sf::Keyboard::D,     [=](){moveRight0();});
+            inputManager.addAction(sf::Keyboard::Right, [=](sf::Time t){moveRight1();});
+            inputManager.addAction(sf::Keyboard::Left,  [=](sf::Time t){moveLeft1();});
+            inputManager.addAction(sf::Keyboard::Up,    [=](sf::Time t){moveUp1();});
+            inputManager.addAction(sf::Keyboard::Down,  [=](sf::Time t){moveDown1();});
+            inputManager.addAction(sf::Keyboard::W,     [=](sf::Time t){moveUp0();});
+            inputManager.addAction(sf::Keyboard::A,     [=](sf::Time t){moveLeft0();});
+            inputManager.addAction(sf::Keyboard::S,     [=](sf::Time t){moveDown0();});
+            inputManager.addAction(sf::Keyboard::D,     [=](sf::Time t){moveRight0();});
             setInputManager(inputManager);
 
         }

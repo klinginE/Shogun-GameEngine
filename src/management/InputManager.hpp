@@ -11,17 +11,26 @@
 
 namespace sg {
 
+//    struct funcStuff {
+//        functype_t funcType;
+//
+//        union f {
+//            std::function<void()> basic,
+//            std::function<void(sf::Time)> withT
+//        };
+//    };
+
     class InputManager {
         
-        std::map<sf::Keyboard::Key, std::function<void()>> actions;
+        std::map<sf::Keyboard::Key, std::function<void(sf::Time)>> actions;
     
         public:
             InputManager();
     
-            void addAction(sf::Keyboard::Key key, std::function<void()> callback);
+            void addAction(sf::Keyboard::Key key, std::function<void(sf::Time)> callback);
             void clearAction(sf::Keyboard::Key key);
-            std::function<void()> getAction(sf::Keyboard::Key key);
-            void processInput();
+            std::function<void(sf::Time)> getAction(sf::Keyboard::Key key);
+            void processInput(const sf::Time &);
     
     };
     
