@@ -11,19 +11,19 @@ namespace sg {
     InputManager::InputManager() {
     }
     
-    void InputManager::addAction(int key, std::function<void()> callback) {
+    void InputManager::addAction(sf::Keyboard::Key key, std::function<void()> callback) {
         
         actions[key] = callback;
     
     }
     
-    void InputManager::clearAction(int key) {
+    void InputManager::clearAction(sf::Keyboard::Key key) {
     
         actions.erase(key);
     
     }
     
-    std::function<void()> InputManager::getAction(int key) {
+    std::function<void()> InputManager::getAction(sf::Keyboard::Key key) {
     
         return actions[key];
     
