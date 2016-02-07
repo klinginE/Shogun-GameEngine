@@ -177,7 +177,6 @@ namespace sg {
 
                 }
 
-                sf::Vector2f v(0.0f, 0.0f);
                 if (s0 != NULL && s1 != NULL) {
 
                     sf::FloatRect bounds0 = s0->getGlobalBounds();
@@ -192,13 +191,8 @@ namespace sg {
                         bounds0.width >= bounds1.left &&
                         bounds0.top <= bounds1.height &&
                         bounds0.height >= bounds1.top &&
-                        s0->collides((*s1), v, trans0, trans1)) {
-
+                        s0->collides((*s1), collisionVectors0, trans0, trans1))
                         isCollides = true;
-                        collisionVectors0.push_back(v);
-                        collisionVectors1.push_back(-v);
-
-                    }
 
                 }
 
@@ -206,6 +200,8 @@ namespace sg {
 
         if (isCollides) {
 
+            for (auto &itt : collisionVectors0)
+                collisionVectors1.push_back(-itt);
             this->handleCollision(e, collisionVectors0);
             e.handleCollision(*this, collisionVectors1);
 
@@ -556,6 +552,8 @@ namespace sg {
         if (makeDrawable && (d = dynamic_cast<sf::Drawable *>(&newTransformable)))
             return this->addComponent(*d, newTransformable);
 
+        if (dynamic_cast<Entity *>(&newTransformable))
+            throw std::invalid_argument("Component\'s sf::Transfromable cannot be an Entity");
         Component *c = new Component();
         c->d = d;
         c->t = &newTransformable;
@@ -595,7 +593,7 @@ namespace sg {
        const Entity *currentAncestor = this;
        while (currentAncestor != NULL) {
 
-           if (currentAncestor == &newPossession)
+           if (dynamic_cast<const void *>(currentAncestor) == dynamic_cast<void *>(&newPossession))
                return (this->getNumOfComponents() - 1);
 
            currentAncestor = currentAncestor->getOwner();
@@ -603,7 +601,7 @@ namespace sg {
        }
 
        if (newPossession.owner != NULL)
-           newPossession.owner->removePossession(&newPossession);
+           newPossession.owner->removePossession(newPossession);
        newPossession.owner = this;
        this->possessions.push_back(&newPossession);
 
@@ -624,18 +622,15 @@ namespace sg {
 
     }
 
-    int Entity::removePossession(Entity *removePossession) {
-
-        if (removePossession == NULL)
-            return -1;
+    int Entity::removePossession(Entity &removePossession) {
 
         uint32_t i;
         for (i = 0; i < this->getNumOfPossessions(); ++i) {
 
-            if (this->possessions[i] == removePossession) {
+            if (dynamic_cast<void *>(this->possessions[i]) == dynamic_cast<void *>(&removePossession)) {
 
                 this->possessions.erase(this->possessions.begin() + i);
-                removePossession->owner = NULL;
+                removePossession.owner = NULL;
                 break;
 
             }

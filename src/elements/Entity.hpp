@@ -49,13 +49,13 @@ namespace sg {
             Entity *owner;
             bool isCollidable;
             //Protected member functions
-            virtual void handleCollision(const Entity &, const std::vector<sf::Vector2f> &) {}
+            virtual void handleCollision(const Entity &e, const std::vector<sf::Vector2f> &collisionVectors) {}
 
         public:
             Entity();
             Entity(bool);
             ~Entity();
-            bool collides(sg::Entity &);// calls handleCollision
+            bool collides(Entity &);// calls handleCollision
             bool getIsCollidable() const;
             void setIsCollidable(bool);
             bool getDeletionStatus();
@@ -80,7 +80,7 @@ namespace sg {
             std::pair<sf::Drawable *, sf::Transformable *> removeComponent(uint32_t);
             std::vector<Entity *>::size_type addPossession(Entity &);
             Entity *removePossession(uint32_t);
-            int removePossession(Entity *);
+            int removePossession(Entity &);
             virtual void update(sf::Time tslu) {
 
                 for (auto &it : this->components)

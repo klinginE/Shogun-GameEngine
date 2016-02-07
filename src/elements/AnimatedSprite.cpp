@@ -125,7 +125,7 @@ namespace sg {
     std::pair<sf::IntRect *, sf::Transformable *> AnimatedSprite::removeFrame(uint32_t idx) {
 
         if (idx >= this->getNumOfFrames())
-            throw std::out_of_range(std::string("In removeFrame(): ") + std::to_string(idx) + std::string(" is not a vaild frame index."));
+            return std::pair<sf::IntRect *, sf::Transformable *>(NULL, NULL);
 
         sf::IntRect *r = this->rects[idx];
         sf::Transformable *t = this->surfaces[idx];
