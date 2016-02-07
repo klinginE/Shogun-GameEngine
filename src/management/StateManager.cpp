@@ -16,9 +16,9 @@ namespace sg {
     
     }
     
-    void StateManager::pushState(GameState *state) {
+    void StateManager::pushState(GameState &state) {
     
-        states.push(state);
+        states.push(&state);
     
     }
     

@@ -20,25 +20,27 @@ class RunState : public sg::GameState {
 
     Universe universe;
     sg::GameWindow window;
+    sg::InputManager inputManager;
     
     public:
         RunState() {
             
             // Initialize window
-            window.setWorld(dynamic_cast<sg::GameWorld *>(&universe));
+            window.setWorld(universe);
             window.setSizeInWorld(sf::Vector2f((float) sg::GameLoop::inst().getRenderWindow().getSize().x*INITIAL_ZOOM,
                                                (float) sg::GameLoop::inst().getRenderWindow().getSize().y*INITIAL_ZOOM));
 
             // add game world and window
-            accessGameWorlds().push_back(dynamic_cast<sg::GameWorld *>(&universe));
-            accessGameWindows().push_back(&window);
+            addWorld(universe);
+            addWindow(window);
 
-            accessInputManager().addAction(sf::Keyboard::Right, [=](){increaseWindowSize();});
-            accessInputManager().addAction(sf::Keyboard::Left,  [=](){decreaseWindowSize();});
-            accessInputManager().addAction(sf::Keyboard::W,     [=](){moveUp();});
-            accessInputManager().addAction(sf::Keyboard::A,     [=](){moveLeft();});
-            accessInputManager().addAction(sf::Keyboard::S,     [=](){moveDown();});
-            accessInputManager().addAction(sf::Keyboard::D,     [=](){moveRight();});
+            inputManager.addAction(sf::Keyboard::Right, [=](sf::Time t){increaseWindowSize();});
+            inputManager.addAction(sf::Keyboard::Left,  [=](sf::Time t){decreaseWindowSize();});
+            inputManager.addAction(sf::Keyboard::W,     [=](sf::Time t){moveUp();});
+            inputManager.addAction(sf::Keyboard::A,     [=](sf::Time t){moveLeft();});
+            inputManager.addAction(sf::Keyboard::S,     [=](sf::Time t){moveDown();});
+            inputManager.addAction(sf::Keyboard::D,     [=](sf::Time t){moveRight();});
+            setInputManager(inputManager);
 
         };
 

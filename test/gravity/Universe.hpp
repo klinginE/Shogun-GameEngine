@@ -56,7 +56,7 @@ class Universe : public sg::GameWorld {
 
                     stars[j + i*STARS_HEIGHT].move(pos);
 
-                    addEntity(dynamic_cast<sg::Entity *>(&stars[i*STARS_HEIGHT+j]));
+                    addEntity(stars[i*STARS_HEIGHT+j]);
                 }
             }
 

@@ -14,35 +14,35 @@ namespace sg {
         sf::Vector2f positionInWorld;
         sf::Vector2f sizeInWorld;
         float rotationInWorld;
-        GameWorld *world;
+        const GameWorld *world;
         sf::View view;
     
         public:
             GameWindow();
-            GameWindow(GameWorld *world);
-            GameWindow(GameWorld *world,
+            GameWindow(const GameWorld &world);
+            GameWindow(const GameWorld &world,
                        sf::Vector2f positionInScreen,
                        sf::Vector2f sizeInScreen,
                        sf::Vector2f positionInWorld,
                        sf::Vector2f sizeInWorld,
                        float rotationInWorld);
-            GameWindow(GameWorld *world,
+            GameWindow(const GameWorld &world,
                        sf::Vector2f positionInScreen,
                        sf::Vector2f sizeInScreen,
                        sf::Vector2f positionInWorld,
                        sf::Vector2f sizeInWorld);
-            GameWindow(GameWorld *world,
+            GameWindow(const GameWorld &world,
                        sf::Vector2f positionInWorld,
                        sf::Vector2f sizeInWorld,
                        float rotationInWorld);
-            GameWindow(GameWorld *world,
+            GameWindow(const GameWorld &world,
                        sf::Vector2f positionInScreen,
                        sf::Vector2f sizeInScreen);
     
             virtual void render();
     
-            void setWorld(GameWorld *newWorld);
-            GameWorld *getWorld();
+            void setWorld(const GameWorld &newWorld);
+            const GameWorld *getWorld();
     
             void setPosInScreen(sf::Vector2f positionInScreen);
             sf::Vector2f getPosInScreen();
@@ -60,7 +60,7 @@ namespace sg {
             float getRotInWorld();
 
             sf::View &getView();
-    
+
         private:
             
             void updateView();

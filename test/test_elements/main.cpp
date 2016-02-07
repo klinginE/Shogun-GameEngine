@@ -594,7 +594,7 @@ void testEntity() {
     sg::GameLoop::inst().getRenderWindow().setFramerateLimit(60);
 
     TestEntityState tes;
-    sg::StateManager::inst().pushState(&tes);
+    sg::StateManager::inst().pushState(tes);
 
     // Start gameloop
     sg::GameLoop::inst().start();

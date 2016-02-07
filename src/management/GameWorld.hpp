@@ -35,9 +35,9 @@ namespace sg {
             
             virtual void update(const sf::Time &);
 
-            void addEntity(Entity *entity);
-            void removeEntity(Entity *entity);
-            const std::vector<Entity *> & getEntities();
+            void addEntity(Entity &entity);
+            void removeEntity(Entity &entity);
+            const std::vector<Entity *> & getEntities() const;
             
             void activateCollisions();
             void deactivateCollisions();

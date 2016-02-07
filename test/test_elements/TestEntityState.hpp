@@ -18,6 +18,7 @@ class TestEntityState : public sg::GameState {
         TestBox e4 = TestBox();
         sg::GameWorld world0;
         sg::GameWindow window0;
+        sg::InputManager inputManager;
 
     public:
         TestEntityState() :
@@ -41,39 +42,39 @@ class TestEntityState : public sg::GameState {
             e4.addPossession(e0);
             e4.addPossession(e2);
 
-            world0.addEntity(&e0);
-            world0.addEntity(&e1);
-            world0.addEntity(&e2);
-            world0.addEntity(&e3);
-            world0.addEntity(&e4);
+            world0.addEntity(e0);
+            world0.addEntity(e1);
+            world0.addEntity(e2);
+            world0.addEntity(e3);
+            world0.addEntity(e4);
 
             window0.setSizeInWorld(sf::Vector2f(static_cast<float>(sg::GameLoop::inst().getRenderWindow().getSize().x),
                                                 static_cast<float>(sg::GameLoop::inst().getRenderWindow().getSize().y)));
             window0.setPosInWorld(window0.getSizeInWorld() / 2.0f);
-            window0.setWorld(&world0);
+            window0.setWorld(world0);
 
-            this->accessGameWindows().push_back(&window0);
-            this->accessGameWorlds().push_back(&world0);
+            this->addWindow(window0);
+            this->addWorld(world0);
 
-            accessInputManager().addAction(sf::Keyboard::Right,   [=](){moveRight1();});
-            accessInputManager().addAction(sf::Keyboard::Left,    [=](){moveLeft1();});
-            accessInputManager().addAction(sf::Keyboard::Up,      [=](){moveUp1();});
-            accessInputManager().addAction(sf::Keyboard::Down,    [=](){moveDown1();});
-            accessInputManager().addAction(sf::Keyboard::W,       [=](){moveUp0();});
-            accessInputManager().addAction(sf::Keyboard::A,       [=](){moveLeft0();});
-            accessInputManager().addAction(sf::Keyboard::S,       [=](){moveDown0();});
-            accessInputManager().addAction(sf::Keyboard::D,       [=](){moveRight0();});
-            accessInputManager().addAction(sf::Keyboard::Q,       [=](){rotateLeft0();});
-            accessInputManager().addAction(sf::Keyboard::E,       [=](){rotateRight0();});
-            accessInputManager().addAction(sf::Keyboard::Comma,   [=](){rotateLeft1();});
-            accessInputManager().addAction(sf::Keyboard::Period,  [=](){rotateRight1();});
-            accessInputManager().addAction(sf::Keyboard::Numpad6, [=](){moveRight4();});
-            accessInputManager().addAction(sf::Keyboard::Numpad4, [=](){moveLeft4();});
-            accessInputManager().addAction(sf::Keyboard::Numpad8, [=](){moveUp4();});
-            accessInputManager().addAction(sf::Keyboard::Numpad2, [=](){moveDown4();});
-            accessInputManager().addAction(sf::Keyboard::Numpad7, [=](){rotateLeft4();});
-            accessInputManager().addAction(sf::Keyboard::Numpad9, [=](){rotateRight4();});
-            accessInputManager().addAction(sf::Keyboard::C,       [=](){changeOwner();});
+            accessInputManager().addAction(sf::Keyboard::Right,   [=](sf::Time t){moveRight1();});
+            accessInputManager().addAction(sf::Keyboard::Left,    [=](sf::Time t){moveLeft1();});
+            accessInputManager().addAction(sf::Keyboard::Up,      [=](sf::Time t){moveUp1();});
+            accessInputManager().addAction(sf::Keyboard::Down,    [=](sf::Time t){moveDown1();});
+            accessInputManager().addAction(sf::Keyboard::W,       [=](sf::Time t){moveUp0();});
+            accessInputManager().addAction(sf::Keyboard::A,       [=](sf::Time t){moveLeft0();});
+            accessInputManager().addAction(sf::Keyboard::S,       [=](sf::Time t){moveDown0();});
+            accessInputManager().addAction(sf::Keyboard::D,       [=](sf::Time t){moveRight0();});
+            accessInputManager().addAction(sf::Keyboard::Q,       [=](sf::Time t){rotateLeft0();});
+            accessInputManager().addAction(sf::Keyboard::E,       [=](sf::Time t){rotateRight0();});
+            accessInputManager().addAction(sf::Keyboard::Comma,   [=](sf::Time t){rotateLeft1();});
+            accessInputManager().addAction(sf::Keyboard::Period,  [=](sf::Time t){rotateRight1();});
+            accessInputManager().addAction(sf::Keyboard::Numpad6, [=](sf::Time t){moveRight4();});
+            accessInputManager().addAction(sf::Keyboard::Numpad4, [=](sf::Time t){moveLeft4();});
+            accessInputManager().addAction(sf::Keyboard::Numpad8, [=](sf::Time t){moveUp4();});
+            accessInputManager().addAction(sf::Keyboard::Numpad2, [=](sf::Time t){moveDown4();});
+            accessInputManager().addAction(sf::Keyboard::Numpad7, [=](sf::Time t){rotateLeft4();});
+            accessInputManager().addAction(sf::Keyboard::Numpad9, [=](sf::Time t){rotateRight4();});
+            accessInputManager().addAction(sf::Keyboard::C,       [=](sf::Time t){changeOwner();});
 
         }
 

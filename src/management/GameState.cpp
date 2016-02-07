@@ -16,10 +16,9 @@ namespace sg {
     
     void GameState::render() {
 
-//        GameLoop::inst().getRenderWindow().clear(sf::Color::Black);
+        GameLoop::inst().getRenderWindow().clear(sf::Color::Black);
 
-        for (std::list<GameWindow*>::iterator
-             gameWindowIt=gameWindows.begin();
+        for (auto gameWindowIt=gameWindows.begin();
              gameWindowIt != gameWindows.end(); ++gameWindowIt) {
            
             GameWindow *gameWindow = *gameWindowIt;
@@ -28,16 +27,16 @@ namespace sg {
     
         }
 
-//        GameLoop::inst().getRenderWindow().display();
+        GameLoop::inst().getRenderWindow().display();
     
     }
     
     void GameState::update(const sf::Time &tslu) {
 
-        inputManager.processInput();
+        if (inputManager)
+            inputManager->processInput(tslu);
     
-        for (std::list<GameWorld*>::iterator
-             gameWorldIt=gameWorlds.begin();
+        for (auto gameWorldIt=gameWorlds.begin();
              gameWorldIt != gameWorlds.end(); ++gameWorldIt) {
             
             GameWorld *gameWorld = *gameWorldIt;
@@ -48,16 +47,40 @@ namespace sg {
     
     }
     
-    std::list<GameWorld*> & GameState::accessGameWorlds() {
-        return gameWorlds;
+    void GameState::addWorld(GameWorld &newWorld) {
+        gameWorlds.push_back(&newWorld);
+    }
+
+    void GameState::addWindow(GameWindow &newWindow) {
+        gameWindows.push_back(&newWindow);
     }
     
-    std::list<GameWindow*> & GameState::accessGameWindows() {
-        return gameWindows;
+    const GameWindow * GameState::getWindow(uint32_t windowIdx) {
+        if (windowIdx >= gameWindows.size())
+            return NULL; // return NULl if not found
+        return gameWindows[windowIdx];
     }
-    
-    InputManager & GameState::accessInputManager() {
+
+    const GameWorld * GameState::getWorld(uint32_t worldIdx) {
+        if (worldIdx >= gameWorlds.size())
+            return NULL; // return NULl if not found
+        return gameWorlds[worldIdx];
+    }
+
+    std::size_t GameState::getNumWindows() {
+        return gameWindows.size();
+    }
+
+    std::size_t GameState::getNumWorlds() {
+        return gameWorlds.size();
+    }
+
+    InputManager * GameState::getInputManager() {
         return inputManager;
+    }
+
+    void GameState::setInputManager(InputManager &newInputManager) {
+        inputManager = &newInputManager;
     }
 
 }

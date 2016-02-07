@@ -40,7 +40,6 @@ namespace sg {
             bool deletion;
             //Private member functions
             void expandSurfaceBounds(sf::FloatRect &, sf::FloatRect) const;
-            void getGlobalTransform(sf::Transform &) const;
 
         protected:
             //Protected member variables
@@ -65,6 +64,7 @@ namespace sg {
             std::vector<Entity *>::size_type getNumOfPossessions() const;
             const Entity *getPossession(uint32_t) const;
             const Entity *getOwner() const;
+            void getGlobalTransform(sf::Transform &) const;
             void setOriginComponent(uint32_t, const sf::Vector2f &);
             void setPositionComponent(uint32_t, const sf::Vector2f &);
             void moveComponent(uint32_t, const sf::Vector2f &);

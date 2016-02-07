@@ -11,25 +11,25 @@ namespace sg {
     InputManager::InputManager() {
     }
     
-    void InputManager::addAction(int key, std::function<void()> callback) {
+    void InputManager::addAction(sf::Keyboard::Key key, std::function<void(sf::Time)> callback) {
         
         actions[key] = callback;
     
     }
     
-    void InputManager::clearAction(int key) {
+    void InputManager::clearAction(sf::Keyboard::Key key) {
     
         actions.erase(key);
     
     }
     
-    std::function<void()> InputManager::getAction(int key) {
+    std::function<void(sf::Time)> InputManager::getAction(sf::Keyboard::Key key) {
     
         return actions[key];
     
     }
     
-    void InputManager::processInput() {
+    void InputManager::processInput(const sf::Time &tslu) {
     
         for (auto iter=actions.begin(); iter!=actions.end(); ++iter) {
             
@@ -38,7 +38,7 @@ namespace sg {
 
             if (sf::Keyboard::isKeyPressed(key)) {
     
-                callback(); // call callback function
+                callback(tslu); // call callback function
     
             }
     

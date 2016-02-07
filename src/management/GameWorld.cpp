@@ -42,7 +42,7 @@ namespace sg {
     void GameWorld::update(const sf::Time &tslu) {
         // process input
         if (inputActive && inputManager)
-            inputManager->processInput();
+            inputManager->processInput(tslu);
         // delete entities that should be removed
         auto shouldBeRemoved = [](Entity * s) {
             if (s->getDeletionStatus())
@@ -104,13 +104,13 @@ namespace sg {
         }
     }
 
-    void GameWorld::addEntity(Entity *entity) {
-        entities.push_back(entity);
+    void GameWorld::addEntity(Entity &entity) {
+        entities.push_back(&entity);
     }
-    void GameWorld::removeEntity(Entity *entity) {
-        deleteSet.insert(entity);
+    void GameWorld::removeEntity(Entity &entity) {
+        deleteSet.insert(&entity);
     }
-    const std::vector<Entity *> & GameWorld::getEntities() {
+    const std::vector<Entity *> & GameWorld::getEntities() const {
         return entities;
     }
 
@@ -146,6 +146,7 @@ namespace sg {
 
     void GameWorld::setInputManager(InputManager * inputManager) {
         this->inputManager = inputManager;
+        this->inputActive = true;
     }
 
     bool verticalComparitor(Entity *e1, Entity *e2) {
