@@ -591,6 +591,8 @@ namespace sg {
     std::vector<Entity *>::size_type Entity::addPossession(Entity &newPossession) {
 
        const Entity *currentAncestor = this;
+       if (newPossession.owner != NULL)
+           return (this->getNumOfComponents() - 1)
        while (currentAncestor != NULL) {
 
            if (dynamic_cast<const void *>(currentAncestor) == dynamic_cast<void *>(&newPossession))
@@ -600,8 +602,6 @@ namespace sg {
 
        }
 
-       if (newPossession.owner != NULL)
-           newPossession.owner->removePossession(newPossession);
        newPossession.owner = this;
        this->possessions.push_back(&newPossession);
 
