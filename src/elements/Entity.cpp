@@ -592,7 +592,7 @@ namespace sg {
 
        const Entity *currentAncestor = this;
        if (newPossession.owner != NULL)
-           return (this->getNumOfComponents() - 1)
+           return (this->getNumOfComponents() - 1);
        while (currentAncestor != NULL) {
 
            if (dynamic_cast<const void *>(currentAncestor) == dynamic_cast<void *>(&newPossession))
