@@ -21,7 +21,7 @@ namespace sg {
         this->sizeInWorld.x = GameLoop::inst().getRenderWindow().getSize().x;
         this->sizeInWorld.y = GameLoop::inst().getRenderWindow().getSize().y;
         this->rotationInWorld = 0;
-    
+
         this->updateView();
         
     }
@@ -39,7 +39,7 @@ namespace sg {
         this->sizeInWorld.x = GameLoop::inst().getRenderWindow().getSize().x;
         this->sizeInWorld.y = GameLoop::inst().getRenderWindow().getSize().y;
         this->rotationInWorld = 0;
-    
+
         this->updateView();
     }
     
@@ -57,7 +57,7 @@ namespace sg {
         this->positionInWorld = positionInWorld;
         this->sizeInWorld = sizeInWorld;
         this->rotationInWorld = rotationInWorld;
-    
+
         this->updateView();
     }
     GameWindow::GameWindow(const GameWorld &world,
@@ -73,7 +73,7 @@ namespace sg {
         this->positionInWorld = positionInWorld;
         this->sizeInWorld = sizeInWorld;
         this->rotationInWorld = 0;
-    
+
         this->updateView();
     }
     
@@ -91,7 +91,7 @@ namespace sg {
         this->positionInWorld = positionInWorld;
         this->sizeInWorld = sizeInWorld;
         this->rotationInWorld = 0;
-    
+
         this->updateView();
     }
     
@@ -106,7 +106,7 @@ namespace sg {
         this->positionInWorld = positionInWorld;
         this->sizeInWorld = sizeInWorld;
         this->rotationInWorld = 0;
-    
+
         this->updateView();
     }
 
@@ -133,10 +133,10 @@ namespace sg {
 
             auto b = e->getTextureBounds(true);
 
-            if (/*true ||*/ ((b.left <= this->positionInWorld.x + this->sizeInWorld.x/2)
-            &&  (b.top <= this->positionInWorld.y + this->sizeInWorld.y/2)
-            &&  (b.left + b.width >= this->positionInWorld.x - this->sizeInWorld.x/2)
-            &&  (b.top + b.height >= this->positionInWorld.y - this->sizeInWorld.y/2))) {
+            if (/*true ||*/ ((b.left <= this->getPosInWorld().x + this->getSizeInWorld().x/2)
+            &&  (b.top <= this->getPosInWorld().y + this->getSizeInWorld().y/2)
+            &&  (b.left + b.width >= this->getPosInWorld().x - this->getSizeInWorld().x/2)
+            &&  (b.top + b.height >= this->getPosInWorld().y - this->getSizeInWorld().y/2))) {
 
                 // add to render queue
                 renderQueue.push(e);
@@ -144,9 +144,10 @@ namespace sg {
             }
 
         }
-        
+       
+        updateView();
         GameLoop::inst().getRenderWindow().setView(this->view);
-        GameLoop::inst().getRenderWindow().clear(sf::Color::Black);
+        //GameLoop::inst().getRenderWindow().clear(sf::Color::Black);
 
         while (!renderQueue.empty()) {
     
@@ -159,7 +160,7 @@ namespace sg {
 
         }
 
-        GameLoop::inst().getRenderWindow().display();
+        //GameLoop::inst().getRenderWindow().display();
         GameLoop::inst().getRenderWindow().setView(
                 GameLoop::inst().getRenderWindow().getDefaultView());
     
@@ -173,13 +174,7 @@ namespace sg {
     }
     
     void GameWindow::setPosInScreen(sf::Vector2f positionInScreen) {
-    
         this->positionInScreen = positionInScreen;
-        sf::Rect<float> viewport(this->positionInScreen.x,
-                                 this->positionInScreen.y,
-                                 this->sizeInScreen.x,
-                                 this->sizeInScreen.y);
-        view.setViewport(viewport);
     }
     sf::Vector2f GameWindow::getPosInScreen() {
         return this->positionInScreen;
@@ -187,11 +182,6 @@ namespace sg {
     
     void GameWindow::setSizeInScreen(sf::Vector2f sizeInScreen) {
         this->sizeInScreen = sizeInScreen;
-        sf::Rect<float> viewport(this->positionInScreen.x,
-                                 this->positionInScreen.y,
-                                 this->sizeInScreen.x,
-                                 this->sizeInScreen.y);
-        view.setViewport(viewport);
     }
     sf::Vector2f GameWindow::getSizeInScreen() {
         return this->sizeInScreen;
@@ -199,7 +189,6 @@ namespace sg {
     
     void GameWindow::setPosInWorld(sf::Vector2f posInWorld) {
         this->positionInWorld = posInWorld;
-        view.setCenter(posInWorld);
     }
     sf::Vector2f GameWindow::getPosInWorld() {
         return this->positionInWorld;
@@ -207,7 +196,6 @@ namespace sg {
     
     void GameWindow::setSizeInWorld(sf::Vector2f sizeInWorld) {
         this->sizeInWorld = sizeInWorld;
-        view.setSize(sizeInWorld);
     }
     sf::Vector2f GameWindow::getSizeInWorld() {
         return this->sizeInWorld;
@@ -215,7 +203,6 @@ namespace sg {
     
     void GameWindow::setRotInWorld(float rotationInWorld) {
         this->rotationInWorld = rotationInWorld;
-        view.setRotation(rotationInWorld);
     }
     float GameWindow::getRotInWorld() {
         return this->rotationInWorld;
@@ -228,9 +215,9 @@ namespace sg {
                                  this->sizeInScreen.x,
                                  this->sizeInScreen.y);
         view.setViewport(viewport);
-        view.setCenter(positionInWorld);
-        view.setSize(sizeInWorld);
-        view.setRotation(rotationInWorld);
+        view.setCenter(getPosInWorld());
+        view.setSize(getSizeInWorld());
+        view.setRotation(getRotInWorld());
     
     }
     

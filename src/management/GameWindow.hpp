@@ -60,7 +60,7 @@ namespace sg {
             float getRotInWorld();
 
             sf::View &getView();
-    
+
         private:
             
             void updateView();
