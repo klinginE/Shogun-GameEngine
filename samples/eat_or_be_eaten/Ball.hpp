@@ -13,8 +13,8 @@
 #include <math.h>
 #include <stdio.h>
 
-#define RADIUS_MODIFIER 100.0f
-#define SPEED_MODIFIER 100.0f
+#define RADIUS_MODIFIER 10.0f
+#define SPEED_MODIFIER 200.0f
 
 class Ball : public sg::Entity {
 
@@ -36,6 +36,20 @@ class Ball : public sg::Entity {
             addDrawable(circleShape);
         };
 
+        void handleCollision(const Entity &other, const std::vector<sf::Vector2f> &_) {
+
+            const Ball *otherBall = dynamic_cast<const Ball *>(&other);
+            if (otherBall) {
+
+                if (this->getMass() > otherBall->getMass()) {
+                    this->setMass(this->getMass() + otherBall->getMass());
+                }
+                else if (this->getMass() < otherBall->getMass()) {
+                    this->setDeletionStatus(true);
+                }
+            }
+        };
+
         void update(sf::Time t) {
 
             sg::Entity::update(t);
@@ -48,7 +62,7 @@ class Ball : public sg::Entity {
             myWindow = &newWindow;
         };
         
-        float getMass() {
+        float getMass() const {
             return mass;
         };
 
@@ -58,7 +72,7 @@ class Ball : public sg::Entity {
         };
 
         float getSpeed() {
-            return SPEED_MODIFIER/getMass();
+            return SPEED_MODIFIER/std::sqrt(std::sqrt(getMass()));
         };
 
         float getRadius() {

@@ -13,7 +13,7 @@
 #include <InputManager.hpp>
 #include <Entity.hpp>
 
-#define NUM_ENEMIES 10
+#define NUM_ENEMIES 100
 #define WORLD_HEIGHT 1000
 #define WORLD_WIDTH 1000
 
@@ -62,8 +62,10 @@ class RunState : public sg::GameState {
                 enemies[i].setPosition(
                         sf::Vector2f(std::rand() % WORLD_WIDTH - WORLD_WIDTH/2,
                                      std::rand() % WORLD_HEIGHT - WORLD_HEIGHT/2));
+                enemies[i].setMass(enemies[i].getMass()/2);
                 world.addEntity(enemies[i]);
             }
+            world.activateCollisions();
 
             // Add player1 input
             inputManager.addAction(sf::Keyboard::W, [=](sf::Time t){p1.moveUp(t);});
