@@ -28,10 +28,12 @@ class TestEntityState : public sg::GameState {
 
             e0.setPosition(100.0f, 100.0f);
             e0.scale(0.5f, 0.5f);
+            e0.setOrigin(10.0, 10.0f);
 
             e1.fill(sf::Color::Red);
             e1.setPosition(400.0f, 100.0f);
             e1.scale(0.5f, 0.5f);
+            e1.setOrigin(25.0, 20.0f);
             //e0.addPossession(e1);
 
             e2.setPosition(100.0f, 300.0f);

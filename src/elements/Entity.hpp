@@ -64,7 +64,11 @@ namespace sg {
             std::vector<Entity *>::size_type getNumOfPossessions() const;
             const Entity *getPossession(uint32_t) const;
             const Entity *getOwner() const;
-            void getGlobalTransform(sf::Transform &) const;
+            std::pair<sf::Vector2f, float> getGlobalTransform(sf::Transform &) const;
+            sf::Vector2f getGlobalOrigin() const;
+            sf::Vector2f getGlobalPosition() const;
+            sf::Vector2f getGlobalScale() const;
+            float getGlobalRotation() const;
             void setOriginComponent(uint32_t, const sf::Vector2f &);
             void setPositionComponent(uint32_t, const sf::Vector2f &);
             void moveComponent(uint32_t, const sf::Vector2f &);
