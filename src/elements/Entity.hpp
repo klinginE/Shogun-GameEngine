@@ -78,9 +78,9 @@ namespace sg {
             std::vector<Component *>::size_type addTransformable(sf::Transformable &, bool=true);
             std::vector<Component *>::size_type addComponent(sf::Drawable &, sf::Transformable &);
             std::pair<sf::Drawable *, sf::Transformable *> removeComponent(uint32_t);
-            std::vector<Entity *>::size_type addPossession(Entity &);
-            Entity *removePossession(uint32_t);
-            int removePossession(Entity &);
+            std::vector<Entity *>::size_type addPossession(Entity &, bool=true);
+            Entity *removePossession(uint32_t, bool=true);
+            int removePossession(Entity &, bool=true);
             virtual void update(sf::Time tslu) {
 
                 for (auto &it : this->components)

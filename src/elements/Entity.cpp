@@ -554,6 +554,7 @@ namespace sg {
 
         if (dynamic_cast<Entity *>(&newTransformable))
             throw std::invalid_argument("Component\'s sf::Transfromable cannot be an Entity");
+
         Component *c = new Component();
         c->d = d;
         c->t = &newTransformable;
@@ -588,17 +589,53 @@ namespace sg {
 
     }
 
-    std::vector<Entity *>::size_type Entity::addPossession(Entity &newPossession) {
+    std::vector<Entity *>::size_type Entity::addPossession(Entity &newPossession, bool adjustForRelativeChange) {
 
-       const Entity *currentAncestor = this;
        if (newPossession.owner != NULL)
            return (this->getNumOfComponents() - 1);
+
+       float transAngle = 0.0f;
+       const Entity *currentAncestor = this;
        while (currentAncestor != NULL) {
 
            if (dynamic_cast<const void *>(currentAncestor) == dynamic_cast<void *>(&newPossession))
                return (this->getNumOfComponents() - 1);
 
+           transAngle += currentAncestor->getRotation();
            currentAncestor = currentAncestor->getOwner();
+
+       }
+
+       if (adjustForRelativeChange) {
+
+           sf::Vector2f xunit = this->getOrigin();
+           xunit.x += 1.0f;
+           sf::Vector2f yunit = this->getOrigin();
+           yunit.y += 1.0f;
+           sf::Vector2f center = this->getOrigin();
+
+           sf::Transform trans = sf::Transform::Identity;
+           this->getGlobalTransform(trans);
+
+           sf::Vector2f xtrans = trans.transformPoint(xunit);
+           sf::Vector2f ytrans = trans.transformPoint(yunit);
+           sf::Vector2f centerTrans = trans.transformPoint(center);
+
+           float xUnitDiff_x = xtrans.x - centerTrans.x;
+           float xUnitDiff_y = xtrans.y - centerTrans.y;
+           float xdist = std::sqrt(xUnitDiff_x * xUnitDiff_x + xUnitDiff_y * xUnitDiff_y);
+
+           float yUnitDiff_x = ytrans.x - centerTrans.x;
+           float yUnitDiff_y = ytrans.y - centerTrans.y;
+           float ydist = std::sqrt(yUnitDiff_x * yUnitDiff_x + yUnitDiff_y * yUnitDiff_y);
+
+           sf::Vector2f scaleTrans;
+           scaleTrans.x = xdist;
+           scaleTrans.y = ydist;
+
+           newPossession.scale(1.0f/scaleTrans.x, 1.0f/scaleTrans.y);
+           newPossession.rotate(-transAngle);
+           newPossession.setPosition(trans.getInverse().transformPoint(newPossession.getPosition()));
 
        }
 
@@ -609,36 +646,73 @@ namespace sg {
 
     }
 
-    Entity *Entity::removePossession(uint32_t idx) {
+    Entity *Entity::removePossession(uint32_t idx, bool adjustForRelativeChange) {
 
         if (idx >= this->getNumOfPossessions())
             return NULL;
 
         Entity *r = this->possessions[idx];
         this->possessions.erase(this->possessions.begin() + idx);
+        float transAngle = 0.0f;
+        const Entity *currentAncestor = this;
+        while (currentAncestor != NULL) {
+
+            transAngle += currentAncestor->getRotation();
+            currentAncestor = currentAncestor->getOwner();
+
+        }
+
+        if (adjustForRelativeChange) {
+
+            sf::Vector2f xunit = this->getOrigin();
+            xunit.x += 1.0f;
+            sf::Vector2f yunit = this->getOrigin();
+            yunit.y += 1.0f;
+            sf::Vector2f center = this->getOrigin();
+
+            sf::Transform trans = sf::Transform::Identity;
+            this->getGlobalTransform(trans);
+
+            sf::Vector2f xtrans = trans.transformPoint(xunit);
+            sf::Vector2f ytrans = trans.transformPoint(yunit);
+            sf::Vector2f centerTrans = trans.transformPoint(center);
+
+            float xUnitDiff_x = xtrans.x - centerTrans.x;
+            float xUnitDiff_y = xtrans.y - centerTrans.y;
+            float xdist = std::sqrt(xUnitDiff_x * xUnitDiff_x + xUnitDiff_y * xUnitDiff_y);
+
+            float yUnitDiff_x = ytrans.x - centerTrans.x;
+            float yUnitDiff_y = ytrans.y - centerTrans.y;
+            float ydist = std::sqrt(yUnitDiff_x * yUnitDiff_x + yUnitDiff_y * yUnitDiff_y);
+
+            sf::Vector2f scaleTrans;
+            scaleTrans.x = xdist;
+            scaleTrans.y = ydist;
+
+            r->scale(scaleTrans.x, scaleTrans.y);
+            r->rotate(transAngle);
+            r->setPosition(trans.transformPoint(r->getPosition()));
+
+        }
         r->owner = NULL;
 
         return r;
 
     }
 
-    int Entity::removePossession(Entity &removePossession) {
+    int Entity::removePossession(Entity &removePossession, bool adjustForRelativeChange) {
 
         uint32_t i;
         for (i = 0; i < this->getNumOfPossessions(); ++i) {
 
             if (dynamic_cast<void *>(this->possessions[i]) == dynamic_cast<void *>(&removePossession)) {
 
-                this->possessions.erase(this->possessions.begin() + i);
-                removePossession.owner = NULL;
-                break;
+                this->removePossession(i, adjustForRelativeChange);
+                return i;
 
             }
 
         }
-
-        if (i < this->getNumOfPossessions())
-            return i;
 
         return -1;
 
