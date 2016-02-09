@@ -299,16 +299,32 @@ namespace sg {
 
     sf::Vector2f Entity::getGlobalPosition() const {
 
-        sf::Transform gTrans = sf::Transform::Identity;
-        this->getGlobalTransform(gTrans);
+        /*sf::Vector2f globalPos;
+        globalPos.x = 0.0f;
+        globalPos.y = 0.0f;
+        const Entity *currentAncestor = this;
+        while (currentAncestor != NULL) {
 
-        return gTrans.transformPoint(this->getPosition());
+            globalPos.x += currentAncestor->getPosition().x;
+            globalPos.y += currentAncestor->getPosition().y;
+            currentAncestor = currentAncestor->getOwner();
+
+        }*/
+        if (this->getOwner()) {
+
+            sf::Transform trans = sf::Transformable::Identity;
+            this->getGlobalTransform(trans);
+            return trans.transformPoint(sf::Vector2f(0.0f, 0.0f));
+
+        }
+
+        return this->getPosition();
 
     }
 
     float Entity::getGlobalRotation() const {
 
-        float globalRotation;
+        float globalRotation = 0.0f;
         const Entity *currentAncestor = this;
         while (currentAncestor != NULL) {
 
@@ -336,6 +352,27 @@ namespace sg {
         }
 
         return globalScale;
+
+    }
+
+    void Entity::moveGlobally(float offsetX, float offsetY) {
+
+        this->moveGlobally(sf::Vector2f(offsetX, offsetY));
+
+    }
+
+    void Entity::moveGlobally(const sf::Vector2f &offset) {
+
+        if (this->getOwner()) {
+
+            sf::Transform trans = sf::Transform::Identity;
+            trans.scale(this->getOwner()->getGlobalScale());
+            trans.rotate(this->getOwner()->getGlobalRotation());
+            this->move(trans.getInverse().transformPoint(offset));
+
+        }
+        else
+            this->move(offset);
 
     }
 

@@ -167,7 +167,7 @@ namespace sg {
         uint32_t steps = static_cast<uint32_t>(floor(timePastAsSec / frameDelayAsSec));
         this->timePast = sf::seconds(fmod(timePastAsSec, frameDelayAsSec));
         this->frameIndex = ((this->frameIndex + steps) % this->getNumOfFrames());
-        this->setTextureRect((*this->rects[this->frameIndex]));
+        this->setTextureRect((*(this->rects[this->frameIndex])));
 
     }
 
