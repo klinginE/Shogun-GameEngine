@@ -68,8 +68,16 @@ namespace sg {
             sf::Vector2f getGlobalPosition() const;
             float getGlobalRotation() const;
             sf::Vector2f getGlobalScale() const;
+            void setGlobalPosition(float, float);
+            void setGlobalPosition(const sf::Vector2f &);
             void moveGlobally(float, float);
             void moveGlobally(const sf::Vector2f &);
+            void setGlobalRotation(float, bool=true);
+            void rotateGlobally(float, bool=true);
+            void setGlobalScale(float, float);
+            void setGlobalScale(const sf::Vector2f &);
+            void scaleGlobally(float, float);
+            void scaleGlobally(const sf::Vector2f &);
             void setOriginComponent(uint32_t, const sf::Vector2f &);
             void setPositionComponent(uint32_t, const sf::Vector2f &);
             void moveComponent(uint32_t, const sf::Vector2f &);

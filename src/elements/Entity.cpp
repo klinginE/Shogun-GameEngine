@@ -299,22 +299,11 @@ namespace sg {
 
     sf::Vector2f Entity::getGlobalPosition() const {
 
-        /*sf::Vector2f globalPos;
-        globalPos.x = 0.0f;
-        globalPos.y = 0.0f;
-        const Entity *currentAncestor = this;
-        while (currentAncestor != NULL) {
-
-            globalPos.x += currentAncestor->getPosition().x;
-            globalPos.y += currentAncestor->getPosition().y;
-            currentAncestor = currentAncestor->getOwner();
-
-        }*/
         if (this->getOwner()) {
 
-            sf::Transform trans = sf::Transformable::Identity;
-            this->getGlobalTransform(trans);
-            return trans.transformPoint(sf::Vector2f(0.0f, 0.0f));
+            sf::Transform trans = sf::Transform::Identity;
+            this->getOwner()->getGlobalTransform(trans);
+            return trans.transformPoint(this->getPosition());
 
         }
 
@@ -355,6 +344,26 @@ namespace sg {
 
     }
 
+    void Entity::setGlobalPosition(float x, float y) {
+
+        this->setGlobalPosition(sf::Vector2f(x, y));
+
+    }
+
+    void Entity::setGlobalPosition(const sf::Vector2f &position) {
+
+        if (this->getOwner()) {
+
+            sf::Transform trans = sf::Transform::Identity;
+            this->getOwner()->getGlobalTransform(trans);
+            this->setPosition(trans.getInverse().transformPoint(position));
+
+        }
+        else
+            this->setPosition(position);
+
+    }
+
     void Entity::moveGlobally(float offsetX, float offsetY) {
 
         this->moveGlobally(sf::Vector2f(offsetX, offsetY));
@@ -373,6 +382,60 @@ namespace sg {
         }
         else
             this->move(offset);
+
+    }
+
+    void Entity::setGlobalRotation(float angle, bool useDeg) {
+
+        if (!useDeg)
+            angle *= (180.0f / M_PI);//If angl is not degs then make it degs
+        if (this->getOwner()) {
+
+            float transAngle = this->getOwner()->getGlobalRotation();
+            this->setRotation(angle - transAngle);
+
+        }
+        else
+            this->setRotation(angle); 
+
+    }
+
+    void Entity::rotateGlobally(float angle, bool useDeg) {
+
+        if (!useDeg)
+            angle *= (180.0f / M_PI);//If angl is not degs then make it degs
+        this->rotate(angle);
+
+    }
+
+    void Entity::setGlobalScale(float factorX, float factorY) {
+
+        this->setGlobalScale(sf::Vector2f(factorX, factorY));
+
+    }
+
+    void Entity::setGlobalScale(const sf::Vector2f &factor) {
+
+        if (this->getOwner()) {
+
+            sf::Vector2f transScale = this->getOwner()->getGlobalScale();
+            this->setScale(factor.x/transScale.x, factor.y/transScale.y);
+
+        }
+        else
+            this->setScale(factor);
+
+    }
+
+    void Entity::scaleGlobally(float factorX, float factorY) {
+
+        this->scale(factorX, factorY);
+
+    }
+
+    void Entity::scaleGlobally(const sf::Vector2f &factor) {
+
+        this->scale(factor);
 
     }
 

@@ -116,6 +116,9 @@ class TestEntityState : public sg::GameState {
             this->inputManager.addAction(sf::Keyboard::X,       [=](sf::Time t){grow0(t);});
             this->inputManager.addAction(sf::Keyboard::N,       [=](sf::Time t){shrink1(t);});
             this->inputManager.addAction(sf::Keyboard::M,       [=](sf::Time t){grow1(t);});
+            this->inputManager.addAction(sf::Keyboard::Numpad0, [=](sf::Time t){changePos(t);});
+            this->inputManager.addAction(sf::Keyboard::K,       [=](sf::Time t){changeRot(t);});
+            this->inputManager.addAction(sf::Keyboard::L,       [=](sf::Time t){changeScale(t);});
             this->setInputManager(this->inputManager);
 
         }
@@ -259,6 +262,21 @@ class TestEntityState : public sg::GameState {
             void grow2(sf::Time t) {
 
                 this->e2.scale(FAC, FAC);
+
+            }
+            void changePos(sf::Time t) {
+
+                this->e2.setGlobalPosition(0.0f, 0.0f);
+
+            }
+            void changeRot(sf::Time t) {
+
+                this->e2.setGlobalRotation(45.0f);
+
+            }
+            void changeScale(sf::Time t) {
+
+                this->e2.setGlobalScale(2.0, 1.5);
 
             }
 
