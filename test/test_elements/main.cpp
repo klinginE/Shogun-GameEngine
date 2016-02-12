@@ -367,7 +367,11 @@ void testAnimatedSprite() {
     std::cout << std::endl;
 
     //test remove invalid frame
-    //std::pair<sf::IntRect *, sf::Transformable *> removePair = as0.removeFrame(10);
+    std::cout << "Removing invalid frame" << std::endl;
+    std::pair<sf::IntRect *, sf::Transformable *> removeFramePair = as0.removeFrame(10);
+    std::cout << "removeFramePair.first:  " << removeFramePair.first << std::endl;
+    std::cout << "removeFramePair.second: " << removeFramePair.second << std::endl;
+    std::cout << std::endl;
 
     //test remove valid frame
     std::pair<sf::IntRect *, sf::Transformable *> removePair = as0.removeFrame(0);

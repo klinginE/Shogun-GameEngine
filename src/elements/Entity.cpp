@@ -177,7 +177,6 @@ namespace sg {
 
                 }
 
-                sf::Vector2f v(0.0f, 0.0f);
                 if (s0 != NULL && s1 != NULL) {
 
                     sf::FloatRect bounds0 = s0->getGlobalBounds();
@@ -192,13 +191,8 @@ namespace sg {
                         bounds0.width >= bounds1.left &&
                         bounds0.top <= bounds1.height &&
                         bounds0.height >= bounds1.top &&
-                        s0->collides((*s1), v, trans0, trans1)) {
-
+                        s0->collides((*s1), collisionVectors0, trans0, trans1))
                         isCollides = true;
-                        collisionVectors0.push_back(v);
-                        collisionVectors1.push_back(-v);
-
-                    }
 
                 }
 
@@ -206,6 +200,8 @@ namespace sg {
 
         if (isCollides) {
 
+            for (auto &itt : collisionVectors0)
+                collisionVectors1.push_back(-itt);
             this->handleCollision(e, collisionVectors0);
             e.handleCollision(*this, collisionVectors1);
 
@@ -273,12 +269,19 @@ namespace sg {
 
     }
 
-    void Entity::getGlobalTransform(sf::Transform &globalTransform) const {
+    std::pair<sf::Vector2f, float> Entity::getGlobalTransform(sf::Transform &globalTransform) const {
 
+        sf::Vector2f globalScale;
+        globalScale.x = 1.0f;
+        globalScale.y = 1.0f;
+        float globalRotation = 0.0f;
         std::stack<const sf::Transform *> transforms;
         const Entity *currentAncestor = this;
         while (currentAncestor != NULL) {
 
+            globalScale.x *= currentAncestor->getScale().x;
+            globalScale.y *= currentAncestor->getScale().y;
+            globalRotation += currentAncestor->getRotation();
             transforms.push(&currentAncestor->getTransform());
             currentAncestor = currentAncestor->getOwner();
 
@@ -289,6 +292,150 @@ namespace sg {
             transforms.pop();
 
         }
+
+        return std::pair<sf::Vector2f, float>(globalScale, globalRotation);
+
+    }
+
+    sf::Vector2f Entity::getGlobalPosition() const {
+
+        if (this->getOwner()) {
+
+            sf::Transform trans = sf::Transform::Identity;
+            this->getOwner()->getGlobalTransform(trans);
+            return trans.transformPoint(this->getPosition());
+
+        }
+
+        return this->getPosition();
+
+    }
+
+    float Entity::getGlobalRotation() const {
+
+        float globalRotation = 0.0f;
+        const Entity *currentAncestor = this;
+        while (currentAncestor != NULL) {
+
+            globalRotation += currentAncestor->getRotation();
+            currentAncestor = currentAncestor->getOwner();
+
+        }
+
+        return globalRotation;
+
+    }
+
+    sf::Vector2f Entity::getGlobalScale() const {
+
+        sf::Vector2f globalScale;
+        globalScale.x = 1.0f;
+        globalScale.y = 1.0f;
+        const Entity *currentAncestor = this;
+        while (currentAncestor != NULL) {
+
+            globalScale.x *= currentAncestor->getScale().x;
+            globalScale.y *= currentAncestor->getScale().y;
+            currentAncestor = currentAncestor->getOwner();
+
+        }
+
+        return globalScale;
+
+    }
+
+    void Entity::setGlobalPosition(float x, float y) {
+
+        this->setGlobalPosition(sf::Vector2f(x, y));
+
+    }
+
+    void Entity::setGlobalPosition(const sf::Vector2f &position) {
+
+        if (this->getOwner()) {
+
+            sf::Transform trans = sf::Transform::Identity;
+            this->getOwner()->getGlobalTransform(trans);
+            this->setPosition(trans.getInverse().transformPoint(position));
+
+        }
+        else
+            this->setPosition(position);
+
+    }
+
+    void Entity::moveGlobally(float offsetX, float offsetY) {
+
+        this->moveGlobally(sf::Vector2f(offsetX, offsetY));
+
+    }
+
+    void Entity::moveGlobally(const sf::Vector2f &offset) {
+
+        if (this->getOwner()) {
+
+            sf::Transform trans = sf::Transform::Identity;
+            trans.scale(this->getOwner()->getGlobalScale());
+            trans.rotate(this->getOwner()->getGlobalRotation());
+            this->move(trans.getInverse().transformPoint(offset));
+
+        }
+        else
+            this->move(offset);
+
+    }
+
+    void Entity::setGlobalRotation(float angle, bool useDeg) {
+
+        if (!useDeg)
+            angle *= (180.0f / M_PI);//If angl is not degs then make it degs
+        if (this->getOwner()) {
+
+            float transAngle = this->getOwner()->getGlobalRotation();
+            this->setRotation(angle - transAngle);
+
+        }
+        else
+            this->setRotation(angle); 
+
+    }
+
+    void Entity::rotateGlobally(float angle, bool useDeg) {
+
+        if (!useDeg)
+            angle *= (180.0f / M_PI);//If angl is not degs then make it degs
+        this->rotate(angle);
+
+    }
+
+    void Entity::setGlobalScale(float factorX, float factorY) {
+
+        this->setGlobalScale(sf::Vector2f(factorX, factorY));
+
+    }
+
+    void Entity::setGlobalScale(const sf::Vector2f &factor) {
+
+        if (this->getOwner()) {
+
+            sf::Vector2f transScale = this->getOwner()->getGlobalScale();
+            this->setScale(factor.x/transScale.x, factor.y/transScale.y);
+
+        }
+        else
+            this->setScale(factor);
+
+    }
+
+    void Entity::scaleGlobally(float factorX, float factorY) {
+
+        this->scale(factorX, factorY);
+
+    }
+
+    void Entity::scaleGlobally(const sf::Vector2f &factor) {
+
+        this->scale(factor);
 
     }
 
@@ -556,6 +703,9 @@ namespace sg {
         if (makeDrawable && (d = dynamic_cast<sf::Drawable *>(&newTransformable)))
             return this->addComponent(*d, newTransformable);
 
+        if (dynamic_cast<Entity *>(&newTransformable))
+            throw std::invalid_argument("Component\'s sf::Transfromable cannot be an Entity");
+
         Component *c = new Component();
         c->d = d;
         c->t = &newTransformable;
@@ -590,60 +740,74 @@ namespace sg {
 
     }
 
-    std::vector<Entity *>::size_type Entity::addPossession(Entity &newPossession) {
+    std::vector<Entity *>::size_type Entity::addPossession(Entity &newPossession, bool adjustForRelativeChange) {
 
-       const Entity *currentAncestor = this;
-       while (currentAncestor != NULL) {
+        if (newPossession.owner != NULL)
+            return (this->getNumOfComponents() - 1);
 
-           if (currentAncestor == &newPossession)
-               return (this->getNumOfComponents() - 1);
+        const Entity *currentAncestor = this;
+        while (currentAncestor != NULL) {
 
-           currentAncestor = currentAncestor->getOwner();
+            if (dynamic_cast<const void *>(currentAncestor) == dynamic_cast<void *>(&newPossession))
+                return (this->getNumOfComponents() - 1);
 
-       }
+            currentAncestor = currentAncestor->getOwner();
 
-       if (newPossession.owner != NULL)
-           newPossession.owner->removePossession(&newPossession);
-       newPossession.owner = this;
-       this->possessions.push_back(&newPossession);
+        }
 
-       return (this->getNumOfComponents() - 1);
+        if (adjustForRelativeChange) {
+
+            sf::Transform trans = sf::Transform::Identity;
+            std::pair<sf::Vector2f, float> transPair = this->getGlobalTransform(trans);
+            newPossession.scale(1.0f/transPair.first.x, 1.0f/transPair.first.y);
+            newPossession.rotate(-transPair.second);
+            newPossession.setPosition(trans.getInverse().transformPoint(newPossession.getPosition()));
+
+        }
+
+        newPossession.owner = this;
+        this->possessions.push_back(&newPossession);
+
+        return (this->getNumOfComponents() - 1);
 
     }
 
-    Entity *Entity::removePossession(uint32_t idx) {
+    Entity *Entity::removePossession(uint32_t idx, bool adjustForRelativeChange) {
 
         if (idx >= this->getNumOfPossessions())
             return NULL;
 
         Entity *r = this->possessions[idx];
         this->possessions.erase(this->possessions.begin() + idx);
+        if (adjustForRelativeChange) {
+
+            sf::Transform trans = sf::Transform::Identity;
+            std::pair<sf::Vector2f, float> transPair = this->getGlobalTransform(trans);
+            r->setPosition(trans.transformPoint(r->getPosition()));
+            r->rotate(transPair.second);
+            r->scale(transPair.first.x, transPair.first.y);
+
+        }
         r->owner = NULL;
 
         return r;
 
     }
 
-    int Entity::removePossession(Entity *removePossession) {
-
-        if (removePossession == NULL)
-            return -1;
+    int Entity::removePossession(Entity &removePossession, bool adjustForRelativeChange) {
 
         uint32_t i;
         for (i = 0; i < this->getNumOfPossessions(); ++i) {
 
-            if (this->possessions[i] == removePossession) {
+            if (dynamic_cast<void *>(this->possessions[i]) == dynamic_cast<void *>(&removePossession)) {
 
-                this->possessions.erase(this->possessions.begin() + i);
-                removePossession->owner = NULL;
-                break;
+                if (dynamic_cast<void *>(this->removePossession(i, adjustForRelativeChange)) == dynamic_cast<void *>(&removePossession))
+                    return i;
+                return -1;
 
             }
 
         }
-
-        if (i < this->getNumOfPossessions())
-            return i;
 
         return -1;
 

@@ -48,13 +48,13 @@ namespace sg {
             Entity *owner;
             bool isCollidable;
             //Protected member functions
-            virtual void handleCollision(const Entity &, const std::vector<sf::Vector2f> &) {}
+            virtual void handleCollision(const Entity &e, const std::vector<sf::Vector2f> &collisionVectors) {}
 
         public:
             Entity();
             Entity(bool);
             ~Entity();
-            bool collides(sg::Entity &);// calls handleCollision
+            bool collides(Entity &);// calls handleCollision
             bool getIsCollidable() const;
             void setIsCollidable(bool);
             bool getDeletionStatus();
@@ -64,7 +64,20 @@ namespace sg {
             std::vector<Entity *>::size_type getNumOfPossessions() const;
             const Entity *getPossession(uint32_t) const;
             const Entity *getOwner() const;
-            void getGlobalTransform(sf::Transform &) const;
+            std::pair<sf::Vector2f, float> getGlobalTransform(sf::Transform &) const;
+            sf::Vector2f getGlobalPosition() const;
+            float getGlobalRotation() const;
+            sf::Vector2f getGlobalScale() const;
+            void setGlobalPosition(float, float);
+            void setGlobalPosition(const sf::Vector2f &);
+            void moveGlobally(float, float);
+            void moveGlobally(const sf::Vector2f &);
+            void setGlobalRotation(float, bool=true);
+            void rotateGlobally(float, bool=true);
+            void setGlobalScale(float, float);
+            void setGlobalScale(const sf::Vector2f &);
+            void scaleGlobally(float, float);
+            void scaleGlobally(const sf::Vector2f &);
             void setOriginComponent(uint32_t, const sf::Vector2f &);
             void setPositionComponent(uint32_t, const sf::Vector2f &);
             void moveComponent(uint32_t, const sf::Vector2f &);
@@ -78,9 +91,9 @@ namespace sg {
             std::vector<Component *>::size_type addTransformable(sf::Transformable &, bool=true);
             std::vector<Component *>::size_type addComponent(sf::Drawable &, sf::Transformable &);
             std::pair<sf::Drawable *, sf::Transformable *> removeComponent(uint32_t);
-            std::vector<Entity *>::size_type addPossession(Entity &);
-            Entity *removePossession(uint32_t);
-            int removePossession(Entity *);
+            std::vector<Entity *>::size_type addPossession(Entity &, bool=true);
+            Entity *removePossession(uint32_t, bool=true);
+            int removePossession(Entity &, bool=true);
             virtual void update(sf::Time tslu) {
 
                 for (auto &it : this->components)

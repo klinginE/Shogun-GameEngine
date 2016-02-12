@@ -8,10 +8,7 @@ class TestBox : public sg::Entity {
         sf::CircleShape r1;
         sf::RectangleShape r2;
         sf::CircleShape r3;
-        //sg::Component c0;
-        //sg::Component c1;
-        //sg::Component c2;
-        //sg::Component c3;
+        sg::BoundingShape bs;
         void handleCollision(const sg::Entity &otherE, const std::vector<sf::Vector2f> &collisionVs) {
 
             sg::Entity::handleCollision(otherE, collisionVs);
@@ -33,20 +30,25 @@ class TestBox : public sg::Entity {
 
             r0.setSize(sf::Vector2f(100.0f, 50.0f));
             r0.setOrigin(50.0f, 25.0f);
-            this->addTransformable(r0);
+            this->addDrawable(r0, false);
+            bs.addShape(r0);
             r1.setRadius(40.0f);
             r1.setOrigin(40.0f, 40.0f);
             r1.move(100.0f, 0.0f);
             r1.scale(2.0f, 1.0f);
-            this->addTransformable(r1);
+            this->addDrawable(r1, false);
+            bs.addShape(r1);
             r2.setSize(sf::Vector2f(250.0f, 10.0f));
             r2.setOrigin(125.0f, 5.0f);
             r2.rotate(-90.0f);
-            this->addTransformable(r2);
+            this->addDrawable(r2, false);
+            bs.addShape(r2);
             r3.setRadius(40.0f);
             r3.setOrigin(40.0f, 40.0f);
             r3.move(-100.0f, 0.0f);
-            this->addDrawable(r3);
+            this->addDrawable(r3, false);
+            bs.addShape(r3);
+            this->addTransformable(bs);
 
         }
         TestBox(bool isCollidable) :
@@ -55,20 +57,27 @@ class TestBox : public sg::Entity {
 
             r0.setSize(sf::Vector2f(100.0f, 50.0f));
             r0.setOrigin(50.0f, 25.0f);
-            this->addTransformable(r0);
+            this->addDrawable(r0, false);
+            bs.addShape(r0);
             r1.setRadius(40.0f);
             r1.setOrigin(40.0f, 40.0f);
             r1.move(100.0f, 0.0f);
             r1.scale(2.0f, 1.0f);
-            this->addTransformable(r1);
+            this->addDrawable(r1, false);
+            bs.addShape(r1);
             r2.setSize(sf::Vector2f(250.0f, 10.0f));
             r2.setOrigin(125.0f, 5.0f);
             r2.rotate(-90.0f);
-            this->addTransformable(r2);
+            this->addDrawable(r2, false);
+            bs.addShape(r2);
             r3.setRadius(40.0f);
             r3.setOrigin(40.0f, 40.0f);
             r3.move(-100.0f, 0.0f);
-            this->addDrawable(r3);
+            this->addDrawable(r3, false);
+            bs.addShape(r3);
+            //bs.rotate(-45.0f);
+            this->addTransformable(bs);
+            //this->rotate(45.0f);
 
         }
 
