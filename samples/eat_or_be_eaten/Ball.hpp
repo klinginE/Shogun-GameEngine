@@ -32,7 +32,7 @@ class Ball : public sg::Entity {
                                                std::rand() % 255,
                                                std::rand() % 255,
                                                255));
-            circleShape.setOrigin(getRadius(), getRadius());
+            circleShape.setPosition(-getRadius(), -getRadius());
             addDrawable(circleShape);
         };
 
@@ -48,6 +48,10 @@ class Ball : public sg::Entity {
                     this->setDeletionStatus(true);
                 }
             }
+        };
+
+        void setColor(sf::Color newColor) {
+            circleShape.setFillColor(newColor);
         };
 
         void update(sf::Time t) {
@@ -69,6 +73,7 @@ class Ball : public sg::Entity {
         void setMass(float newMass) {
             mass = newMass;
             circleShape.setRadius(getRadius());
+            circleShape.setPosition(-getRadius(), -getRadius());
         };
 
         float getSpeed() {
@@ -79,17 +84,36 @@ class Ball : public sg::Entity {
             return (float) sqrt(mass/M_PI) * RADIUS_MODIFIER;
         };
 
-        void moveLeft(sf::Time t) {
+        void handleOutsideOfBounds(sf::RectangleShape bounds) {
+            if (this->getPosition().x - this->getRadius() < bounds.getPosition().x)
+                this->setPosition(bounds.getPosition().x + this->getRadius(),
+                                  this->getPosition().y);
+            if (this->getPosition().x + this->getRadius() > bounds.getPosition().x + bounds.getSize().x)
+                this->setPosition(bounds.getPosition().x + bounds.getSize().x - this->getRadius(),
+                                  this->getPosition().y);
+            if (this->getPosition().y - this->getRadius() < bounds.getPosition().y)
+                this->setPosition(this->getPosition().x,
+                                  bounds.getPosition().y + this->getRadius());
+            if (this->getPosition().y + this->getRadius() > bounds.getPosition().y + bounds.getSize().y)
+                this->setPosition(this->getPosition().x,
+                                  bounds.getPosition().y + bounds.getSize().y - this->getRadius());
+        }
+
+        void moveLeft(sf::Time t, sf::RectangleShape bounds) {
             this->move(sf::Vector2f(-getSpeed()*t.asSeconds(), 0));
+            handleOutsideOfBounds(bounds);
         };
-        void moveRight(sf::Time t) {
+        void moveRight(sf::Time t, sf::RectangleShape bounds) {
             this->move(sf::Vector2f(getSpeed()*t.asSeconds(), 0));
+            handleOutsideOfBounds(bounds);
         };
-        void moveUp(sf::Time t) {
+        void moveUp(sf::Time t, sf::RectangleShape bounds) {
             this->move(sf::Vector2f(0, -getSpeed()*t.asSeconds()));
+            handleOutsideOfBounds(bounds);
         };
-        void moveDown(sf::Time t) {
+        void moveDown(sf::Time t, sf::RectangleShape bounds) {
             this->move(sf::Vector2f(0, getSpeed()*t.asSeconds()));
+            handleOutsideOfBounds(bounds);
         };
 
 };
