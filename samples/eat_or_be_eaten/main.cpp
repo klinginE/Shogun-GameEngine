@@ -14,7 +14,7 @@
 int main() {
 
     // Initialize gameloop
-    sg::GameLoop::inst().init(sf::Vector2u(600, 600),
+    sg::GameLoop::inst().init(sf::Vector2u(1000, 600),
                               sf::String("Test"));
     sg::GameLoop::inst().getRenderWindow().setFramerateLimit(60);
 
