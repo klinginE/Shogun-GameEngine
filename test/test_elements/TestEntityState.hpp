@@ -1,3 +1,5 @@
+#pragma once
+
 #include<SFML/Graphics.hpp>
 #include<GameState.hpp>
 #include<Entity.hpp>
@@ -15,18 +17,12 @@ class TestEntityState : public sg::GameState {
         TestBox e0 = TestBox();
         TestBox e1 = TestBox();
         TestBox e2 = TestBox();
-        sf::Texture t;
-        sg::Entity player = sg::Entity();
-        sg::AnimatedSprite as = sg::AnimatedSprite();
-        sf::ConvexShape rs;
-        sg::BoundingShape bounds;
-        sf::IntRect textRect0 = sf::IntRect(0, 0, 16, 16);
-        sf::IntRect textRect1 = sf::IntRect(0, 16, 16, 16);
-        sf::IntRect textRect2 = sf::IntRect(0, 32, 16, 16);
-        sf::IntRect textRect3 = sf::IntRect(0, 48, 16, 16);
         sg::GameWorld world0;
         sg::GameWindow window0;
         sg::InputManager inputManager;
+        bool canChangeOwner = true;
+        bool canRemoveOwner = false;
+        bool moveGlobal = true;
 
     public:
         TestEntityState() :
@@ -34,7 +30,7 @@ class TestEntityState : public sg::GameState {
         {
 
             e0.setPosition(100.0f, 100.0f);
-            e0.scale(0.5f, 0.5f);
+            e0.scale(1.0f, 0.25f);
             e0.setOrigin(10.0, 10.0f);
 
             e1.fill(sf::Color::Red);
@@ -45,42 +41,9 @@ class TestEntityState : public sg::GameState {
             e2.setPosition(300.0f, 500.0f);
             e2.setScale(0.5f, 0.5f);
 
-            t.loadFromFile("villager.png");
-            as.setTexture(t);
-            as.setFrameDelay(sf::milliseconds(200));
-            rs.setPointCount(4);
-            rs.setPoint(0, sf::Vector2f(0.0f, 0.0f));
-            rs.setPoint(1, sf::Vector2f(11.0f, 0.0f));
-            rs.setPoint(2, sf::Vector2f(11.0f, 8.0f));
-            rs.setPoint(3, sf::Vector2f(0.0f, 8.0f));
-            rs.setOrigin(11.0f/2.0f, 4.0f);
-            rs.setPosition(2.0f + 11.0f / 2.0f, 12.0f);
-
-            bounds.addShape(rs);
-
-            as.setTextureRect(textRect0);
-            as.addFrame(textRect0, bounds);
-            as.addFrame(textRect1, bounds);
-            as.addFrame(textRect2, bounds);
-            as.addFrame(textRect3, bounds);
-            as.addFrame(textRect1, bounds);
-            as.addFrame(textRect2, bounds);
-            as.addFrame(textRect0, bounds);
-            as.addFrame(textRect1, bounds);
-            as.addFrame(textRect2, bounds);
-            as.start();
-            player.setPosition(sg::GameLoop::inst().getRenderWindow().getSize().x / 2.0f - 8.0f,
-                               sg::GameLoop::inst().getRenderWindow().getSize().y / 2.0f - 8.0f);
-            player.setOrigin(8.0f, 8.0f);
-            player.scale(4.0f, 4.0f);
-            player.addDrawable(as);
-
-            e0.addPossession(player);
-
             world0.addEntity(e0);
             world0.addEntity(e1);
             world0.addEntity(e2);
-            world0.addEntity(player);
 
             window0.setSizeInWorld(sf::Vector2f(static_cast<float>(sg::GameLoop::inst().getRenderWindow().getSize().x),
                                                 static_cast<float>(sg::GameLoop::inst().getRenderWindow().getSize().y)));
@@ -116,168 +79,191 @@ class TestEntityState : public sg::GameState {
             this->inputManager.addAction(sf::Keyboard::X,       [=](sf::Time t){grow0(t);});
             this->inputManager.addAction(sf::Keyboard::N,       [=](sf::Time t){shrink1(t);});
             this->inputManager.addAction(sf::Keyboard::M,       [=](sf::Time t){grow1(t);});
-            this->inputManager.addAction(sf::Keyboard::Numpad0, [=](sf::Time t){changePos(t);});
-            this->inputManager.addAction(sf::Keyboard::K,       [=](sf::Time t){changeRot(t);});
-            this->inputManager.addAction(sf::Keyboard::L,       [=](sf::Time t){changeScale(t);});
+            this->inputManager.addAction(sf::Keyboard::G,       [=](sf::Time t){this->moveGlobal = !this->moveGlobal;});
             this->setInputManager(this->inputManager);
 
         }
 
-        private:
-            void moveUp0(sf::Time t) {
+    private:
+        void moveUp0(sf::Time t) {
 
+            if (this->moveGlobal)
                 this->e0.moveGlobally(0.0f, -VEL);
+            else
+                this->e0.move(0.0f, -VEL);
 
-            }
-            void moveLeft0(sf::Time t) {
+        }
+        void moveLeft0(sf::Time t) {
 
+            if (this->moveGlobal)
                 this->e0.moveGlobally(-VEL, 0.0f);
+            else
+                this->e0.move(-VEL, 0.0f);
 
-            }
-            void moveDown0(sf::Time t) {
+        }
+        void moveDown0(sf::Time t) {
 
+            if (this->moveGlobal)
                 this->e0.moveGlobally(0.0f, VEL);
+            else
+                this->e0.move(0.0f, VEL);
 
-            }
-            void moveRight0(sf::Time t) {
+        }
+        void moveRight0(sf::Time t) {
 
+            if (this->moveGlobal)
+                this->e0.moveGlobally(VEL, 0.0f);
+            else
                 this->e0.move(VEL, 0.0f);
 
-            }
-            void rotateLeft0(sf::Time t) {
+        }
+        void rotateLeft0(sf::Time t) {
 
-                this->e0.rotate(-ROT);
+            this->e0.rotate(-ROT);
 
-            }
-            void rotateRight0(sf::Time t) {
+        }
+        void rotateRight0(sf::Time t) {
 
-                this->e0.rotate(ROT);
+            this->e0.rotate(ROT);
 
-            }
-            void moveUp1(sf::Time t) {
+        }
+        void moveUp1(sf::Time t) {
 
+            if (this->moveGlobal)
                 this->e1.moveGlobally(0.0f, -VEL);
+            else
+                this->e1.move(0.0f, -VEL);
 
-            }
-            void moveLeft1(sf::Time t) {
+        }
+        void moveLeft1(sf::Time t) {
 
+            if (this->moveGlobal)
                 this->e1.moveGlobally(-VEL, 0.0f);
+            else
+                this->e1.move(-VEL, 0.0f);
 
-            }
-            void moveDown1(sf::Time t) {
+        }
+        void moveDown1(sf::Time t) {
 
+            if (this->moveGlobal)
                 this->e1.moveGlobally(0.0f, VEL);
+            else
+                this->e1.move(0.0f, VEL);
 
-            }
-            void moveRight1(sf::Time t) {
+        }
+        void moveRight1(sf::Time t) {
 
+            if (this->moveGlobal)
                 this->e1.moveGlobally(VEL, 0.0f);
+            else
+                this->e1.move(VEL, 0.0f);
 
-            }
-            void rotateLeft1(sf::Time t) {
+        }
+        void rotateLeft1(sf::Time t) {
 
-                this->e1.rotate(-ROT);
+            this->e1.rotate(-ROT);
 
-            }
-            void rotateRight1(sf::Time t) {
+        }
+        void rotateRight1(sf::Time t) {
 
-                this->e1.rotate(ROT);
+            this->e1.rotate(ROT);
 
-            }
-            void moveUp2(sf::Time t) {
+        }
+        void moveUp2(sf::Time t) {
 
+            if (this->moveGlobal)
                 this->e2.moveGlobally(0.0f, -VEL);
+            else
+                this->e2.move(0.0f, -VEL);
 
-            }
-            void moveLeft2(sf::Time t) {
+        }
+        void moveLeft2(sf::Time t) {
 
+            if (this->moveGlobal)
                 this->e2.moveGlobally(-VEL, 0.0f);
+            else
+                this->e2.move(-VEL, 0.0f);
 
-            }
-            void moveDown2(sf::Time t) {
+        }
+        void moveDown2(sf::Time t) {
 
+            if (this->moveGlobal)
                 this->e2.moveGlobally(0.0f, VEL);
+            else
+                this->e2.move(0.0f, VEL);
 
-            }
-            void moveRight2(sf::Time t) {
+        }
+        void moveRight2(sf::Time t) {
 
+            if (this->moveGlobal)
                 this->e2.moveGlobally(VEL, 0.0f);
+            else
+                this->e2.move(VEL, 0.0f);
+
+        }
+        void rotateLeft2(sf::Time t) {
+
+            this->e2.rotate(-ROT);
+
+        }
+        void rotateRight2(sf::Time t) {
+
+            this->e2.rotate(ROT);
+
+        }
+        void changeOwner(sf::Time t) {
+
+            if (this->canChangeOwner) {
+                
+                this->canChangeOwner = false;
+                this->canRemoveOwner = true;
+                this->e0.addPossession(this->e1);
+                this->e1.addPossession(this->e2);
 
             }
-            void rotateLeft2(sf::Time t) {
 
-                this->e2.rotate(-ROT);
+        }
+        void removeOwner(sf::Time t) {
 
-            }
-            void rotateRight2(sf::Time t) {
+            if (this->canRemoveOwner) {
 
-                this->e2.rotate(ROT);
-
-            }
-            void changeOwner(sf::Time t) {
-
-                static bool changeOnce = true;
-                if (changeOnce) {
-                    changeOnce = false;
-                    this->e0.addPossession(this->e1);
-                    this->e1.addPossession(this->e2);
-                }
+                this->canRemoveOwner = false;
+                this->canChangeOwner = true;
+                this->e1.removePossession(this->e2);
+                this->e0.removePossession(this->e1);
 
             }
-            void removeOwner(sf::Time t) {
 
-                static bool removeOnce = true;
-                if (removeOnce) {
-                    removeOnce = false;
-                    this->e1.removePossession(this->e2);
-                    this->e0.removePossession(this->e1);
-                }
+        }
+        void shrink0(sf::Time t) {
 
-            }
-            void shrink0(sf::Time t) {
+            this->e0.scale(1.0f/FAC, 1.0f/FAC);
 
-                this->e0.scale(1.0f/FAC, 1.0f/FAC);
+        }
+        void grow0(sf::Time t) {
 
-            }
-            void grow0(sf::Time t) {
+            this->e0.scale(FAC, FAC);
 
-                this->e0.scale(FAC, FAC);
+        }
+        void shrink1(sf::Time t) {
 
-            }
-            void shrink1(sf::Time t) {
+            this->e1.scale(1.0f/FAC, 1.0f/FAC);
 
-                this->e1.scale(1.0f/FAC, 1.0f/FAC);
+        }
+        void grow1(sf::Time t) {
 
-            }
-            void grow1(sf::Time t) {
+            this->e1.scale(FAC, FAC);
 
-                this->e1.scale(FAC, FAC);
+        }
+        void shrink2(sf::Time t) {
 
-            }
-            void shrink2(sf::Time t) {
+            this->e2.scale(1.0f/FAC, 1.0f/FAC);
 
-                this->e2.scale(1.0f/FAC, 1.0f/FAC);
+        }
+        void grow2(sf::Time t) {
 
-            }
-            void grow2(sf::Time t) {
+            this->e2.scale(FAC, FAC);
 
-                this->e2.scale(FAC, FAC);
-
-            }
-            void changePos(sf::Time t) {
-
-                this->e2.setGlobalPosition(0.0f, 0.0f);
-
-            }
-            void changeRot(sf::Time t) {
-
-                this->e2.setGlobalRotation(45.0f);
-
-            }
-            void changeScale(sf::Time t) {
-
-                this->e2.setGlobalScale(2.0, 1.5);
-
-            }
+        }
 
 };

@@ -9,6 +9,7 @@
 #include<SFML/Graphics.hpp>
 #include<iostream>
 #include"TestEntityState.hpp"
+#include"TestAnimationState.hpp"
 
 void testBoundingShape() {
 
@@ -594,7 +595,9 @@ void testEntity() {
     sg::GameLoop::inst().getRenderWindow().setFramerateLimit(60);
 
     TestEntityState tes;
+    TestAnimationState tas;
     sg::StateManager::inst().pushState(tes);
+    //sg::StateManager::inst().pushState(tas);
 
     // Start gameloop
     sg::GameLoop::inst().start();
