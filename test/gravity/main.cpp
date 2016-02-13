@@ -15,7 +15,7 @@ int main() {
 
     // Initialize gameloop
     sg::GameLoop::inst().init(sf::Vector2u(600, 600),
-                              sf::String("Test"));
+                              sf::String("Gravity"));
     sg::GameLoop::inst().getRenderWindow().setFramerateLimit(60);
 
     // Initialize states

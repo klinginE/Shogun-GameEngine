@@ -14,26 +14,20 @@
 #include <stdio.h>
 
 #define RADIUS_MODIFIER 10.0f
-#define SPEED_MODIFIER 200.0f
+#define SPEED_MODIFIER 300.0f
 
 class Ball : public sg::Entity {
 
-    sf::Sprite sprite;
     sf::CircleShape circleShape = sf::CircleShape();
     float mass;
     sg::GameWindow *myWindow = NULL;
 
     public:
         Ball() : sg::Entity() {
-            setIsCollidable(true);
+
             setMass(1.0f);
-            circleShape.setRadius(getRadius());
-            circleShape.setFillColor(sf::Color(std::rand() % 255,
-                                               std::rand() % 255,
-                                               std::rand() % 255,
-                                               255));
-            circleShape.setPosition(-getRadius(), -getRadius());
             addDrawable(circleShape);
+
         };
 
         void handleCollision(const Entity &other, const std::vector<sf::Vector2f> &_) {
@@ -73,7 +67,7 @@ class Ball : public sg::Entity {
         void setMass(float newMass) {
             mass = newMass;
             circleShape.setRadius(getRadius());
-            circleShape.setPosition(-getRadius(), -getRadius());
+            circleShape.setOrigin(getRadius(), getRadius());
         };
 
         float getSpeed() {
@@ -100,19 +94,19 @@ class Ball : public sg::Entity {
         }
 
         void moveLeft(sf::Time t, sf::RectangleShape bounds) {
-            this->move(sf::Vector2f(-getSpeed()*t.asSeconds(), 0));
+            this->move(-getSpeed()*t.asSeconds(), 0);
             handleOutsideOfBounds(bounds);
         };
         void moveRight(sf::Time t, sf::RectangleShape bounds) {
-            this->move(sf::Vector2f(getSpeed()*t.asSeconds(), 0));
+            this->move(getSpeed()*t.asSeconds(), 0);
             handleOutsideOfBounds(bounds);
         };
         void moveUp(sf::Time t, sf::RectangleShape bounds) {
-            this->move(sf::Vector2f(0, -getSpeed()*t.asSeconds()));
+            this->move(0, -getSpeed()*t.asSeconds());
             handleOutsideOfBounds(bounds);
         };
         void moveDown(sf::Time t, sf::RectangleShape bounds) {
-            this->move(sf::Vector2f(0, getSpeed()*t.asSeconds()));
+            this->move(0, getSpeed()*t.asSeconds());
             handleOutsideOfBounds(bounds);
         };
 

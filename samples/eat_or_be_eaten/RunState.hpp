@@ -60,33 +60,43 @@ class RunState : public sg::GameState {
                                                  renderWindowSize.y));
 
             // Add players and enemies to world
-            p1.setPosition(sf::Vector2f(std::rand() % WORLD_WIDTH - WORLD_WIDTH/2,
-                                        std::rand() % WORLD_HEIGHT - WORLD_HEIGHT/2));
-            p2.setPosition(sf::Vector2f(std::rand() % WORLD_WIDTH - WORLD_WIDTH/2,
-                                        std::rand() % WORLD_HEIGHT - WORLD_HEIGHT/2));
-            p1.setColor(sf::Color(255, 0, 0, 255));
-            p2.setColor(sf::Color(0, 0, 255, 255));
+            p1.setPosition(std::rand() % WORLD_WIDTH - WORLD_WIDTH/2,
+                           std::rand() % WORLD_HEIGHT - WORLD_HEIGHT/2);
+            p2.setPosition(std::rand() % WORLD_WIDTH - WORLD_WIDTH/2,
+                           std::rand() % WORLD_HEIGHT - WORLD_HEIGHT/2);
+            //Make sure the horizontal distance between p1 and p2 is far enough
+            uint32_t iterations = 0;
+            while (std::abs(p2.getPosition().x - p1.getPosition().x) < WORLD_WIDTH/4 && iterations < 1000) {
+
+                p2.setPosition(std::rand() % WORLD_WIDTH - WORLD_WIDTH/2,
+                               std::rand() % WORLD_HEIGHT - WORLD_HEIGHT/2);
+                iterations++;
+
+            }
+
+            p1.setColor(sf::Color::Red);
+            p2.setColor(sf::Color::Blue);
             world.addEntity(p1);
             world.addEntity(p2);
             for (int i = 0; i < NUM_ENEMIES; i++) {
-                enemies[i].setPosition(
-                        sf::Vector2f(std::rand() % WORLD_WIDTH - WORLD_WIDTH/2,
-                                     std::rand() % WORLD_HEIGHT - WORLD_HEIGHT/2));
                 enemies[i].setMass(enemies[i].getMass()/2);
-                enemies[i].setColor(sf::Color(0, 255, 0, 255));
+                enemies[i].setPosition(std::rand() % WORLD_WIDTH - WORLD_WIDTH/2,
+                                       std::rand() % WORLD_HEIGHT - WORLD_HEIGHT/2);
+                enemies[i].setColor(sf::Color::Green);
                 world.addEntity(enemies[i]);
             }
             world.activateCollisions();
 
             // Create edge bounds and add to world
-            edge.setSize(sf::Vector2f(WORLD_WIDTH + 10,
-                                      WORLD_HEIGHT + 10));
-            edge.setPosition(sf::Vector2f(-(WORLD_WIDTH + 10)/2.0f,
-                                          -(WORLD_HEIGHT + 10)/2.0f));
-            edge.setFillColor(sf::Color(0, 0, 0, 0));
-            edge.setOutlineColor(sf::Color(255, 255, 255, 100));
-            edge.setOutlineThickness(5.0f);
-            edgeEntity.addDrawable(edge);
+            edge.setSize(sf::Vector2f(WORLD_WIDTH+20,
+                                      WORLD_HEIGHT+20));
+            edge.setPosition(-sf::Vector2f((WORLD_WIDTH+20)/2.0f,
+                                           (WORLD_HEIGHT+20)/2.0f));
+            edge.setFillColor(sf::Color::Transparent);
+            edge.setOutlineColor(sf::Color::Yellow);
+            edge.setOutlineThickness(10.0f);
+            edgeEntity.addDrawable(edge, false);
+            edgeEntity.setIsCollidable(false);
             world.addEntity(edgeEntity);
 
             // Add player1 input

@@ -15,7 +15,7 @@ int main() {
 
     // Initialize gameloop
     sg::GameLoop::inst().init(sf::Vector2u(1000, 600),
-                              sf::String("Test"));
+                              sf::String("Eat or be eaten!"));
     sg::GameLoop::inst().getRenderWindow().setFramerateLimit(60);
 
     // Initialize states
