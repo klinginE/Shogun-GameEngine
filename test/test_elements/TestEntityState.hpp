@@ -49,6 +49,7 @@ class TestEntityState : public sg::GameState {
                                                 static_cast<float>(sg::GameLoop::inst().getRenderWindow().getSize().y)));
             window0.setPosInWorld(window0.getSizeInWorld() / 2.0f);
             window0.setWorld(world0);
+            window0.setRenderOrder([=](const sg::Entity &, const sg::Entity &)->bool{return false;});
 
             this->addWindow(window0);
             this->addWorld(world0);

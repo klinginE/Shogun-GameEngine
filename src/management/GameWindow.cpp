@@ -1,4 +1,6 @@
 #include <queue>
+#include <stdlib.h>
+#include <functional>
 
 #include "GameWorld.hpp"
 #include "../elements/Entity.hpp"
@@ -23,6 +25,8 @@ namespace sg {
         this->rotationInWorld = 0;
 
         this->updateView();
+
+        this->renderOrder = [=](const Entity &e1, const Entity &e2) -> bool {return true;};
         
     }
 
@@ -41,6 +45,9 @@ namespace sg {
         this->rotationInWorld = 0;
 
         this->updateView();
+        
+        this->renderOrder = [=](const Entity &e1, const Entity &e2) -> bool {return true;};
+
     }
     
     GameWindow::GameWindow(const GameWorld &world,
@@ -59,6 +66,9 @@ namespace sg {
         this->rotationInWorld = rotationInWorld;
 
         this->updateView();
+        
+        this->renderOrder = [=](const Entity &e1, const Entity &e2) -> bool {return true;};
+
     }
     GameWindow::GameWindow(const GameWorld &world,
                            sf::Vector2f positionInScreen,
@@ -75,6 +85,9 @@ namespace sg {
         this->rotationInWorld = 0;
 
         this->updateView();
+        
+        this->renderOrder = [=](const Entity &e1, const Entity &e2) -> bool {return true;};
+
     }
     
     GameWindow::GameWindow(const GameWorld &world,
@@ -93,6 +106,9 @@ namespace sg {
         this->rotationInWorld = 0;
 
         this->updateView();
+        
+        this->renderOrder = [=](const Entity &e1, const Entity &e2) -> bool {return true;};
+
     }
     
     GameWindow::GameWindow(const GameWorld &world,
@@ -108,23 +124,19 @@ namespace sg {
         this->rotationInWorld = 0;
 
         this->updateView();
-    }
+        
+        this->renderOrder = [=](const Entity &e1, const Entity &e2) -> bool {return true;};
 
-    class verticalComparitor {
-        public:
-            bool operator() (Entity *e1, Entity *e2) {
-                if (e1->getPosition().y < e2->getPosition().y)
-                    return true;
-                return false;
-            }
-    };
+    }
 
     void GameWindow::render() {
 
         auto entities = world->getEntities();
         
+        auto comp = [=](Entity *e1, Entity *e2)->bool{return renderOrder(*e1, *e2);}; 
+
         std::priority_queue<Entity *, std::vector<Entity *>,
-                            verticalComparitor> renderQueue;
+                            decltype(comp)> renderQueue(comp);
     
         for (auto entityIter=entities.begin();
             entityIter!=entities.end(); ++entityIter) {
@@ -207,6 +219,11 @@ namespace sg {
     float GameWindow::getRotInWorld() {
         return this->rotationInWorld;
     }
+
+    void GameWindow::setRenderOrder(std::function<bool(const Entity &, const Entity &)> newRenderOrder) {
+        
+        renderOrder = newRenderOrder;
+    }
     
     void GameWindow::updateView() {
     
@@ -221,12 +238,6 @@ namespace sg {
     
     }
     
-    bool GameWindow::verticalSort(Entity *e1, Entity *e2) {
-        if (e1->getPosition().y < e2->getPosition().y)
-            return true;
-        return false;
-    }
-
     sf::View &GameWindow::getView() {
         return view;
     }
