@@ -30,7 +30,7 @@ class TestEntityState : public sg::GameState {
         {
 
             e0.setPosition(100.0f, 100.0f);
-            e0.scale(1.0f, 0.25f);
+            e0.scale(0.5f, 0.5f);
             e0.setOrigin(10.0, 10.0f);
 
             e1.fill(sf::Color::Red);
@@ -88,7 +88,7 @@ class TestEntityState : public sg::GameState {
         void moveUp0(sf::Time t) {
 
             if (this->moveGlobal)
-                this->e0.moveGlobally(0.0f, -VEL);
+                this->e0.moveGlobally(0.0f, -VEL, false, true);
             else
                 this->e0.move(0.0f, -VEL);
 
@@ -96,7 +96,7 @@ class TestEntityState : public sg::GameState {
         void moveLeft0(sf::Time t) {
 
             if (this->moveGlobal)
-                this->e0.moveGlobally(-VEL, 0.0f);
+                this->e0.moveGlobally(-VEL, 0.0f, false, true);
             else
                 this->e0.move(-VEL, 0.0f);
 
@@ -104,7 +104,7 @@ class TestEntityState : public sg::GameState {
         void moveDown0(sf::Time t) {
 
             if (this->moveGlobal)
-                this->e0.moveGlobally(0.0f, VEL);
+                this->e0.moveGlobally(0.0f, VEL, false, true);
             else
                 this->e0.move(0.0f, VEL);
 
@@ -112,7 +112,7 @@ class TestEntityState : public sg::GameState {
         void moveRight0(sf::Time t) {
 
             if (this->moveGlobal)
-                this->e0.moveGlobally(VEL, 0.0f);
+                this->e0.moveGlobally(VEL, 0.0f, false, true);
             else
                 this->e0.move(VEL, 0.0f);
 
@@ -130,7 +130,7 @@ class TestEntityState : public sg::GameState {
         void moveUp1(sf::Time t) {
 
             if (this->moveGlobal)
-                this->e1.moveGlobally(0.0f, -VEL);
+                this->e1.moveGlobally(0.0f, -VEL, false, true);
             else
                 this->e1.move(0.0f, -VEL);
 
@@ -138,7 +138,7 @@ class TestEntityState : public sg::GameState {
         void moveLeft1(sf::Time t) {
 
             if (this->moveGlobal)
-                this->e1.moveGlobally(-VEL, 0.0f);
+                this->e1.moveGlobally(-VEL, 0.0f, false, true);
             else
                 this->e1.move(-VEL, 0.0f);
 
@@ -146,7 +146,7 @@ class TestEntityState : public sg::GameState {
         void moveDown1(sf::Time t) {
 
             if (this->moveGlobal)
-                this->e1.moveGlobally(0.0f, VEL);
+                this->e1.moveGlobally(0.0f, VEL, false, true);
             else
                 this->e1.move(0.0f, VEL);
 
@@ -154,7 +154,7 @@ class TestEntityState : public sg::GameState {
         void moveRight1(sf::Time t) {
 
             if (this->moveGlobal)
-                this->e1.moveGlobally(VEL, 0.0f);
+                this->e1.moveGlobally(VEL, 0.0f, false, true);
             else
                 this->e1.move(VEL, 0.0f);
 
@@ -172,7 +172,7 @@ class TestEntityState : public sg::GameState {
         void moveUp2(sf::Time t) {
 
             if (this->moveGlobal)
-                this->e2.moveGlobally(0.0f, -VEL);
+                this->e2.moveGlobally(0.0f, -VEL, false, true);
             else
                 this->e2.move(0.0f, -VEL);
 
@@ -180,7 +180,7 @@ class TestEntityState : public sg::GameState {
         void moveLeft2(sf::Time t) {
 
             if (this->moveGlobal)
-                this->e2.moveGlobally(-VEL, 0.0f);
+                this->e2.moveGlobally(-VEL, 0.0f, false, true);
             else
                 this->e2.move(-VEL, 0.0f);
 
@@ -188,7 +188,7 @@ class TestEntityState : public sg::GameState {
         void moveDown2(sf::Time t) {
 
             if (this->moveGlobal)
-                this->e2.moveGlobally(0.0f, VEL);
+                this->e2.moveGlobally(0.0f, VEL, false, true);
             else
                 this->e2.move(0.0f, VEL);
 
@@ -196,7 +196,7 @@ class TestEntityState : public sg::GameState {
         void moveRight2(sf::Time t) {
 
             if (this->moveGlobal)
-                this->e2.moveGlobally(VEL, 0.0f);
+                this->e2.moveGlobally(VEL, 0.0f, false, true);
             else
                 this->e2.move(VEL, 0.0f);
 

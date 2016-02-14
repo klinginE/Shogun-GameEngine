@@ -70,8 +70,8 @@ namespace sg {
             sf::Vector2f getGlobalScale() const;
             void setGlobalPosition(float, float);
             void setGlobalPosition(const sf::Vector2f &);
-            void moveGlobally(float, float);
-            void moveGlobally(const sf::Vector2f &);
+            void moveGlobally(float, float, bool=true, bool=true);
+            void moveGlobally(const sf::Vector2f &, bool=true, bool=true);
             void setGlobalRotation(float, bool=true);
             void rotateGlobally(float, bool=true);
             void setGlobalScale(float, float);

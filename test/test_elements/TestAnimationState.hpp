@@ -5,7 +5,6 @@
 #include<Entity.hpp>
 #include<GameWorld.hpp>
 #include<GameWindow.hpp>
-//#include"TestBox.hpp"
 
 class TestAnimationState : public sg::GameState {
 
