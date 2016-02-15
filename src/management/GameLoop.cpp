@@ -1,4 +1,5 @@
 #include <stack>
+#include <functional>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
@@ -6,6 +7,7 @@
 #include "GameLoop.hpp"
 #include "StateManager.hpp"
 #include "GameState.hpp"
+#include "InputManager.hpp"
 
 namespace sg {
     
@@ -22,33 +24,41 @@ namespace sg {
         sf::Clock clock;
     
         while (getRenderWindow().isOpen()) {
-    
+
             // elapsed time
             sf::Time elapsed = clock.restart();
-    
-            // process current state
-            if (StateManager::inst().peekState() == NULL) {
+
+            // check if there is a current state
+            GameState *topState;
+            if ((topState = StateManager::inst().peekState()) == NULL) {
+
                 getRenderWindow().close();
                 break;
-            };
-           
-            StateManager::inst().peekState()->update(elapsed);
-            StateManager::inst().peekState()->render();
-    
-            // handle window close event
+
+            }
+
+            // handle window events
             sf::Event event;
             while (getRenderWindow().pollEvent(event)) {
-    
-                if (event.type == sf::Event::Closed) {
+
+                InputManager *topIM = NULL;
+                std::function<void(const sf::Time, const sf::Event)> action;
+                if ((topIM = topState->getInputManager()) &&
+                    (action = topIM->getAction(event.type)))
+                    action(elapsed, event);
+
+                if (event.type == sf::Event::Closed)
                     getRenderWindow().close();
-                }
-    
+
             }
-    
+
+            topState->update(elapsed);
+            topState->render();
+
         }
-    
+
     }
-    
+
     void GameLoop::init(sf::Vector2u windowDimensions,
                         sf::String windowName) {
     

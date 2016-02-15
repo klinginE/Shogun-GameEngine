@@ -597,7 +597,7 @@ void testEntity() {
     TestEntityState tes;
     TestAnimationState tas;
     sg::StateManager::inst().pushState(tes);
-    //sg::StateManager::inst().pushState(tas);
+    sg::StateManager::inst().pushState(tas);
 
     // Start gameloop
     sg::GameLoop::inst().start();

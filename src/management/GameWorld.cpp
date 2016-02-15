@@ -1,4 +1,3 @@
-
 #include "GameWorld.hpp"
 #include "../elements/Entity.hpp"
 #include "GameLoop.hpp"
@@ -10,39 +9,20 @@ namespace sg {
     // CONSTRUCTORS
 
     GameWorld::GameWorld() {
-        inputManager = NULL;
         inputActive = false;
         scanlineType = scanline_t::HORIZONTAL;
         collisionActive = true;
     }
-    GameWorld::GameWorld(InputManager *inputManager) {
-        this->inputManager = inputManager;
-        this->inputActive = true;
-        this->scanlineType = scanline_t::HORIZONTAL;
-        this->collisionActive = true;
-    }
     GameWorld::GameWorld(std::vector<Entity *> entities) {
         this->entities = entities;
-        this->inputManager = NULL;
         this->inputActive = false;
-        this->scanlineType = scanline_t::HORIZONTAL;
-        this->collisionActive = true;
-        sortEntities();
-    }
-    GameWorld::GameWorld(InputManager *inputManager,
-                         std::vector<Entity *> entities) {
-        this->entities = entities;
-        this->inputManager = inputManager;
-        this->inputActive = true;
         this->scanlineType = scanline_t::HORIZONTAL;
         this->collisionActive = true;
         sortEntities();
     }
 
     void GameWorld::update(const sf::Time &tslu) {
-        // process input
-        if (inputActive && inputManager)
-            inputManager->processInput(tslu);
+
         // delete entities that should be removed
         auto shouldBeRemoved = [](Entity * s) {
             if (s->getDeletionStatus())
@@ -142,11 +122,6 @@ namespace sg {
     }
     scanline_t GameWorld::getScanlineStatus() {
         return scanlineType;
-    }
-
-    void GameWorld::setInputManager(InputManager * inputManager) {
-        this->inputManager = inputManager;
-        this->inputActive = true;
     }
 
     bool verticalComparitor(Entity *e1, Entity *e2) {

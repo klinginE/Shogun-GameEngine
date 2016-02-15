@@ -19,9 +19,7 @@ class TestEntityState : public sg::GameState {
         TestBox e2 = TestBox();
         sg::GameWorld world0;
         sg::GameWindow window0;
-        sg::InputManager inputManager;
-        bool canChangeOwner = true;
-        bool canRemoveOwner = false;
+        sg::InputManager myInputManager;
         bool moveGlobal = true;
 
     public:
@@ -54,71 +52,105 @@ class TestEntityState : public sg::GameState {
             this->addWindow(window0);
             this->addWorld(world0);
 
-            this->inputManager.addAction(sf::Keyboard::Right,   [=](sf::Time t){moveRight1(t);});
-            this->inputManager.addAction(sf::Keyboard::Left,    [=](sf::Time t){moveLeft1(t);});
-            this->inputManager.addAction(sf::Keyboard::Up,      [=](sf::Time t){moveUp1(t);});
-            this->inputManager.addAction(sf::Keyboard::Down,    [=](sf::Time t){moveDown1(t);});
-            this->inputManager.addAction(sf::Keyboard::W,       [=](sf::Time t){moveUp0(t);});
-            this->inputManager.addAction(sf::Keyboard::A,       [=](sf::Time t){moveLeft0(t);});
-            this->inputManager.addAction(sf::Keyboard::S,       [=](sf::Time t){moveDown0(t);});
-            this->inputManager.addAction(sf::Keyboard::D,       [=](sf::Time t){moveRight0(t);});
-            this->inputManager.addAction(sf::Keyboard::Q,       [=](sf::Time t){rotateLeft0(t);});
-            this->inputManager.addAction(sf::Keyboard::E,       [=](sf::Time t){rotateRight0(t);});
-            this->inputManager.addAction(sf::Keyboard::Comma,   [=](sf::Time t){rotateLeft1(t);});
-            this->inputManager.addAction(sf::Keyboard::Period,  [=](sf::Time t){rotateRight1(t);});
-            this->inputManager.addAction(sf::Keyboard::Numpad6, [=](sf::Time t){moveRight2(t);});
-            this->inputManager.addAction(sf::Keyboard::Numpad4, [=](sf::Time t){moveLeft2(t);});
-            this->inputManager.addAction(sf::Keyboard::Numpad8, [=](sf::Time t){moveUp2(t);});
-            this->inputManager.addAction(sf::Keyboard::Numpad2, [=](sf::Time t){moveDown2(t);});
-            this->inputManager.addAction(sf::Keyboard::Numpad7, [=](sf::Time t){rotateLeft2(t);});
-            this->inputManager.addAction(sf::Keyboard::Numpad9, [=](sf::Time t){rotateRight2(t);});
-            this->inputManager.addAction(sf::Keyboard::Numpad1, [=](sf::Time t){shrink2(t);});
-            this->inputManager.addAction(sf::Keyboard::Numpad3, [=](sf::Time t){grow2(t);});
-            this->inputManager.addAction(sf::Keyboard::C,       [=](sf::Time t){changeOwner(t);});
-            this->inputManager.addAction(sf::Keyboard::R,       [=](sf::Time t){removeOwner(t);});
-            this->inputManager.addAction(sf::Keyboard::Z,       [=](sf::Time t){shrink0(t);});
-            this->inputManager.addAction(sf::Keyboard::X,       [=](sf::Time t){grow0(t);});
-            this->inputManager.addAction(sf::Keyboard::N,       [=](sf::Time t){shrink1(t);});
-            this->inputManager.addAction(sf::Keyboard::M,       [=](sf::Time t){grow1(t);});
-            this->inputManager.addAction(sf::Keyboard::G,       [=](sf::Time t){this->moveGlobal = !this->moveGlobal;});
-            this->setInputManager(this->inputManager);
+            this->myInputManager.addAction(sf::Event::EventType::KeyReleased, [=](const sf::Time t, const sf::Event e) {
+                if (e.key.code == sf::Keyboard::C)
+                    changeOwner(t);
+                if (e.key.code == sf::Keyboard::R)
+                    removeOwner(t);
+                if (e.key.code == sf::Keyboard::G)
+                    this->moveGlobal = !this->moveGlobal;
+            });
+            this->setInputManager(this->myInputManager);
+
+        }
+        void update(const sf::Time &tslu) {
+
+            sg::GameState::update(tslu);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+                moveRight1(tslu);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+                moveLeft1(tslu);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+                moveUp1(tslu);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+                moveDown1(tslu);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+                moveUp0(tslu);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+                moveLeft0(tslu);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+                moveDown0(tslu);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+                moveRight0(tslu);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
+                rotateLeft0(tslu);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::E))
+                rotateRight0(tslu);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Comma))
+                rotateLeft1(tslu);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Period))
+                rotateRight1(tslu);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad6))
+                moveRight2(tslu);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad4))
+                moveLeft2(tslu);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad8))
+                moveUp2(tslu);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad2))
+                moveDown2(tslu);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad7))
+                rotateLeft2(tslu);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad9))
+                rotateRight2(tslu);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad1))
+                shrink2(tslu);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad3))
+                grow2(tslu);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
+                shrink0(tslu);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::X))
+                grow0(tslu);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::N))
+                shrink1(tslu);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::M))
+                grow1(tslu);
 
         }
 
     private:
-        void moveUp0(sf::Time t) {
+        void moveUp0(const sf::Time &t) {
 
             if (this->moveGlobal)
-                this->e0.moveGlobally(0.0f, -VEL, false, true);
+                this->e0.moveGlobally(0.0f, -VEL);
             else
                 this->e0.move(0.0f, -VEL);
 
         }
-        void moveLeft0(sf::Time t) {
+        void moveLeft0(const sf::Time &t) {
 
             if (this->moveGlobal)
-                this->e0.moveGlobally(-VEL, 0.0f, false, true);
+                this->e0.moveGlobally(-VEL, 0.0f);
             else
                 this->e0.move(-VEL, 0.0f);
 
         }
-        void moveDown0(sf::Time t) {
+        void moveDown0(const sf::Time &t) {
 
             if (this->moveGlobal)
-                this->e0.moveGlobally(0.0f, VEL, false, true);
+                this->e0.moveGlobally(0.0f, VEL);
             else
                 this->e0.move(0.0f, VEL);
 
         }
-        void moveRight0(sf::Time t) {
+        void moveRight0(const sf::Time &t) {
 
             if (this->moveGlobal)
-                this->e0.moveGlobally(VEL, 0.0f, false, true);
+                this->e0.moveGlobally(VEL, 0.0f);
             else
                 this->e0.move(VEL, 0.0f);
 
         }
-        void rotateLeft0(sf::Time t) {
+        void rotateLeft0(const sf::Time &t) {
 
             this->e0.rotate(-ROT);
 
@@ -128,140 +160,128 @@ class TestEntityState : public sg::GameState {
             this->e0.rotate(ROT);
 
         }
-        void moveUp1(sf::Time t) {
+        void moveUp1(const sf::Time &t) {
 
             if (this->moveGlobal)
-                this->e1.moveGlobally(0.0f, -VEL, false, true);
+                this->e1.moveGlobally(0.0f, -VEL);
             else
                 this->e1.move(0.0f, -VEL);
 
         }
-        void moveLeft1(sf::Time t) {
+        void moveLeft1(const sf::Time &t) {
 
             if (this->moveGlobal)
-                this->e1.moveGlobally(-VEL, 0.0f, false, true);
+                this->e1.moveGlobally(-VEL, 0.0f);
             else
                 this->e1.move(-VEL, 0.0f);
 
         }
-        void moveDown1(sf::Time t) {
+        void moveDown1(const sf::Time &t) {
 
             if (this->moveGlobal)
-                this->e1.moveGlobally(0.0f, VEL, false, true);
+                this->e1.moveGlobally(0.0f, VEL);
             else
                 this->e1.move(0.0f, VEL);
 
         }
-        void moveRight1(sf::Time t) {
+        void moveRight1(const sf::Time &t) {
 
             if (this->moveGlobal)
-                this->e1.moveGlobally(VEL, 0.0f, false, true);
+                this->e1.moveGlobally(VEL, 0.0f);
             else
                 this->e1.move(VEL, 0.0f);
 
         }
-        void rotateLeft1(sf::Time t) {
+        void rotateLeft1(const sf::Time &t) {
 
             this->e1.rotate(-ROT);
 
         }
-        void rotateRight1(sf::Time t) {
+        void rotateRight1(const sf::Time &t) {
 
             this->e1.rotate(ROT);
 
         }
-        void moveUp2(sf::Time t) {
+        void moveUp2(const sf::Time &t) {
 
             if (this->moveGlobal)
-                this->e2.moveGlobally(0.0f, -VEL, false, true);
+                this->e2.moveGlobally(0.0f, -VEL);
             else
                 this->e2.move(0.0f, -VEL);
 
         }
-        void moveLeft2(sf::Time t) {
+        void moveLeft2(const sf::Time &t) {
 
             if (this->moveGlobal)
-                this->e2.moveGlobally(-VEL, 0.0f, false, true);
+                this->e2.moveGlobally(-VEL, 0.0f);
             else
                 this->e2.move(-VEL, 0.0f);
 
         }
-        void moveDown2(sf::Time t) {
+        void moveDown2(const sf::Time &t) {
 
             if (this->moveGlobal)
-                this->e2.moveGlobally(0.0f, VEL, false, true);
+                this->e2.moveGlobally(0.0f, VEL);
             else
                 this->e2.move(0.0f, VEL);
 
         }
-        void moveRight2(sf::Time t) {
+        void moveRight2(const sf::Time &t) {
 
             if (this->moveGlobal)
-                this->e2.moveGlobally(VEL, 0.0f, false, true);
+                this->e2.moveGlobally(VEL, 0.0f);
             else
                 this->e2.move(VEL, 0.0f);
 
         }
-        void rotateLeft2(sf::Time t) {
+        void rotateLeft2(const sf::Time &t) {
 
             this->e2.rotate(-ROT);
 
         }
-        void rotateRight2(sf::Time t) {
+        void rotateRight2(const sf::Time &t) {
 
             this->e2.rotate(ROT);
 
         }
-        void changeOwner(sf::Time t) {
+        void changeOwner(const sf::Time &t) {
 
-            if (this->canChangeOwner) {
-                
-                this->canChangeOwner = false;
-                this->canRemoveOwner = true;
-                this->e0.addPossession(this->e1);
-                this->e1.addPossession(this->e2);
-
-            }
+            this->e0.addPossession(this->e1);
+            this->e1.addPossession(this->e2);
 
         }
-        void removeOwner(sf::Time t) {
+        void removeOwner(const sf::Time &t) {
 
-            if (this->canRemoveOwner) {
-
-                this->canRemoveOwner = false;
-                this->canChangeOwner = true;
-                this->e1.removePossession(this->e2);
-                this->e0.removePossession(this->e1);
-
-            }
+            this->e1.removePossession(this->e2);
+            this->e0.removePossession(this->e1);
 
         }
-        void shrink0(sf::Time t) {
+        void shrink0(const sf::Time &t) {
 
             this->e0.scale(1.0f/FAC, 1.0f/FAC);
 
         }
-        void grow0(sf::Time t) {
+        void grow0(const sf::Time &t) {
 
             this->e0.scale(FAC, FAC);
 
         }
-        void shrink1(sf::Time t) {
+        void shrink1(const sf::Time &t) {
 
             this->e1.scale(1.0f/FAC, 1.0f/FAC);
 
         }
-        void grow1(sf::Time t) {
+        void grow1(const sf::Time &t) {
 
             this->e1.scale(FAC, FAC);
 
         }
-        void shrink2(sf::Time t) {
+        void shrink2(const sf::Time &t) {
 
             this->e2.scale(1.0f/FAC, 1.0f/FAC);
 
         }
-        void grow2(sf::Time t) {
+        void grow2(const sf::Time &t) {
 
             this->e2.scale(FAC, FAC);
 

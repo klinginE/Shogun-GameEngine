@@ -15,7 +15,7 @@ class TestAnimationState : public sg::GameState {
         sf::ConvexShape rs;
         sg::GameWorld world0;
         sg::GameWindow window0;
-        sg::InputManager inputManager;
+        sg::InputManager myInputManger;
         sf::IntRect textRect0 = sf::IntRect(0, 0, 16, 16);
         sf::IntRect textRect1 = sf::IntRect(0, 16, 16, 16);
         sf::IntRect textRect2 = sf::IntRect(0, 32, 16, 16);
@@ -63,33 +63,44 @@ class TestAnimationState : public sg::GameState {
 
             this->addWindow(window0);
             this->addWorld(world0);
+            this->myInputManger.addAction(sf::Event::EventType::KeyReleased, [=](const sf::Time t, const sf::Event e) {
+                if (e.key.code == sf::Keyboard::P)
+                    sg::StateManager::inst().popState();
+            });
+            this->setInputManager(this->myInputManger);
 
-            this->inputManager.addAction(sf::Keyboard::Right,   [=](sf::Time t){moveRight(t);});
-            this->inputManager.addAction(sf::Keyboard::Left,    [=](sf::Time t){moveLeft(t);});
-            this->inputManager.addAction(sf::Keyboard::Up,      [=](sf::Time t){moveUp(t);});
-            this->inputManager.addAction(sf::Keyboard::Down,    [=](sf::Time t){moveDown(t);});
-            this->inputManager.addAction(sf::Keyboard::P,       [=](sf::Time t){sg::StateManager::inst().popState();});
-            this->setInputManager(this->inputManager);
+        }
+        void update(const sf::Time &tslu) {
+
+            sg::GameState::update(tslu);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+                moveRight(tslu);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+                moveLeft(tslu);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+                moveUp(tslu);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+                moveDown(tslu);
 
         }
 
     private:
-        void moveUp(sf::Time t) {
+        void moveUp(const sf::Time &t) {
 
             this->player.move(0.0f, -VEL);
 
         }
-        void moveLeft(sf::Time t) {
+        void moveLeft(const sf::Time &t) {
 
             this->player.move(-VEL, 0.0f);
 
         }
-        void moveDown(sf::Time t) {
+        void moveDown(const sf::Time &t) {
 
             this->player.move(0.0f, VEL);
 
         }
-        void moveRight(sf::Time t) {
+        void moveRight(const sf::Time &t) {
 
             this->player.move(VEL, 0.0f);
 

@@ -33,9 +33,6 @@ namespace sg {
     
     void GameState::update(const sf::Time &tslu) {
 
-        if (inputManager)
-            inputManager->processInput(tslu);
-    
         for (auto gameWorldIt=gameWorlds.begin();
              gameWorldIt != gameWorlds.end(); ++gameWorldIt) {
             
