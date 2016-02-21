@@ -19,7 +19,6 @@ namespace sg {
         protected:
             std::vector<Entity *> entities;
 
-            bool inputActive;
             scanline_t scanlineType;
             bool collisionActive;
     
@@ -36,10 +35,6 @@ namespace sg {
             void activateCollisions();
             void deactivateCollisions();
             bool getCollisionStatus();
-
-            void activateInput();
-            void deactivateInput();
-            bool getInputStatus();
 
             void setVerticalScanline();
             void setHorizontalScanline();

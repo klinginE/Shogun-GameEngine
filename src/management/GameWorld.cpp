@@ -9,13 +9,11 @@ namespace sg {
     // CONSTRUCTORS
 
     GameWorld::GameWorld() {
-        inputActive = false;
         scanlineType = scanline_t::HORIZONTAL;
         collisionActive = true;
     }
     GameWorld::GameWorld(std::vector<Entity *> entities) {
         this->entities = entities;
-        this->inputActive = false;
         this->scanlineType = scanline_t::HORIZONTAL;
         this->collisionActive = true;
         sortEntities();
@@ -99,16 +97,6 @@ namespace sg {
     }
     bool GameWorld::getCollisionStatus() {
         return collisionActive;
-    }
-
-    void GameWorld::activateInput() {
-        inputActive = true;
-    }
-    void GameWorld::deactivateInput() {
-        inputActive = false;
-    }
-    bool GameWorld::getInputStatus() {
-        return inputActive;
     }
 
     void GameWorld::setVerticalScanline() {
