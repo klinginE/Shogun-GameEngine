@@ -364,19 +364,21 @@ namespace sg {
 
     }
 
-    void Entity::moveGlobally(float offsetX, float offsetY) {
+    void Entity::moveGlobally(float offsetX, float offsetY, bool withScale, bool withRotation) {
 
-        this->moveGlobally(sf::Vector2f(offsetX, offsetY));
+        this->moveGlobally(sf::Vector2f(offsetX, offsetY), withScale, withRotation);
 
     }
 
-    void Entity::moveGlobally(const sf::Vector2f &offset) {
+    void Entity::moveGlobally(const sf::Vector2f &offset, bool withScale, bool withRotation) {
 
         if (this->getOwner()) {
 
             sf::Transform trans = sf::Transform::Identity;
-            trans.scale(this->getOwner()->getGlobalScale());
-            trans.rotate(this->getOwner()->getGlobalRotation());
+            if (withScale)
+                trans.scale(this->getOwner()->getGlobalScale());
+            if (withRotation)
+                trans.rotate(this->getOwner()->getGlobalRotation());
             this->move(trans.getInverse().transformPoint(offset));
 
         }

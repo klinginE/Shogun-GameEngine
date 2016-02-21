@@ -5,7 +5,6 @@
 #include <SFML/Graphics.hpp>
 
 #include "../elements/Entity.hpp"
-#include "InputManager.hpp"
 
 namespace sg {
 
@@ -19,7 +18,6 @@ namespace sg {
         //std::vector<sf::Sprite *> background; // TODO: implemenet fuctions for this, and with GameWindow
         protected:
             std::vector<Entity *> entities;
-            InputManager *inputManager;
 
             bool inputActive;
             scanline_t scanlineType;
@@ -27,11 +25,8 @@ namespace sg {
     
         public:
             GameWorld();
-            GameWorld(InputManager *inputManager);
             GameWorld(std::vector<Entity *> entities);
-            GameWorld(InputManager *inputManager,
-                      std::vector<Entity *> entities);
-            
+
             virtual void update(const sf::Time &);
 
             void addEntity(Entity &entity);
@@ -49,8 +44,6 @@ namespace sg {
             void setVerticalScanline();
             void setHorizontalScanline();
             scanline_t getScanlineStatus();
-
-            void setInputManager(InputManager *);
 
         protected:
             bool horizontalSort(Entity *e1, Entity *e2);
