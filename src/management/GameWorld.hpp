@@ -18,7 +18,6 @@ namespace sg {
     
         //std::vector<sf::Sprite *> background; // TODO: implemenet fuctions for this, and with GameWindow
         protected:
-            std::set<Entity *> deleteSet;
             std::vector<Entity *> entities;
             InputManager *inputManager;
 
