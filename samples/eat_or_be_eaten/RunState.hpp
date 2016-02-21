@@ -99,18 +99,6 @@ class RunState : public sg::GameState {
             edgeEntity.setIsCollidable(false);
             world.addEntity(edgeEntity);
 
-            // Add player1 input
-            inputManager.addAction(sf::Keyboard::W, [=](sf::Time t){p1.moveUp(t, edge);});
-            inputManager.addAction(sf::Keyboard::A, [=](sf::Time t){p1.moveLeft(t, edge);});
-            inputManager.addAction(sf::Keyboard::S, [=](sf::Time t){p1.moveDown(t, edge);});
-            inputManager.addAction(sf::Keyboard::D, [=](sf::Time t){p1.moveRight(t, edge);});
-
-            // Add player2 input
-            inputManager.addAction(sf::Keyboard::Up, [=](sf::Time t){p2.moveUp(t, edge);});
-            inputManager.addAction(sf::Keyboard::Left, [=](sf::Time t){p2.moveLeft(t, edge);});
-            inputManager.addAction(sf::Keyboard::Down, [=](sf::Time t){p2.moveDown(t, edge);});
-            inputManager.addAction(sf::Keyboard::Right, [=](sf::Time t){p2.moveRight(t, edge);});
-
             // Create split bar down middle of screen
             splitBarWindow.setWorld(splitBarWorld);
             splitBarWindow.setPosInScreen(sf::Vector2f(0.499f, 0.0f));
@@ -127,6 +115,32 @@ class RunState : public sg::GameState {
             addWindow(p2Window);
             addWindow(splitBarWindow);
             setInputManager(inputManager);
+
+        };
+
+        void update(const sf::Time &tslu) {
+
+            // Add player1 input
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+                p1.moveUp(tslu, edge);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+                p1.moveLeft(tslu, edge);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+                p1.moveDown(tslu, edge);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+                p1.moveRight(tslu, edge);
+
+            // Add player2 input
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+                p2.moveUp(tslu, edge);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+                p2.moveLeft(tslu, edge);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+                p2.moveDown(tslu, edge);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+                p2.moveRight(tslu, edge);
+            
+            sg::GameState::update(tslu);
 
         };
 
