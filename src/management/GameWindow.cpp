@@ -131,6 +131,8 @@ namespace sg {
 
     void GameWindow::render() {
 
+        if (world == NULL) return;
+
         auto entities = world->getEntities();
         
         auto comp = [=](Entity *e1, Entity *e2)->bool{return renderOrder(*e1, *e2);}; 
