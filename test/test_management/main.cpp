@@ -14,6 +14,10 @@ sg::Entity entities[10];
 sg::GameWorld gameWorld;
 void testGameWorld() {
 
+    std::cout << std::endl;
+    std::cout << "Testing GameWorld" << std::endl;
+    std::cout << std::endl;
+
     // Test init
     assert(gameWorld.getEntities().size() == 0);
 
@@ -65,6 +69,10 @@ void testGameWorld() {
 sg::GameWindow gameWindow;
 void testGameWindow() {
 
+    std::cout << std::endl;
+    std::cout << "Testing GameWindow" << std::endl;
+    std::cout << std::endl;
+
     // Test initial gameWindow
     std::cout << "Default initial gameWindow world: " << ((gameWindow.getWorld() == NULL) ? "NULL" : "NOT NULL") << std::endl;
     assert(gameWindow.getWorld() == NULL);
@@ -77,15 +85,86 @@ void testGameWindow() {
 
     std::cout << "Default initial gameWindow sizeInWorld: " << gameWindow.getSizeInWorld().x << ", " << gameWindow.getSizeInWorld().y << std::endl;
 
+    std::cout << "Default initial gameWindow rotInWorld: " << gameWindow.getRotInWorld() << std::endl;
+
     // Test rendering with initial gameWindow
     gameWindow.render();
+    std::cout << "Successfully rendered with initial gameWindow" << std::endl;
+
+    // Test setting world
+    gameWindow.setWorld(gameWorld);
+    std::cout << "gameWindow world after setting world: " << ((gameWindow.getWorld() == &gameWorld) ? "SUCCESS" : "UNSUCCESSFUL") << std::endl;
+    assert(gameWindow.getWorld() == &gameWorld);
+
+    // Test rendering with initial gameWindow after setting world
+    gameWindow.render();
+    std::cout << "Successfully rendered after adding world" << std::endl;
+
+    // Test setPosInScreen
+    gameWindow.setPosInScreen(sf::Vector2f(0.5, 0.25));
+    assert(gameWindow.getPosInScreen() == sf::Vector2f(0.5, 0.25));
+
+    // Test setSizeInScreen
+    gameWindow.setSizeInScreen(sf::Vector2f(0.1, 0.3));
+    assert(gameWindow.getSizeInScreen() == sf::Vector2f(0.1, 0.3));
+
+    // Test setPosInWorld
+    gameWindow.setPosInWorld(sf::Vector2f(500, 250));
+    assert(gameWindow.getPosInWorld() == sf::Vector2f(500, 250));
+
+    // Test setSizeInWorld
+    gameWindow.setSizeInWorld(sf::Vector2f(250, 500));
+    assert(gameWindow.getSizeInWorld() == sf::Vector2f(250, 500));
+
+    // Test setRotInWorld
+    gameWindow.setRotInWorld(50);
+    assert(gameWindow.getRotInWorld() == 50);
+
+}
+
+sg::GameState gameState;
+sg::InputManager inputManager;
+void testGameState() {
+
+    std::cout << std::endl;
+    std::cout << "Testing GameWindow" << std::endl;
+    std::cout << std::endl;
+
+    assert(gameState.getWindow(0) == NULL);
+    assert(gameState.getWorld(0) == NULL);
+    assert(gameState.getNumWindows() == 0);
+    assert(gameState.getNumWorlds() == 0);
+    assert(gameState.getInputManager() == NULL);
+    assert(gameState.removeWindow(0) == NULL);
+    assert(gameState.removeWorld(0) == NULL);
+
+    gameState.addWindow(gameWindow);
+    assert(gameState.getWindow(0) == &gameWindow);
+    assert(gameState.getWindow(1) == NULL);
+    assert(gameState.getNumWindows() == 1);
+    assert(gameState.removeWindow(1) == NULL);
+    assert(gameState.removeWindow(0) == &gameWindow);
+
+    gameState.addWorld(gameWorld);
+    assert(gameState.getWorld(0) == &gameWorld);
+    assert(gameState.getWorld(1) == NULL);
+    assert(gameState.getNumWorlds() == 1);
+    assert(gameState.removeWorld(1) == NULL);
+    assert(gameState.removeWorld(0) == &gameWorld);
+
+    gameState.setInputManager(inputManager);
+    assert(gameState.getInputManager() == &inputManager);
+    assert(gameState.removeInputManager() == &inputManager);
+    assert(gameState.getInputManager() == NULL);
+    assert(gameState.removeInputManager() == NULL);
 
 }
 
 int main() {
 
-//    testGameWorld();
+    testGameWorld();
     testGameWindow();
+    testGameState();
     std::cout << "Success!" << std::endl;
 
     return 0;

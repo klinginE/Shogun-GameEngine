@@ -41,7 +41,7 @@ namespace sg {
             sf::Event event;
             while (getRenderWindow().pollEvent(event)) {
 
-                InputManager *topIM = NULL;
+                const InputManager *topIM = NULL;
                 std::function<void(const sf::Time, const sf::Event)> action;
                 if ((topIM = topState->getInputManager()) &&
                     (action = topIM->getAction(event.type)))

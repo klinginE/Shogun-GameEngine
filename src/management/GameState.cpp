@@ -64,6 +64,22 @@ namespace sg {
         return gameWorlds[worldIdx];
     }
 
+    const GameWindow * GameState::removeWindow(uint32_t windowIdx) {
+        if (windowIdx >= gameWindows.size())
+            return NULL;
+        GameWindow *gameWindow = gameWindows[windowIdx];
+        gameWindows.erase(gameWindows.begin() + windowIdx);
+        return gameWindow;
+    }
+
+    const GameWorld * GameState::removeWorld(uint32_t worldIdx) {
+        if (worldIdx >= gameWorlds.size())
+            return NULL;
+        GameWorld *gameWorld = gameWorlds[worldIdx];
+        gameWorlds.erase(gameWorlds.begin() + worldIdx);
+        return gameWorld;
+    }
+
     std::size_t GameState::getNumWindows() {
         return gameWindows.size();
     }
@@ -72,12 +88,18 @@ namespace sg {
         return gameWorlds.size();
     }
 
-    InputManager * GameState::getInputManager() {
-        return inputManager;
+    void GameState::setInputManager(const InputManager &newInputManager) {
+        inputManager = &newInputManager;
     }
 
-    void GameState::setInputManager(InputManager &newInputManager) {
-        inputManager = &newInputManager;
+    const InputManager * GameState::removeInputManager() {
+        const InputManager *oldInputManager = inputManager;
+        inputManager = NULL;
+        return oldInputManager;
+    }
+
+    const InputManager * GameState::getInputManager() {
+        return inputManager;
     }
 
 }
