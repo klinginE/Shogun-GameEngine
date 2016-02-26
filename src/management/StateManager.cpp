@@ -22,9 +22,11 @@ namespace sg {
     
     }
     
-    void StateManager::popState() {
-    
+    GameState *StateManager::popState() {
+
+        GameState *state = peekState();
         states.pop();
+        return state;
     
     }
     

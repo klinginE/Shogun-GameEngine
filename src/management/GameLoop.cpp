@@ -59,8 +59,8 @@ namespace sg {
 
     }
 
-    void GameLoop::init(sf::Vector2u windowDimensions,
-                        sf::String windowName) {
+    void GameLoop::init(const sf::Vector2u &windowDimensions,
+                        const sf::String &windowName) {
     
         // Configure
         sf::VideoMode setWindowDimensions(

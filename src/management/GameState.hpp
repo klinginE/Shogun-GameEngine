@@ -24,18 +24,18 @@ namespace sg {
             void addWindow(GameWindow &);
             void addWorld(GameWorld &);
 
-            const GameWindow * getWindow(uint32_t);
-            const GameWorld * getWorld(uint32_t);
+            const GameWindow * getWindow(uint32_t) const;
+            const GameWorld * getWorld(uint32_t) const;
 
             const GameWindow * removeWindow(uint32_t);
             const GameWorld * removeWorld(uint32_t);
 
-            std::size_t getNumWindows();
-            std::size_t getNumWorlds();
+            std::size_t getNumWindows() const;
+            std::size_t getNumWorlds() const;
 
             void setInputManager(const InputManager &);
             const InputManager * removeInputManager();
-            const InputManager * getInputManager();
+            const InputManager * getInputManager() const;
 
     };
     

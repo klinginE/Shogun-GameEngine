@@ -52,13 +52,13 @@ namespace sg {
         gameWindows.push_back(&newWindow);
     }
     
-    const GameWindow * GameState::getWindow(uint32_t windowIdx) {
+    const GameWindow * GameState::getWindow(uint32_t windowIdx) const {
         if (windowIdx >= gameWindows.size())
             return NULL; // return NULl if not found
         return gameWindows[windowIdx];
     }
 
-    const GameWorld * GameState::getWorld(uint32_t worldIdx) {
+    const GameWorld * GameState::getWorld(uint32_t worldIdx) const {
         if (worldIdx >= gameWorlds.size())
             return NULL; // return NULl if not found
         return gameWorlds[worldIdx];
@@ -80,11 +80,11 @@ namespace sg {
         return gameWorld;
     }
 
-    std::size_t GameState::getNumWindows() {
+    std::size_t GameState::getNumWindows() const {
         return gameWindows.size();
     }
 
-    std::size_t GameState::getNumWorlds() {
+    std::size_t GameState::getNumWorlds() const {
         return gameWorlds.size();
     }
 
@@ -98,7 +98,7 @@ namespace sg {
         return oldInputManager;
     }
 
-    const InputManager * GameState::getInputManager() {
+    const InputManager * GameState::getInputManager() const {
         return inputManager;
     }
 

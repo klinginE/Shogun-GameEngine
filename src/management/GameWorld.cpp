@@ -95,7 +95,7 @@ namespace sg {
     void GameWorld::deactivateCollisions() {
         collisionActive = false;
     }
-    bool GameWorld::getCollisionStatus() {
+    bool GameWorld::getCollisionStatus() const {
         return collisionActive;
     }
 
@@ -105,7 +105,7 @@ namespace sg {
     void GameWorld::setHorizontalScanline() {
         scanlineType = scanline_t::HORIZONTAL;
     }
-    scanline_t GameWorld::getScanlineStatus() {
+    scanline_t GameWorld::getScanlineStatus() const {
         return scanlineType;
     }
 
