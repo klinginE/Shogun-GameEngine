@@ -44,7 +44,6 @@ class Universe : public sg::GameWorld {
     public:
         Universe() {
 
-            deactivateInput();
             deactivateCollisions();
             
             sf::Vector2f centerPos(0, 0);

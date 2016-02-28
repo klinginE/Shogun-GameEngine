@@ -14,11 +14,11 @@ namespace sg {
 
     }
 
-    std::function<void(const sf::Time, const sf::Event)> InputManager::getAction(sf::Event::EventType type) {
+    std::function<void(const sf::Time, const sf::Event)> InputManager::getAction(sf::Event::EventType type) const {
 
-        if (actions.find(type) == actions.end())
-            return [](const sf::Time t, const sf::Event e){};
-        return actions[type];
+        if (this->actions.find(type) == this->actions.end())
+            return [=](const sf::Time t, const sf::Event e){};
+        return this->actions.find(type)->second;
 
     }
 

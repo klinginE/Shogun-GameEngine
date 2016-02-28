@@ -52,32 +52,54 @@ namespace sg {
         gameWindows.push_back(&newWindow);
     }
     
-    const GameWindow * GameState::getWindow(uint32_t windowIdx) {
+    const GameWindow * GameState::getWindow(uint32_t windowIdx) const {
         if (windowIdx >= gameWindows.size())
             return NULL; // return NULl if not found
         return gameWindows[windowIdx];
     }
 
-    const GameWorld * GameState::getWorld(uint32_t worldIdx) {
+    const GameWorld * GameState::getWorld(uint32_t worldIdx) const {
         if (worldIdx >= gameWorlds.size())
             return NULL; // return NULl if not found
         return gameWorlds[worldIdx];
     }
 
-    std::size_t GameState::getNumWindows() {
+    const GameWindow * GameState::removeWindow(uint32_t windowIdx) {
+        if (windowIdx >= gameWindows.size())
+            return NULL;
+        GameWindow *gameWindow = gameWindows[windowIdx];
+        gameWindows.erase(gameWindows.begin() + windowIdx);
+        return gameWindow;
+    }
+
+    const GameWorld * GameState::removeWorld(uint32_t worldIdx) {
+        if (worldIdx >= gameWorlds.size())
+            return NULL;
+        GameWorld *gameWorld = gameWorlds[worldIdx];
+        gameWorlds.erase(gameWorlds.begin() + worldIdx);
+        return gameWorld;
+    }
+
+    std::size_t GameState::getNumWindows() const {
         return gameWindows.size();
     }
 
-    std::size_t GameState::getNumWorlds() {
+    std::size_t GameState::getNumWorlds() const {
         return gameWorlds.size();
     }
 
-    InputManager * GameState::getInputManager() {
-        return inputManager;
+    void GameState::setInputManager(const InputManager &newInputManager) {
+        inputManager = &newInputManager;
     }
 
-    void GameState::setInputManager(InputManager &newInputManager) {
-        inputManager = &newInputManager;
+    const InputManager * GameState::removeInputManager() {
+        const InputManager *oldInputManager = inputManager;
+        inputManager = NULL;
+        return oldInputManager;
+    }
+
+    const InputManager * GameState::getInputManager() const {
+        return inputManager;
     }
 
 }

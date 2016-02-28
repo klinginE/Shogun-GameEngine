@@ -34,11 +34,11 @@ namespace sg {
             
             void activateCollisions();
             void deactivateCollisions();
-            bool getCollisionStatus();
+            bool getCollisionStatus() const;
 
             void setVerticalScanline();
             void setHorizontalScanline();
-            scanline_t getScanlineStatus();
+            scanline_t getScanlineStatus() const;
 
         protected:
             bool horizontalSort(Entity *e1, Entity *e2);

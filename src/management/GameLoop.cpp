@@ -41,7 +41,7 @@ namespace sg {
             sf::Event event;
             while (getRenderWindow().pollEvent(event)) {
 
-                InputManager *topIM = NULL;
+                const InputManager *topIM = NULL;
                 std::function<void(const sf::Time, const sf::Event)> action;
                 if ((topIM = topState->getInputManager()) &&
                     (action = topIM->getAction(event.type)))
@@ -59,8 +59,8 @@ namespace sg {
 
     }
 
-    void GameLoop::init(sf::Vector2u windowDimensions,
-                        sf::String windowName) {
+    void GameLoop::init(const sf::Vector2u &windowDimensions,
+                        const sf::String &windowName) {
     
         // Configure
         sf::VideoMode setWindowDimensions(

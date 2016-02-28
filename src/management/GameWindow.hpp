@@ -26,45 +26,45 @@ namespace sg {
             GameWindow();
             GameWindow(const GameWorld &world);
             GameWindow(const GameWorld &world,
-                       sf::Vector2f positionInScreen,
-                       sf::Vector2f sizeInScreen,
-                       sf::Vector2f positionInWorld,
-                       sf::Vector2f sizeInWorld,
+                       const sf::Vector2f &positionInScreen,
+                       const sf::Vector2f &sizeInScreen,
+                       const sf::Vector2f &positionInWorld,
+                       const sf::Vector2f &sizeInWorld,
                        float rotationInWorld);
             GameWindow(const GameWorld &world,
-                       sf::Vector2f positionInScreen,
-                       sf::Vector2f sizeInScreen,
-                       sf::Vector2f positionInWorld,
-                       sf::Vector2f sizeInWorld);
+                       const sf::Vector2f &positionInScreen,
+                       const sf::Vector2f &sizeInScreen,
+                       const sf::Vector2f &positionInWorld,
+                       const sf::Vector2f &sizeInWorld);
             GameWindow(const GameWorld &world,
-                       sf::Vector2f positionInWorld,
-                       sf::Vector2f sizeInWorld,
+                       const sf::Vector2f &positionInWorld,
+                       const sf::Vector2f &sizeInWorld,
                        float rotationInWorld);
             GameWindow(const GameWorld &world,
-                       sf::Vector2f positionInScreen,
-                       sf::Vector2f sizeInScreen);
+                       const sf::Vector2f &positionInScreen,
+                       const sf::Vector2f &sizeInScreen);
     
             virtual void render();
     
             void setWorld(const GameWorld &newWorld);
-            const GameWorld *getWorld();
+            const GameWorld *getWorld() const;
     
-            void setPosInScreen(sf::Vector2f positionInScreen);
-            sf::Vector2f getPosInScreen();
+            void setPosInScreen(const sf::Vector2f &positionInScreen);
+            sf::Vector2f getPosInScreen() const;
     
-            void setSizeInScreen(sf::Vector2f sizeInScreen);
-            sf::Vector2f getSizeInScreen();
+            void setSizeInScreen(const sf::Vector2f &sizeInScreen);
+            sf::Vector2f getSizeInScreen() const;
     
-            void setPosInWorld(sf::Vector2f posInWorld);
-            sf::Vector2f getPosInWorld();
+            void setPosInWorld(const sf::Vector2f &posInWorld);
+            sf::Vector2f getPosInWorld() const;
     
-            void setSizeInWorld(sf::Vector2f sizeInWorld);
-            sf::Vector2f getSizeInWorld();
+            void setSizeInWorld(const sf::Vector2f &sizeInWorld);
+            sf::Vector2f getSizeInWorld() const;
     
             void setRotInWorld(float rotationInWorld);
-            float getRotInWorld();
+            float getRotInWorld() const;
 
-            sf::View &getView();
+            const sf::View * getView() const;
 
             void setRenderOrder(std::function<bool(const Entity &, const Entity &)>);
 

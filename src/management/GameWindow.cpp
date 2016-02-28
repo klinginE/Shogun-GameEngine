@@ -51,10 +51,10 @@ namespace sg {
     }
     
     GameWindow::GameWindow(const GameWorld &world,
-                           sf::Vector2f positionInScreen,
-                           sf::Vector2f sizeInScreen,
-                           sf::Vector2f positionInWorld,
-                           sf::Vector2f sizeInWorld,
+                           const sf::Vector2f &positionInScreen,
+                           const sf::Vector2f &sizeInScreen,
+                           const sf::Vector2f &positionInWorld,
+                           const sf::Vector2f &sizeInWorld,
                            float rotationInWorld) {
         
         this->world = &world;
@@ -71,10 +71,10 @@ namespace sg {
 
     }
     GameWindow::GameWindow(const GameWorld &world,
-                           sf::Vector2f positionInScreen,
-                           sf::Vector2f sizeInScreen,
-                           sf::Vector2f positionInWorld,
-                           sf::Vector2f sizeInWorld) {
+                           const sf::Vector2f &positionInScreen,
+                           const sf::Vector2f &sizeInScreen,
+                           const sf::Vector2f &positionInWorld,
+                           const sf::Vector2f &sizeInWorld) {
         
         this->world = &world;
     
@@ -91,8 +91,8 @@ namespace sg {
     }
     
     GameWindow::GameWindow(const GameWorld &world,
-                           sf::Vector2f positionInWorld,
-                           sf::Vector2f sizeInWorld,
+                           const sf::Vector2f &positionInWorld,
+                           const sf::Vector2f &sizeInWorld,
                            float rotationInWorld) {
     
         this->world = &world;
@@ -112,8 +112,8 @@ namespace sg {
     }
     
     GameWindow::GameWindow(const GameWorld &world,
-                           sf::Vector2f positionInScreen,
-                           sf::Vector2f sizeInScreen) {
+                           const sf::Vector2f &positionInScreen,
+                           const sf::Vector2f &sizeInScreen) {
     
         this->world = &world;
     
@@ -130,6 +130,8 @@ namespace sg {
     }
 
     void GameWindow::render() {
+
+        if (world == NULL) return;
 
         auto entities = world->getEntities();
         
@@ -181,42 +183,42 @@ namespace sg {
     void GameWindow::setWorld(const GameWorld &newWorld) {
         this->world = &newWorld;
     }
-    const GameWorld *GameWindow::getWorld() {
+    const GameWorld *GameWindow::getWorld() const {
         return this->world;
     }
     
-    void GameWindow::setPosInScreen(sf::Vector2f positionInScreen) {
+    void GameWindow::setPosInScreen(const sf::Vector2f &positionInScreen) {
         this->positionInScreen = positionInScreen;
     }
-    sf::Vector2f GameWindow::getPosInScreen() {
+    sf::Vector2f GameWindow::getPosInScreen() const {
         return this->positionInScreen;
     }
     
-    void GameWindow::setSizeInScreen(sf::Vector2f sizeInScreen) {
+    void GameWindow::setSizeInScreen(const sf::Vector2f &sizeInScreen) {
         this->sizeInScreen = sizeInScreen;
     }
-    sf::Vector2f GameWindow::getSizeInScreen() {
+    sf::Vector2f GameWindow::getSizeInScreen() const {
         return this->sizeInScreen;
     }
     
-    void GameWindow::setPosInWorld(sf::Vector2f posInWorld) {
+    void GameWindow::setPosInWorld(const sf::Vector2f &posInWorld) {
         this->positionInWorld = posInWorld;
     }
-    sf::Vector2f GameWindow::getPosInWorld() {
+    sf::Vector2f GameWindow::getPosInWorld() const {
         return this->positionInWorld;
     }
     
-    void GameWindow::setSizeInWorld(sf::Vector2f sizeInWorld) {
+    void GameWindow::setSizeInWorld(const sf::Vector2f &sizeInWorld) {
         this->sizeInWorld = sizeInWorld;
     }
-    sf::Vector2f GameWindow::getSizeInWorld() {
+    sf::Vector2f GameWindow::getSizeInWorld() const {
         return this->sizeInWorld;
     }
     
     void GameWindow::setRotInWorld(float rotationInWorld) {
         this->rotationInWorld = rotationInWorld;
     }
-    float GameWindow::getRotInWorld() {
+    float GameWindow::getRotInWorld() const {
         return this->rotationInWorld;
     }
 
@@ -238,8 +240,8 @@ namespace sg {
     
     }
     
-    sf::View &GameWindow::getView() {
-        return view;
+    const sf::View * GameWindow::getView() const {
+        return &view;
     }
 
 }

@@ -13,7 +13,7 @@ namespace sg {
             static StateManager & inst();
             
             void pushState(GameState &state);
-            void popState();
+            GameState *popState();
             GameState *peekState();
     
             ~StateManager();

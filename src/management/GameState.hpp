@@ -13,7 +13,7 @@ namespace sg {
         private: 
             std::vector<GameWorld*> gameWorlds;
             std::vector<GameWindow*> gameWindows;
-            InputManager *inputManager = NULL;
+            const InputManager *inputManager = NULL;
 
         public:
             GameState();
@@ -24,14 +24,18 @@ namespace sg {
             void addWindow(GameWindow &);
             void addWorld(GameWorld &);
 
-            const GameWindow *getWindow(uint32_t);
-            const GameWorld *getWorld(uint32_t);
+            const GameWindow * getWindow(uint32_t) const;
+            const GameWorld * getWorld(uint32_t) const;
 
-            std::size_t getNumWindows();
-            std::size_t getNumWorlds();
+            const GameWindow * removeWindow(uint32_t);
+            const GameWorld * removeWorld(uint32_t);
 
-            void setInputManager(InputManager &);
-            InputManager *getInputManager();
+            std::size_t getNumWindows() const;
+            std::size_t getNumWorlds() const;
+
+            void setInputManager(const InputManager &);
+            const InputManager * removeInputManager();
+            const InputManager * getInputManager() const;
 
     };
     
