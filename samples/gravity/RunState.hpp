@@ -20,7 +20,6 @@ class RunState : public sg::GameState {
 
     Universe universe;
     sg::GameWindow window;
-    sg::InputManager inputManager;
     
     public:
         RunState() {
@@ -34,13 +33,24 @@ class RunState : public sg::GameState {
             addWorld(universe);
             addWindow(window);
 
-            inputManager.addAction(sf::Keyboard::Right, [=](sf::Time t){increaseWindowSize();});
-            inputManager.addAction(sf::Keyboard::Left,  [=](sf::Time t){decreaseWindowSize();});
-            inputManager.addAction(sf::Keyboard::W,     [=](sf::Time t){moveUp();});
-            inputManager.addAction(sf::Keyboard::A,     [=](sf::Time t){moveLeft();});
-            inputManager.addAction(sf::Keyboard::S,     [=](sf::Time t){moveDown();});
-            inputManager.addAction(sf::Keyboard::D,     [=](sf::Time t){moveRight();});
-            setInputManager(inputManager);
+        };
+        
+        void update(const sf::Time &tslu) {
+
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+                increaseWindowSize();
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+                decreaseWindowSize();
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+                moveUp();
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+                moveLeft();
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+                moveDown();
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+                moveRight();
+
+            sg::GameState::update(tslu);
 
         };
 
