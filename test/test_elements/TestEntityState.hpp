@@ -1,10 +1,10 @@
 #pragma once
 
 #include<SFML/Graphics.hpp>
-#include<GameState.hpp>
-#include<Entity.hpp>
-#include<GameWorld.hpp>
-#include<GameWindow.hpp>
+#include<Shogun/GameState.hpp>
+#include<Shogun/Entity.hpp>
+#include<Shogun/GameWorld.hpp>
+#include<Shogun/GameWindow.hpp>
 #include"TestBox.hpp"
 
 class TestEntityState : public sg::GameState {
