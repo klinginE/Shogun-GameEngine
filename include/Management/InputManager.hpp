@@ -18,7 +18,6 @@ namespace sg {
             void addAction(sf::Event::EventType, std::function<void(const sf::Time, const sf::Event)>);
             void clearAction(sf::Event::EventType);
             std::function<void(const sf::Time, const sf::Event)> getAction(sf::Event::EventType) const;
-            void processInput(sf::Event::EventType);
 
     };
 
