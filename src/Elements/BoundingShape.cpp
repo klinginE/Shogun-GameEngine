@@ -5,8 +5,8 @@
 #include <iostream>
 #include <math.h>
 
-//SHOGUN includes
-#include "BoundingShape.hpp"
+//Shogun includes
+#include <Shogun/Elements/BoundingShape.hpp>
 
 namespace sg {
 

@@ -6,7 +6,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 
-#include "GameWorld.hpp"
+#include <Shogun/Management/GameWorld.hpp>
 
 namespace sg {
     

@@ -3,7 +3,7 @@
 #include <stack>
 #include <SFML/Graphics.hpp>
 
-#include "GameState.hpp"
+#include <Shogun/Management/GameState.hpp>
 
 namespace sg {
     

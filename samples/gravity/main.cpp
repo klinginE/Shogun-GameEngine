@@ -1,7 +1,7 @@
 // Shogun libraries
-#include <GameLoop.hpp>
-#include <StateManager.hpp>
-#include <GameState.hpp>
+#include <Shogun/Management/GameLoop.hpp>
+#include <Shogun/Management/StateManager.hpp>
+#include <Shogun/Management/GameState.hpp>
 
 // SFML libraries
 #include <SFML/Graphics.hpp>

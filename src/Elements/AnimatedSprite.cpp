@@ -1,9 +1,9 @@
 //C++ includes
-#include<stdexcept>
+#include <stdexcept>
 
-//SHOGUN includes
-#include"AnimatedSprite.hpp"
-#include"Entity.hpp"
+//Shogun includes
+#include <Shogun/Elements/AnimatedSprite.hpp>
+#include <Shogun/Elements/Entity.hpp>
 
 namespace sg {
 

@@ -4,7 +4,7 @@
 #include <set>
 #include <SFML/Graphics.hpp>
 
-#include "../elements/Entity.hpp"
+#include <Shogun/Elements/Entity.hpp>
 
 namespace sg {
 

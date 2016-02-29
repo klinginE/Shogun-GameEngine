@@ -1,8 +1,8 @@
-#include "GameWorld.hpp"
-#include "../elements/Entity.hpp"
-#include "GameLoop.hpp"
+#include <Shogun/Management/GameWorld.hpp>
+#include <Shogun/Elements/Entity.hpp>
+#include <Shogun/Management/GameLoop.hpp>
 
-#include "GameWorld.hpp"
+#include <Shogun/Management/GameWorld.hpp>
 
 namespace sg {
     

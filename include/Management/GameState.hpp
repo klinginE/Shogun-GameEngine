@@ -2,9 +2,9 @@
 
 #include <vector>
 
-#include "GameWorld.hpp"
-#include "GameWindow.hpp"
-#include "InputManager.hpp"
+#include <Shogun/Management/GameWorld.hpp>
+#include <Shogun/Management/GameWindow.hpp>
+#include <Shogun/Management/InputManager.hpp>
 
 namespace sg {
 

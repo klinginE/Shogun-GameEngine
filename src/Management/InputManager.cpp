@@ -1,4 +1,4 @@
-#include "InputManager.hpp"
+#include <Shogun/Management/InputManager.hpp>
 
 namespace sg {
 

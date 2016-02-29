@@ -1,8 +1,8 @@
 //C++ includes
-#include<stdexcept>
+#include <stdexcept>
 
 //SHOGUN includes
-#include"Entity.hpp"
+#include <Shogun/Elements/Entity.hpp>
 
 namespace sg {
 

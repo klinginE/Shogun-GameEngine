@@ -7,11 +7,11 @@
 #include <SFML/Graphics.hpp>
 
 // Shougun includes
-#include <GameState.hpp>
-#include <GameWorld.hpp>
-#include <GameWindow.hpp>
-#include <InputManager.hpp>
-#include <Entity.hpp>
+#include <Shogun/Management/GameState.hpp>
+#include <Shogun/Management/GameWorld.hpp>
+#include <Shogun/Management/GameWindow.hpp>
+#include <Shogun/Management/InputManager.hpp>
+#include <Shogun/Elements/Entity.hpp>
 
 #define NUM_ENEMIES 100
 #define WORLD_HEIGHT 1000

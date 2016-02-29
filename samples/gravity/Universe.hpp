@@ -7,7 +7,7 @@
 #include <cstdlib>
 
 // Shogun includes
-#include <GameWorld.hpp>
+#include <Shogun/Management/GameWorld.hpp>
 
 #define GRAV_CONST 1.0f
 #define STARS_WIDTH 81

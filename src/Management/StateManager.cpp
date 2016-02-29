@@ -3,8 +3,8 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 
-#include "StateManager.hpp"
-#include "GameState.hpp"
+#include <Shogun/Management/StateManager.hpp>
+#include <Shogun/Management/GameState.hpp>
 
 namespace sg {
     

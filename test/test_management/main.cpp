@@ -1,14 +1,14 @@
-#include<BoundingShape.hpp>
-#include<AnimatedSprite.hpp>
-#include<GameLoop.hpp>
-#include<GameState.hpp>
-#include<StateManager.hpp>
-#include<GameWindow.hpp>
-#include<GameWorld.hpp>
-#include<Entity.hpp>
-#include<SFML/Graphics.hpp>
-#include<iostream>
-#include<assert.h>
+#include <Shogun/Elements/BoundingShape.hpp>
+#include <Shogun/Elements/AnimatedSprite.hpp>
+#include <Shogun/Elements/Entity.hpp>
+#include <Shogun/Management/GameLoop.hpp>
+#include <Shogun/Management/GameState.hpp>
+#include <Shogun/Management/StateManager.hpp>
+#include <Shogun/Management/GameWindow.hpp>
+#include <Shogun/Management/GameWorld.hpp>
+#include <SFML/Graphics.hpp>
+#include <iostream>
+#include <assert.h>
 
 sg::Entity entities[10];
 sg::GameWorld gameWorld;

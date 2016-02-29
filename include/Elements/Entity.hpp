@@ -1,19 +1,19 @@
 #pragma once
 
 //C++ includes
-#include<iostream>
-#include<vector>
-#include<math.h>
-#include<stdint.h>
+#include <iostream>
+#include <vector>
+#include <math.h>
+#include <stdint.h>
 #include <typeinfo>
 
 //SFML includes
-#include<SFML/Graphics.hpp>
+#include <SFML/Graphics.hpp>
 
-//SHOGUN includes
-#include"AnimatedSprite.hpp"
-#include"BoundingShape.hpp"
-#include"../management/GameLoop.hpp"
+//Shogun includes
+#include <Shogun/Elements/AnimatedSprite.hpp>
+#include <Shogun/Elements/BoundingShape.hpp>
+#include <Shogun/Management/GameLoop.hpp>
 
 namespace sg {
 

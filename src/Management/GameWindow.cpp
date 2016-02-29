@@ -2,11 +2,11 @@
 #include <stdlib.h>
 #include <functional>
 
-#include "GameWorld.hpp"
-#include "../elements/Entity.hpp"
-#include "GameLoop.hpp"
+#include <Shogun/Management/GameWorld.hpp>
+#include <Shogun/Elements/Entity.hpp>
+#include <Shogun/Management/GameLoop.hpp>
 
-#include "GameWindow.hpp"
+#include <Shogun/Management/GameWindow.hpp>
 
 namespace sg {
     

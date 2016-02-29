@@ -1,6 +1,6 @@
 #pragma once
 
-#include<Shogun/Entity.hpp>
+#include<Shogun/Elements/Entity.hpp>
 #include<SFML/Graphics.hpp>
 
 class TestBox : public sg::Entity {

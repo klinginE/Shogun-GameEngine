@@ -4,9 +4,9 @@
 #include <SFML/Graphics.hpp>
 
 // Shogun includes
-#include <Entity.hpp>
-#include <GameLoop.hpp>
-#include <BoundingShape.hpp>
+#include <Shogun/Elements/Entity.hpp>
+#include <Shogun/Management/GameLoop.hpp>
+#include <Shogun/Elements/BoundingShape.hpp>
 
 // standard includes
 #include <cstdlib>

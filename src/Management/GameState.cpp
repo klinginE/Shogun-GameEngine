@@ -1,12 +1,12 @@
 #include <list>
 #include <assert.h>
 
-#include "GameLoop.hpp"
-#include "GameWorld.hpp"
-#include "GameWindow.hpp"
-#include "InputManager.hpp"
+#include <Shogun/Management/GameLoop.hpp>
+#include <Shogun/Management/GameWorld.hpp>
+#include <Shogun/Management/GameWindow.hpp>
+#include <Shogun/Management/InputManager.hpp>
 
-#include "GameState.hpp"
+#include <Shogun/Management/GameState.hpp>
 
 namespace sg {
     

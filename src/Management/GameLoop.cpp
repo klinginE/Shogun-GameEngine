@@ -4,10 +4,10 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 
-#include "GameLoop.hpp"
-#include "StateManager.hpp"
-#include "GameState.hpp"
-#include "InputManager.hpp"
+#include <Shogun/Management/GameLoop.hpp>
+#include <Shogun/Management/StateManager.hpp>
+#include <Shogun/Management/GameState.hpp>
+#include <Shogun/Management/InputManager.hpp>
 
 namespace sg {
     
