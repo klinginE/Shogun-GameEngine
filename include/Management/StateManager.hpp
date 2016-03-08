@@ -14,7 +14,7 @@ namespace sg {
             
             void pushState(GameState &state);
             GameState *popState();
-            GameState *peekState();
+            GameState *peekState() const;
     
             ~StateManager();
     
