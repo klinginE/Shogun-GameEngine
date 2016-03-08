@@ -40,17 +40,6 @@ namespace sg {
 
     }
 
-    AnimatedSprite::~AnimatedSprite() {
-
-        this->rects.clear();
-        this->surfaces.clear();
-        this->frameDelay = sf::Time::Zero;
-        this->timePast = sf::Time::Zero;
-        this->frameIndex = 0;
-        this->playing = false;
-
-    }
-
     std::vector<sf::IntRect *>::size_type AnimatedSprite::getNumOfFrames() const {
 
         return this->rects.size();

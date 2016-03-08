@@ -24,7 +24,6 @@ namespace sg {
             AnimatedSprite();
             AnimatedSprite(sf::Time);
             AnimatedSprite(sf::Time, const sf::Texture &);
-            ~AnimatedSprite();
             std::vector<sf::IntRect>::size_type getNumOfFrames() const;
             const sf::Transformable *getFrameBound(uint32_t) const;
             const sf::IntRect *getFrameRect(uint32_t) const;
@@ -46,7 +45,7 @@ namespace sg {
             void move(float, float);
             void move(const sf::Vector2f &);
             void setRotation(float);
-            void rotate(float angle);
+            void rotate(float);
             void setScale(float, float);
             void setScale(const sf::Vector2f &);
             void scale(float, float);

@@ -22,8 +22,6 @@ namespace sg {
         public:
             sf::Drawable *d = NULL;
             sf::Transformable *t = NULL;
-            Component() {
-            }
             Component(sf::Drawable &d, sf::Transformable &t) {
 
                 this->d = &d;
@@ -57,7 +55,7 @@ namespace sg {
             bool collides(Entity &);// calls handleCollision
             bool getIsCollidable() const;
             void setIsCollidable(bool);
-            bool getDeletionStatus();
+            bool getDeletionStatus() const;
             void setDeletionStatus(bool);
             std::vector<Component *>::size_type getNumOfComponents() const;
             std::pair<const sf::Drawable *, const sf::Transformable *>getComponent(uint32_t) const;
@@ -110,7 +108,7 @@ namespace sg {
                 // render sprites
                 for (const auto &it : this->components)
                     if(it->d)
-                        GameLoop::inst().getRenderWindow().draw(*it->d, states);
+                        GameLoop::inst().getRenderWindow().draw(*(it->d), states);
 
             }
 

@@ -223,7 +223,7 @@ namespace sg {
 
     }
 
-    bool Entity::getDeletionStatus() {
+    bool Entity::getDeletionStatus() const {
 
         return deletion;
 

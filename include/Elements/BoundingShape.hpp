@@ -25,7 +25,6 @@ namespace sg {
 
         public:
             //Public member functions
-            ~BoundingShape();
             std::vector<sf::Shape *>::size_type getNumOfShapes() const;
             const sf::Shape *getShape(uint32_t) const;
             std::vector<sf::Shape *>::size_type addShape(sf::Shape &);

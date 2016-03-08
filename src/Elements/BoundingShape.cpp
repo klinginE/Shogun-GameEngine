@@ -10,12 +10,6 @@
 
 namespace sg {
 
-    BoundingShape::~BoundingShape() {
-
-        this->shapes.clear();
-
-    }
-
     std::vector<sf::Shape *>::size_type BoundingShape::getNumOfShapes() const {
 
         return this->shapes.size();
@@ -53,7 +47,6 @@ namespace sg {
 
         if (idx >= this->getNumOfShapes())
             return;
-            //throw std::out_of_range(std::string("In setOriginShape(): ") + std::to_string(idx) + std::string(" is not a vaild shape index."));
         this->shapes[idx]->setOrigin(origin);
 
     }
@@ -62,7 +55,6 @@ namespace sg {
 
         if (idx >= this->getNumOfShapes())
             return;
-            //throw std::out_of_range(std::string("In setPositionShape(): ") + std::to_string(idx) + std::string(" is not a vaild shape index."));
         this->shapes[idx]->setPosition(newPos);
 
     }
@@ -71,7 +63,6 @@ namespace sg {
 
         if (idx >= this->getNumOfShapes())
             return;
-            //throw std::out_of_range(std::string("In moveShape(): ") + std::to_string(idx) + std::string(" is not a vaild shape index."));
         this->shapes[idx]->move(offset);
 
     }
@@ -80,7 +71,6 @@ namespace sg {
 
         if (idx >= this->getNumOfShapes())
             return;
-            //throw std::out_of_range(std::string("In setRotationShape(): ") + std::to_string(idx) + std::string(" is not a vaild shape index."));
         this->shapes[idx]->setRotation(angle);
 
     }
@@ -89,7 +79,6 @@ namespace sg {
 
         if (idx >= this->getNumOfShapes())
             return;
-            //throw std::out_of_range(std::string("In rotateShape(): ") + std::to_string(idx) + std::string(" is not a vaild shape index."));
         this->shapes[idx]->rotate(angle);
 
     }
@@ -98,7 +87,6 @@ namespace sg {
 
         if (idx >= this->getNumOfShapes())
             return;
-            //throw std::out_of_range(std::string("In setScaleShape(): ") + std::to_string(idx) + std::string(" is not a vaild shape index."));
         this->shapes[idx]->setScale(factor);
 
     }
@@ -107,7 +95,6 @@ namespace sg {
 
         if (idx >= this->getNumOfShapes())
             return;
-            //throw std::out_of_range(std::string("In scaleShape(): ") + std::to_string(idx) + std::string(" is not a vaild shape index."));
         this->shapes[idx]->scale(factor);
 
     }
