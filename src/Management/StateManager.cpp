@@ -30,7 +30,7 @@ namespace sg {
     
     }
     
-    GameState *StateManager::peekState() {
+    GameState *StateManager::peekState() const {
     
         if (this->states.empty()) {
     
