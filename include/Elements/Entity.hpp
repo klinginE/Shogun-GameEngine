@@ -20,8 +20,14 @@ namespace sg {
     class Component {
 
         public:
-            sf::Drawable *d = NULL;
-            sf::Transformable *t = NULL;
+            sf::Drawable *d;
+            sf::Transformable *t;
+            Component() {
+
+                this->d = NULL;
+                this->t = NULL;
+
+            }
             Component(sf::Drawable &d, sf::Transformable &t) {
 
                 this->d = &d;
@@ -85,6 +91,8 @@ namespace sg {
             void scaleComponent(uint32_t, const sf::Vector2f &);
             sf::FloatRect getSurfaceBounds(bool=true) const;
             sf::FloatRect getTextureBounds(bool=true) const;
+            bool isPointInSurfaceBounds(sf::Vector2f &, bool) const;
+            bool isPointInTextureBounds(sf::Vector2f &, bool) const;
             std::vector<Component *>::size_type addDrawable(sf::Drawable &, bool=true);
             std::vector<Component *>::size_type addTransformable(sf::Transformable &, bool=true);
             std::vector<Component *>::size_type addComponent(sf::Drawable &, sf::Transformable &);

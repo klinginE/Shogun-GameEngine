@@ -28,13 +28,8 @@ namespace sg {
 
     Entity::~Entity() {
 
-        this->owner = NULL;
-        this->isCollidable = false;
-        this->deletion = false;
         for (const auto &it : this->components)
             delete it;
-        this->components.clear();
-        this->possessions.clear();
 
     }
 
@@ -682,6 +677,20 @@ namespace sg {
         bounds.height -= bounds.top;
 
         return bounds;
+
+    }
+
+    bool Entity::isPointInSurfaceBounds(sf::Vector2f &point, bool useGlobal) const {
+
+        sf::FloatRect surfBounds = this->getSurfaceBounds(useGlobal);
+        return (point.x >= surfBounds.left) && (point.x <= (surfBounds.left + surfBounds.width)) && (point.y >= surfBounds.top) && (point.y <= (surfBounds.top + surfBounds.height));
+
+    }
+
+    bool Entity::isPointInTextureBounds(sf::Vector2f &point, bool useGlobal) const {
+
+        sf::FloatRect textBounds = this->getTextureBounds(useGlobal);
+        return (point.x >= textBounds.left) && (point.x <= (textBounds.left + textBounds.width)) && (point.y >= textBounds.top) && (point.y <= (textBounds.top + textBounds.height));
 
     }
 

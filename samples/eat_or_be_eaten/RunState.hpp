@@ -41,7 +41,7 @@ class RunState : public sg::GameState {
 
     public:
         RunState() {
-            
+
             // Initialize windows
             p1.setMyWindow(p1Window);
             p2.setMyWindow(p2Window);
