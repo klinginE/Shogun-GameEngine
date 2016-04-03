@@ -26,7 +26,7 @@ namespace sg {
 
         this->updateView();
 
-        this->renderOrder = [=](const Entity &e1, const Entity &e2) -> bool {return true;};
+        this->renderOrder = [=](const Entity &e1, const Entity &e2) -> bool {return false;};
         
     }
 
@@ -46,7 +46,7 @@ namespace sg {
 
         this->updateView();
         
-        this->renderOrder = [=](const Entity &e1, const Entity &e2) -> bool {return true;};
+        this->renderOrder = [=](const Entity &e1, const Entity &e2) -> bool {return false;};
 
     }
     
@@ -67,7 +67,7 @@ namespace sg {
 
         this->updateView();
         
-        this->renderOrder = [=](const Entity &e1, const Entity &e2) -> bool {return true;};
+        this->renderOrder = [=](const Entity &e1, const Entity &e2) -> bool {return false;};
 
     }
     GameWindow::GameWindow(const GameWorld &world,
@@ -86,7 +86,7 @@ namespace sg {
 
         this->updateView();
         
-        this->renderOrder = [=](const Entity &e1, const Entity &e2) -> bool {return true;};
+        this->renderOrder = [=](const Entity &e1, const Entity &e2) -> bool {return false;};
 
     }
     
@@ -107,7 +107,7 @@ namespace sg {
 
         this->updateView();
         
-        this->renderOrder = [=](const Entity &e1, const Entity &e2) -> bool {return true;};
+        this->renderOrder = [=](const Entity &e1, const Entity &e2) -> bool {return false;};
 
     }
     
@@ -125,7 +125,7 @@ namespace sg {
 
         this->updateView();
         
-        this->renderOrder = [=](const Entity &e1, const Entity &e2) -> bool {return true;};
+        this->renderOrder = [=](const Entity &e1, const Entity &e2) -> bool {return false;};
 
     }
 

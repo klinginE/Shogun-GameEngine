@@ -11,12 +11,15 @@
 namespace sg {
     
     GameState::GameState() {
-        // Nothing is in the constructor
+        renderOrder = [=](const GameWindow &w1, const GameWindow &w2) -> bool {return false;};
     }
     
     void GameState::render() {
 
         GameLoop::inst().getRenderWindow().clear(sf::Color::Black);
+
+        auto comp = [=](GameWindow *w1, GameWindow *w2)->bool{return renderOrder(*w1, *w2);};
+        std::sort(gameWindows.begin(), gameWindows.end(), comp);
 
         for (auto gameWindowIt=gameWindows.begin();
              gameWindowIt != gameWindows.end(); ++gameWindowIt) {

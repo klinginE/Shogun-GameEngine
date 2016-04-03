@@ -14,6 +14,8 @@ namespace sg {
             std::vector<GameWorld*> gameWorlds;
             std::vector<GameWindow*> gameWindows;
             const InputManager *inputManager = NULL;
+            std::function<bool(const GameWindow &, const GameWindow &)>
+                    renderOrder;
 
         public:
             GameState();
