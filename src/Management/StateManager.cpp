@@ -18,7 +18,10 @@ namespace sg {
     
     void StateManager::pushState(GameState &state) {
     
+        GameState *pausestate = peekState();
         states.push(&state);
+        if (pausestate) pausestate->pause();
+        state.enter();
     
     }
     
@@ -26,6 +29,8 @@ namespace sg {
 
         GameState *state = peekState();
         states.pop();
+        state->leave();
+        if (peekState()) peekState()->resume();
         return state;
     
     }
