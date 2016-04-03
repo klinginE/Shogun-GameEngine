@@ -64,6 +64,9 @@ namespace sg {
             void setRotInWorld(float rotationInWorld);
             float getRotInWorld() const;
 
+            sf::Vector2f worldCoordToScreenCoord(sf::Vector2f) const;
+            sf::Vector2f screenCoordToWorldCoord(sf::Vector2f) const;
+
             const sf::View * getView() const;
 
             void setRenderOrder(std::function<bool(const Entity &, const Entity &)>);

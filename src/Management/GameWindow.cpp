@@ -226,6 +226,22 @@ namespace sg {
         
         renderOrder = newRenderOrder;
     }
+
+    sf::Vector2f GameWindow::worldCoordToScreenCoord(sf::Vector2f worldCoord) const {
+        sf::Vector2f coord = worldCoord - getPosInWorld();
+        coord.x = coord.x*getSizeInScreen().x/getSizeInWorld().x;
+        coord.y = coord.y*getSizeInScreen().y/getSizeInWorld().y;
+        coord += getPosInScreen();
+        return coord;
+    }
+
+    sf::Vector2f GameWindow::screenCoordToWorldCoord(sf::Vector2f screenCoord) const {
+        sf::Vector2f coord = screenCoord - getPosInScreen();
+        coord.x = coord.x*getSizeInWorld().x/getSizeInScreen().x;
+        coord.y = coord.y*getSizeInWorld().y/getSizeInScreen().y;
+        coord += getPosInWorld();
+        return coord;
+    }
     
     void GameWindow::updateView() {
     
