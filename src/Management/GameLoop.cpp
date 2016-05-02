@@ -93,11 +93,5 @@ namespace sg {
         return window;
     
     }
-    
-    GameLoop::~GameLoop() {
-    
-        // do nothing
-    
-    }
 
 }

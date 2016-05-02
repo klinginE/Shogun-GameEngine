@@ -24,6 +24,7 @@ namespace sg {
     
         public:
             GameWorld();
+            virtual ~GameWorld() {}
             GameWorld(std::vector<Entity *> entities);
 
             virtual void update(const sf::Time &);

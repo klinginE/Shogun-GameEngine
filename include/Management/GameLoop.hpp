@@ -17,15 +17,15 @@ namespace sg {
     
             sf::RenderWindow & getRenderWindow();
     
-            ~GameLoop();
+            ~GameLoop() {}
     
         private:
             
             sf::RenderWindow window;
+            bool paused = false;
     
-            GameLoop() {};
+            GameLoop() {}
             GameLoop(GameLoop const&) = delete;
             void operator=(GameLoop const&) = delete;
-            bool paused = false;
     };
 }

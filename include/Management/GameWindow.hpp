@@ -21,9 +21,10 @@ namespace sg {
         sf::View view;
         std::function<bool(const Entity &, const Entity &)>
                 renderOrder;
-    
+
         public:
             GameWindow();
+            virtual ~GameWindow() {}
             GameWindow(const GameWorld &world);
             GameWindow(const GameWorld &world,
                        const sf::Vector2f &positionInScreen,
