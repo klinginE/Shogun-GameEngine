@@ -1,8 +1,5 @@
 #include <queue>
-#include <stdlib.h>
-#include <functional>
 
-#include <Shogun/Management/GameWorld.hpp>
 #include <Shogun/Elements/Entity.hpp>
 #include <Shogun/Management/GameLoop.hpp>
 

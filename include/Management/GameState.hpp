@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <iostream>
 
 #include <Shogun/Management/GameWorld.hpp>
 #include <Shogun/Management/GameWindow.hpp>
@@ -19,11 +20,12 @@ namespace sg {
 
         public:
             GameState();
+            virtual ~GameState() {}
  
             virtual void render();
             virtual void update(const sf::Time &tslu);
             virtual void enter() {}
-            virtual void leave() {}
+            virtual void leave() {std::cout << "LEAVE" << std::endl;}
             virtual void pause() {}
             virtual void resume() {}
 
@@ -44,5 +46,5 @@ namespace sg {
             const InputManager * getInputManager() const;
 
     };
-    
+
 }

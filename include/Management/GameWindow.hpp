@@ -17,7 +17,7 @@ namespace sg {
         sf::Vector2f positionInWorld;
         sf::Vector2f sizeInWorld;
         float rotationInWorld;
-        const GameWorld *world;
+        const GameWorld *world = NULL;
         sf::View view;
         std::function<bool(const Entity &, const Entity &)>
                 renderOrder;

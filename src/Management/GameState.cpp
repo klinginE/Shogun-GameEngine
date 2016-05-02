@@ -2,23 +2,19 @@
 #include <assert.h>
 
 #include <Shogun/Management/GameLoop.hpp>
-#include <Shogun/Management/GameWorld.hpp>
-#include <Shogun/Management/GameWindow.hpp>
-#include <Shogun/Management/InputManager.hpp>
-
 #include <Shogun/Management/GameState.hpp>
 
 namespace sg {
     
     GameState::GameState() {
-        renderOrder = [=](const GameWindow &w1, const GameWindow &w2) -> bool {return false;};
+        this->renderOrder = [=](const GameWindow &w1, const GameWindow &w2) -> bool {return false;};
     }
-    
+
     void GameState::render() {
 
         GameLoop::inst().getRenderWindow().clear(sf::Color::Black);
 
-        auto comp = [=](GameWindow *w1, GameWindow *w2)->bool{return renderOrder(*w1, *w2);};
+        auto comp = [=](GameWindow *w1, GameWindow *w2)->bool{return this->renderOrder(*w1, *w2);};
         std::sort(gameWindows.begin(), gameWindows.end(), comp);
 
         for (auto gameWindowIt=gameWindows.begin();
@@ -46,7 +42,7 @@ namespace sg {
         }
     
     }
-    
+
     void GameState::addWorld(GameWorld &newWorld) {
         gameWorlds.push_back(&newWorld);
     }

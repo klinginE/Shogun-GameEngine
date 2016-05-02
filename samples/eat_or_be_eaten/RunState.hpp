@@ -40,7 +40,9 @@ class RunState : public sg::GameState {
     sg::Entity edgeEntity;
 
     public:
-        RunState() {
+        RunState() :
+        sg::GameState()
+        {
 
             // Initialize windows
             p1.setMyWindow(p1Window);
@@ -116,7 +118,7 @@ class RunState : public sg::GameState {
             addWindow(splitBarWindow);
             setInputManager(inputManager);
 
-        };
+        }
 
         void update(const sf::Time &tslu) {
 
@@ -139,9 +141,9 @@ class RunState : public sg::GameState {
                 p2.moveDown(tslu, edge);
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
                 p2.moveRight(tslu, edge);
-            
+
             sg::GameState::update(tslu);
 
-        };
+        }
 
 };

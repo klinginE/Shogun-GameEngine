@@ -28,7 +28,7 @@ class Ball : public sg::Entity {
             setMass(1.0f);
             addDrawable(circleShape);
 
-        };
+        }
 
         void handleCollision(const Entity &other, const std::vector<sf::Vector2f> &_) {
 
@@ -42,11 +42,11 @@ class Ball : public sg::Entity {
                     this->setDeletionStatus(true);
                 }
             }
-        };
+        }
 
         void setColor(sf::Color newColor) {
             circleShape.setFillColor(newColor);
-        };
+        }
 
         void update(sf::Time t) {
 
@@ -54,29 +54,29 @@ class Ball : public sg::Entity {
 
             if (myWindow)
                 myWindow->setPosInWorld(this->getPosition());
-        };
+        }
 
         void setMyWindow(sg::GameWindow &newWindow) {
             myWindow = &newWindow;
-        };
+        }
         
         float getMass() const {
             return mass;
-        };
+        }
 
         void setMass(float newMass) {
             mass = newMass;
             circleShape.setRadius(getRadius());
             circleShape.setOrigin(getRadius(), getRadius());
-        };
+        }
 
         float getSpeed() {
             return SPEED_MODIFIER/std::sqrt(std::sqrt(getMass()));
-        };
+        }
 
         float getRadius() {
             return (float) sqrt(mass/M_PI) * RADIUS_MODIFIER;
-        };
+        }
 
         void handleOutsideOfBounds(sf::RectangleShape bounds) {
             if (this->getPosition().x - this->getRadius() < bounds.getPosition().x)
@@ -96,18 +96,18 @@ class Ball : public sg::Entity {
         void moveLeft(sf::Time t, sf::RectangleShape bounds) {
             this->move(-getSpeed()*t.asSeconds(), 0);
             handleOutsideOfBounds(bounds);
-        };
+        }
         void moveRight(sf::Time t, sf::RectangleShape bounds) {
             this->move(getSpeed()*t.asSeconds(), 0);
             handleOutsideOfBounds(bounds);
-        };
+        }
         void moveUp(sf::Time t, sf::RectangleShape bounds) {
             this->move(0, -getSpeed()*t.asSeconds());
             handleOutsideOfBounds(bounds);
-        };
+        }
         void moveDown(sf::Time t, sf::RectangleShape bounds) {
             this->move(0, getSpeed()*t.asSeconds());
             handleOutsideOfBounds(bounds);
-        };
+        }
 
 };

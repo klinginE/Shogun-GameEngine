@@ -16,8 +16,6 @@ namespace sg {
             GameState *popState();
             GameState *peekState() const;
     
-            ~StateManager();
-    
         private:
             
             std::stack<GameState *> states;

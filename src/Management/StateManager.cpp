@@ -1,10 +1,6 @@
-#include <stack>
-
-#include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 
 #include <Shogun/Management/StateManager.hpp>
-#include <Shogun/Management/GameState.hpp>
 
 namespace sg {
     
@@ -28,8 +24,8 @@ namespace sg {
     GameState *StateManager::popState() {
 
         GameState *state = peekState();
-        states.pop();
         state->leave();
+        states.pop();
         if (peekState()) peekState()->resume();
         return state;
     
@@ -46,15 +42,5 @@ namespace sg {
         return states.top();
     
     }
-    
-    StateManager::~StateManager() {
-    
-        while (!states.empty()) {
-    
-            popState();
-    
-        }
-    
-    }
-    
+
 }
