@@ -11,7 +11,9 @@ namespace sg {
             static GameLoop & inst();
             
             void init(const sf::Vector2u &windowDimensions,
-                      const sf::String &windowName);
+                      const sf::String &windowName,
+                      uint32_t style=sf::Style::Close | sf::Style::Titlebar,
+                      const sf::ContextSettings &settings=sf::ContextSettings());
     
             void start();
     

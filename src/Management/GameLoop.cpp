@@ -60,7 +60,9 @@ namespace sg {
     }
 
     void GameLoop::init(const sf::Vector2u &windowDimensions,
-                        const sf::String &windowName) {
+                        const sf::String &windowName,
+                        uint32_t style,
+                        const sf::ContextSettings &settings) {
     
         // Configure
         sf::VideoMode setWindowDimensions(
@@ -74,13 +76,10 @@ namespace sg {
                 static_cast<int>(
                     sf::VideoMode::getDesktopMode().height / 2.0f -
                     setWindowDimensions.height / 2.0f));
-    
-        int windowStyleBitmask = sf::Style::Close   |
-                                 sf::Style::Titlebar;
-    
+
         // Setup
         getRenderWindow().create(setWindowDimensions,
-                windowName, windowStyleBitmask);
+                windowName, style, settings);
         getRenderWindow().setPosition(windowPosition);
         getRenderWindow().setSize(windowDimensions);
         getRenderWindow().setVerticalSyncEnabled(true);
