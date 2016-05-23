@@ -52,8 +52,12 @@ namespace sg {
 
             }
 
-            topState->update(elapsed);
-            topState->render();
+            if (!this->paused) {
+
+                topState->update(elapsed);
+                topState->render();
+
+            }
 
         }
 
@@ -91,6 +95,24 @@ namespace sg {
     
         return window;
     
+    }
+
+    void GameLoop::pause() {
+
+        this->paused = true;
+
+    }
+
+    void GameLoop::unpause() {
+
+        this->paused = false;
+
+    }
+
+    bool GameLoop::isPaused() {
+
+        return this->paused;
+
     }
 
 }

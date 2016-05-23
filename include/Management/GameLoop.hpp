@@ -16,9 +16,13 @@ namespace sg {
                       const sf::ContextSettings &settings=sf::ContextSettings());
     
             void start();
-    
+
             sf::RenderWindow & getRenderWindow();
-    
+
+            void pause();
+            void unpause();
+            bool isPaused();
+
             ~GameLoop() {}
     
         private:
