@@ -22,7 +22,7 @@ sg::GameState()
         sg::GameLoop::inst().pause();
     });
     this->im.addAction(sf::Event::EventType::GainedFocus, [=](const sf::Time t, const sf::Event e) {
-        sg::GameLoop::inst().unpause();
+        sg::GameLoop::inst().resume();
     });
     this->setInputManager(this->im);
 

@@ -103,7 +103,7 @@ namespace sg {
 
     }
 
-    void GameLoop::unpause() {
+    void GameLoop::resume() {
 
         this->paused = false;
 

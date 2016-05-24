@@ -20,7 +20,7 @@ namespace sg {
             sf::RenderWindow & getRenderWindow();
 
             void pause();
-            void unpause();
+            void resume();
             bool isPaused();
 
             ~GameLoop() {}

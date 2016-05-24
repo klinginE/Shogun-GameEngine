@@ -18,8 +18,6 @@ class TitleState : public BaseState {
         sg::GameWorld tWorld;
         sf::Font arial;
         sf::Text developed;
-        sf::Text presents;
-        sf::Text title;
         sf::Texture logoTexture;
         sf::Sprite logoSprite;
         sg::Entity textEntity;
