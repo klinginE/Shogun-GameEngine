@@ -42,10 +42,10 @@ namespace sg {
             while (getRenderWindow().pollEvent(event)) {
 
                 const InputManager *topIM = NULL;
-                std::function<void(const sf::Time, const sf::Event)> action;
-                if ((topIM = topState->getInputManager()) &&
-                    (action = topIM->getAction(event.type)))
-                    action(elapsed, event);
+                const std::vector<std::function<void(const sf::Time, const sf::Event)>> actions;
+                if ((topIM = topState->getInputManager()))
+                    for (const auto &a : topIM->getAction(event.type))
+                        a(elapsed, event);
 
                 if (event.type == sf::Event::Closed)
                     getRenderWindow().close();
