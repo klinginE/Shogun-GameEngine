@@ -19,7 +19,6 @@ namespace sg {
         if (this->actions.find(type) == this->actions.end()) {
 
             std::vector<std::function<void(const sf::Time, const sf::Event)>> v;
-            v.push_back([=](const sf::Time t, const sf::Event e){});
             return v;
 
         }
