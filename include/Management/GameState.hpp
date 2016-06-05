@@ -25,7 +25,7 @@ namespace sg {
             virtual void render();
             virtual void update(const sf::Time &tslu);
             virtual void enter() {}
-            virtual void leave() {std::cout << "LEAVE" << std::endl;}
+            virtual void leave() {}
             virtual void pause() {}
             virtual void resume() {}
 

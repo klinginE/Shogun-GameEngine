@@ -86,6 +86,12 @@ namespace sg {
 
     }
 
+    void AnimatedSprite::setTimePast(sf::Time tp) {
+
+        this->timePast = tp;
+
+    }
+
     bool AnimatedSprite::getIsPlaying() const {
 
         return this->playing;
@@ -106,6 +112,8 @@ namespace sg {
 
         this->rects.push_back(&newRect);
         this->surfaces.push_back(&newTrans);
+        if (this->getNumOfFrames() == 1)
+            this->setTextureRect((*(this->rects[this->frameIndex])));
 
         return (this->getNumOfFrames() - 1);
 

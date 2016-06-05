@@ -31,6 +31,7 @@ namespace sg {
             void setFrameDelay(sf::Time);
             uint32_t getFrameIndex() const;
             sf::Time getTimePast() const;
+            void setTimePast(sf::Time);
             bool getIsPlaying() const;
             std::vector<sf::IntRect *>::size_type addFrame(sf::IntRect &, sf::Transformable &);
             std::pair<sf::IntRect *, sf::Transformable *> removeFrame(uint32_t);
