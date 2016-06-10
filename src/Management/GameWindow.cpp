@@ -23,8 +23,8 @@ namespace sg {
 
         this->updateView();
 
-        this->renderOrder = [=](const Entity &e1, const Entity &e2) -> bool {return false;};
-        
+        this->renderOrder = [=](const Entity &e1, const Entity &e2)->bool {return false;};
+
     }
 
     GameWindow::GameWindow(const GameWorld &world) {
@@ -42,11 +42,11 @@ namespace sg {
         this->rotationInWorld = 0;
 
         this->updateView();
-        
-        this->renderOrder = [=](const Entity &e1, const Entity &e2) -> bool {return false;};
+
+        this->renderOrder = [=](const Entity &e1, const Entity &e2)->bool {return false;};
 
     }
-    
+
     GameWindow::GameWindow(const GameWorld &world,
                            const sf::Vector2f &positionInScreen,
                            const sf::Vector2f &sizeInScreen,
@@ -63,10 +63,11 @@ namespace sg {
         this->rotationInWorld = rotationInWorld;
 
         this->updateView();
-        
-        this->renderOrder = [=](const Entity &e1, const Entity &e2) -> bool {return false;};
+
+        this->renderOrder = [=](const Entity &e1, const Entity &e2)->bool {return false;};
 
     }
+
     GameWindow::GameWindow(const GameWorld &world,
                            const sf::Vector2f &positionInScreen,
                            const sf::Vector2f &sizeInScreen,
@@ -82,11 +83,11 @@ namespace sg {
         this->rotationInWorld = 0;
 
         this->updateView();
-        
-        this->renderOrder = [=](const Entity &e1, const Entity &e2) -> bool {return false;};
+
+        this->renderOrder = [=](const Entity &e1, const Entity &e2)->bool {return false;};
 
     }
-    
+
     GameWindow::GameWindow(const GameWorld &world,
                            const sf::Vector2f &positionInWorld,
                            const sf::Vector2f &sizeInWorld,
@@ -103,8 +104,8 @@ namespace sg {
         this->rotationInWorld = 0;
 
         this->updateView();
-        
-        this->renderOrder = [=](const Entity &e1, const Entity &e2) -> bool {return false;};
+
+        this->renderOrder = [=](const Entity &e1, const Entity &e2)->bool {return false;};
 
     }
     
@@ -121,127 +122,167 @@ namespace sg {
         this->rotationInWorld = 0;
 
         this->updateView();
-        
-        this->renderOrder = [=](const Entity &e1, const Entity &e2) -> bool {return false;};
+
+        this->renderOrder = [=](const Entity &e1, const Entity &e2)->bool {return false;};
 
     }
 
     void GameWindow::render() {
 
-        if (world == NULL) return;
+        if (world == NULL)
+            return;
+
+        updateView();
+        const sf::View v = GameLoop::inst().getRenderWindow().getView();
+        GameLoop::inst().getRenderWindow().setView(this->view);
+        //GameLoop::inst().getRenderWindow().clear(sf::Color::Black);
 
         auto entities = world->getEntities();
-        
-        auto comp = [=](Entity *e1, Entity *e2)->bool{return renderOrder(*e1, *e2);}; 
 
-        std::priority_queue<Entity *, std::vector<Entity *>,
-                            decltype(comp)> renderQueue(comp);
+        auto comp = [=](Entity *e1, Entity *e2)->bool{return renderOrder(*e1, *e2);};
+
+        std::priority_queue<Entity *, std::vector<Entity *>, decltype(comp)> renderQueue(comp);
+
+
+        sf::FloatRect winBounds(this->getPosInWorld().x - this->getSizeInWorld().x / 2.0f, //left
+                                this->getPosInWorld().y - this->getSizeInWorld().y / 2.0f, //top
+                                this->getSizeInWorld().x,                                  //width
+                                this->getSizeInWorld().y);                                 //height
+        for (auto it = entities.begin(); it != entities.end(); ++it) {
+
+            for (Entity *e : it->second) {
+
+                auto b = e->getTextureBounds(true);
+
+                // if in bounds then add to render queue
+                if ((b.left <= winBounds.left + winBounds.width) &&
+                    (b.top <= winBounds.top + winBounds.height) &&
+                    (b.left + b.width >= winBounds.left) &&
+                    (b.top + b.height >= winBounds.top))
+                    renderQueue.push(e);
+
+            }
+
+
+            while (!renderQueue.empty()) {
     
-        for (auto entityIter=entities.begin();
-            entityIter!=entities.end(); ++entityIter) {
+                // fetch entity
+                Entity *entity = renderQueue.top();
+                renderQueue.pop();
 
-            Entity *e = *entityIter;
-
-            auto b = e->getTextureBounds(true);
-
-            if (/*true ||*/ ((b.left <= this->getPosInWorld().x + this->getSizeInWorld().x/2)
-            &&  (b.top <= this->getPosInWorld().y + this->getSizeInWorld().y/2)
-            &&  (b.left + b.width >= this->getPosInWorld().x - this->getSizeInWorld().x/2)
-            &&  (b.top + b.height >= this->getPosInWorld().y - this->getSizeInWorld().y/2))) {
-
-                // add to render queue
-                renderQueue.push(e);
+                // draw entity
+                entity->draw();
 
             }
 
         }
-       
-        updateView();
-        GameLoop::inst().getRenderWindow().setView(this->view);
-        //GameLoop::inst().getRenderWindow().clear(sf::Color::Black);
-
-        while (!renderQueue.empty()) {
-    
-            // fetch entity
-            Entity *entity = renderQueue.top();
-            renderQueue.pop();
-
-            // draw entity
-            entity->draw();
-
-        }
 
         //GameLoop::inst().getRenderWindow().display();
-        GameLoop::inst().getRenderWindow().setView(
-                GameLoop::inst().getRenderWindow().getDefaultView());
+        GameLoop::inst().getRenderWindow().setView(v);
     
     }
-    
+
     void GameWindow::setWorld(const GameWorld &newWorld) {
+
         this->world = &newWorld;
+
     }
+
     const GameWorld *GameWindow::getWorld() const {
+
         return this->world;
+
     }
-    
+
     void GameWindow::setPosInScreen(const sf::Vector2f &positionInScreen) {
+
         this->positionInScreen = positionInScreen;
+
     }
+
     sf::Vector2f GameWindow::getPosInScreen() const {
+
         return this->positionInScreen;
+
     }
-    
+
     void GameWindow::setSizeInScreen(const sf::Vector2f &sizeInScreen) {
+
         this->sizeInScreen = sizeInScreen;
+
     }
+
     sf::Vector2f GameWindow::getSizeInScreen() const {
+
         return this->sizeInScreen;
+
     }
-    
+
     void GameWindow::setPosInWorld(const sf::Vector2f &posInWorld) {
+
         this->positionInWorld = posInWorld;
+
     }
+
     sf::Vector2f GameWindow::getPosInWorld() const {
+
         return this->positionInWorld;
+
     }
-    
+
     void GameWindow::setSizeInWorld(const sf::Vector2f &sizeInWorld) {
+
         this->sizeInWorld = sizeInWorld;
+
     }
+
     sf::Vector2f GameWindow::getSizeInWorld() const {
+
         return this->sizeInWorld;
+
     }
-    
+
     void GameWindow::setRotInWorld(float rotationInWorld) {
+
         this->rotationInWorld = rotationInWorld;
+
     }
+
     float GameWindow::getRotInWorld() const {
+
         return this->rotationInWorld;
+
     }
 
     void GameWindow::setRenderOrder(std::function<bool(const Entity &, const Entity &)> newRenderOrder) {
-        
+
         renderOrder = newRenderOrder;
+
     }
 
     sf::Vector2f GameWindow::worldCoordToScreenCoord(sf::Vector2f worldCoord) const {
+
         sf::Vector2f coord = worldCoord - getPosInWorld();
         coord.x = coord.x*getSizeInScreen().x/getSizeInWorld().x;
         coord.y = coord.y*getSizeInScreen().y/getSizeInWorld().y;
         coord += getPosInScreen();
+
         return coord;
+
     }
 
     sf::Vector2f GameWindow::screenCoordToWorldCoord(sf::Vector2f screenCoord) const {
+
         sf::Vector2f coord = screenCoord - getPosInScreen();
         coord.x = coord.x*getSizeInWorld().x/getSizeInScreen().x;
         coord.y = coord.y*getSizeInWorld().y/getSizeInScreen().y;
         coord += getPosInWorld();
         return coord;
+
     }
-    
+
     void GameWindow::updateView() {
-    
+
         sf::Rect<float> viewport(this->positionInScreen.x,
                                  this->positionInScreen.y,
                                  this->sizeInScreen.x,
@@ -250,11 +291,13 @@ namespace sg {
         view.setCenter(getPosInWorld());
         view.setSize(getSizeInWorld());
         view.setRotation(getRotInWorld());
-    
+
     }
-    
-    const sf::View * GameWindow::getView() const {
+
+    const sf::View *GameWindow::getView() const {
+
         return &view;
+
     }
 
 }

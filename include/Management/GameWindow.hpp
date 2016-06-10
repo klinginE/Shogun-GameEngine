@@ -19,8 +19,7 @@ namespace sg {
         float rotationInWorld;
         const GameWorld *world = NULL;
         sf::View view;
-        std::function<bool(const Entity &, const Entity &)>
-                renderOrder;
+        std::function<bool(const Entity &, const Entity &)> renderOrder;
 
         public:
             GameWindow();

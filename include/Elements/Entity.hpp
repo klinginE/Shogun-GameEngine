@@ -57,7 +57,7 @@ namespace sg {
         public:
             Entity();
             Entity(bool);
-            ~Entity();
+            virtual ~Entity();
             bool collides(Entity &);// calls handleCollision
             bool getIsCollidable() const;
             void setIsCollidable(bool);

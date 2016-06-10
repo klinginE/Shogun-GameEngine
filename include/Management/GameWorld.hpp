@@ -1,9 +1,14 @@
 #pragma once
 
+//C++ Includes
+#include <map>
 #include <vector>
-#include <set>
+#include <functional>
+
+//SFML Includes
 #include <SFML/Graphics.hpp>
 
+//Shogun Includes
 #include <Shogun/Elements/Entity.hpp>
 
 namespace sg {
@@ -14,25 +19,23 @@ namespace sg {
     };
     
     class GameWorld {
-    
-        //std::vector<sf::Sprite *> background; // TODO: implemenet fuctions for this, and with GameWindow
-        protected:
-            std::vector<Entity *> entities;
 
+        protected:
+            std::map<uint32_t, std::vector<Entity *>> entities;
             scanline_t scanlineType;
             bool collisionActive;
-    
+
         public:
             GameWorld();
+            GameWorld(std::map<uint32_t, std::vector<Entity *>>);
             virtual ~GameWorld() {}
-            GameWorld(std::vector<Entity *> entities);
 
             virtual void update(const sf::Time &);
 
-            void addEntity(Entity &entity);
+            void addEntity(uint32_t, Entity &entity);
             void removeEntity(Entity &entity);
-            const std::vector<Entity *> & getEntities() const;
-            
+            const std::map<uint32_t, std::vector<Entity *>> &getEntities() const;
+
             void activateCollisions();
             void deactivateCollisions();
             bool getCollisionStatus() const;
