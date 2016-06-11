@@ -27,6 +27,7 @@ class TestEntityState : public sg::GameState {
         sg::GameState()
         {
 
+            e0.fill(sf::Color::White);
             e0.setPosition(100.0f, 100.0f);
             e0.scale(0.5f, 0.5f);
             e0.setOrigin(10.0, 10.0f);
@@ -36,12 +37,13 @@ class TestEntityState : public sg::GameState {
             e1.scale(0.5f, 0.5f);
             e1.setOrigin(25.0, 20.0f);
 
+            e2.fill(sf::Color::White);
             e2.setPosition(300.0f, 500.0f);
             e2.setScale(0.5f, 0.5f);
 
-            world0.addEntity(e0);
-            world0.addEntity(e1);
-            world0.addEntity(e2);
+            world0.addEntity(0, e0);
+            world0.addEntity(0, e1);
+            world0.addEntity(0, e2);
 
             window0.setSizeInWorld(sf::Vector2f(static_cast<float>(sg::GameLoop::inst().getRenderWindow().getSize().x),
                                                 static_cast<float>(sg::GameLoop::inst().getRenderWindow().getSize().y)));
@@ -65,7 +67,6 @@ class TestEntityState : public sg::GameState {
         }
         void update(const sf::Time &tslu) {
 
-            sg::GameState::update(tslu);
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
                 moveRight1(tslu);
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
@@ -114,6 +115,7 @@ class TestEntityState : public sg::GameState {
                 shrink1(tslu);
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::M))
                 grow1(tslu);
+            sg::GameState::update(tslu);
 
         }
 

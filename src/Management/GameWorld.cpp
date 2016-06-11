@@ -72,23 +72,25 @@ namespace sg {
         sortEntities();
 
         // scanline
-        for (auto it1 = entities.begin(); it1 != entities.end(); ++it1)
-            for (Entity *e1 : it1->second) {
+        for (auto it = entities.begin(); it != entities.end(); ++it) {
 
-                if (!e1->getIsCollidable())
+            for (uint32_t i = 0; i < it->second.size(); ++i) {
+
+                if (!it->second[i]->getIsCollidable())
                     continue;
 
-                for (auto it2 = entities.begin(); it2 != entities.end(); ++it2)
-                    for (Entity *e2 : it2->second) {
+                for (uint32_t j = i + 1; j < it->second.size() && scanMin(it->second[j]) <= scanMax(it->second[i]); ++j) {
 
-                        if (!e2->getIsCollidable() || e1 == e2)
-                            continue;
+                    if (!it->second[j]->getIsCollidable())
+                        continue;
 
-                        e1->collides(*e2);
+                    it->second[i]->collides(*it->second[j]);
 
-                    }
+                }
 
             }
+
+       }
 
     }
 

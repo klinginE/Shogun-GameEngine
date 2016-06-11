@@ -41,6 +41,7 @@ class Ball : public sg::Entity {
                 else if (this->getMass() < otherBall->getMass()) {
                     this->setDeletionStatus(true);
                 }
+
             }
         }
 

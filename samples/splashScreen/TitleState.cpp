@@ -38,7 +38,7 @@ BaseState()
     this->textEntity.addDrawable(this->logoSprite);
 
     this->textEntity.setPosition(this->tWindow.getSizeInWorld()/2.0f);
-    this->tWorld.addEntity(this->textEntity);
+    this->tWorld.addEntity(0, this->textEntity);
 
 }
 

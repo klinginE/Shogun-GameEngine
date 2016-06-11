@@ -29,21 +29,25 @@ void testGameWorld() {
 
     // Test add entities and getEntities
     for (std::size_t i = 0; i < 10; i++) {
-        std::size_t old_size = gameWorld.getEntities().size();
-        gameWorld.addEntity(entities[i]);
+        std::size_t old_size = 0; 
+        if (gameWorld.getEntities().size())
+            old_size = gameWorld.getEntities().at(0).size();
+        gameWorld.addEntity(0, entities[i]);
         std::cout << "Adding an entity: old size = " << old_size
-                  << ", new size = " << gameWorld.getEntities().size() << std::endl;
-        assert(gameWorld.getEntities().size() == i + 1);
+                  << ", new size = " << gameWorld.getEntities().at(0).size() << std::endl;
+        assert(gameWorld.getEntities().at(0).size() == i + 1);
     }
 
     // Test delete entities and getEntities
     for (std::size_t i = 0; i < 10; i++) {
-        std::size_t old_size = gameWorld.getEntities().size();
+        std::size_t old_size = 0; 
+        if (gameWorld.getEntities().size())
+            old_size = gameWorld.getEntities().at(0).size();
         entities[i].setDeletionStatus(true);
         gameWorld.update(sf::Time());
         std::cout << "Removing an entity: old size = " << old_size
-                  << ", new size = " << gameWorld.getEntities().size() << std::endl;
-        assert(gameWorld.getEntities().size() == 9 - i);
+                  << ", new size = " << gameWorld.getEntities().at(0).size() << std::endl;
+        assert(gameWorld.getEntities().at(0).size() == 9 - i);
     }
 
     // Test activate/deactivate collisions

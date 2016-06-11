@@ -14,13 +14,14 @@ class TestBox : public sg::Entity {
         void handleCollision(const sg::Entity &otherE, const std::vector<sf::Vector2f> &collisionVs) {
 
             sg::Entity::handleCollision(otherE, collisionVs);
-            if (this->r0.getFillColor() == sf::Color::White)
+            const sf::Color &c = this->getFill();
+            if (c == sf::Color::White)
                 this->fill(sf::Color::Yellow);
-            else if (this->r0.getFillColor() == sf::Color::Yellow)
+            else if (c == sf::Color::Yellow)
                 this->fill(sf::Color::White);
-            else if (this->r0.getFillColor() == sf::Color::Red)
+            else if (c == sf::Color::Red)
                 this->fill(sf::Color::Green);
-            else if (this->r0.getFillColor() == sf::Color::Green)
+            else if (c == sf::Color::Green)
                 this->fill(sf::Color::Red);
 
         }
@@ -91,6 +92,7 @@ class TestBox : public sg::Entity {
             this->r3.setFillColor(c);
 
         }
+
         const sf::Color &getFill() {
 
             return this->r0.getFillColor();

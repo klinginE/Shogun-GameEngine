@@ -54,7 +54,7 @@ class TestAnimationState : public sg::GameState {
             player.scale(4.0f, 4.0f);
             player.addDrawable(as);
 
-            world0.addEntity(player);
+            world0.addEntity(0, player);
 
             window0.setSizeInWorld(sf::Vector2f(static_cast<float>(sg::GameLoop::inst().getRenderWindow().getSize().x),
                                                 static_cast<float>(sg::GameLoop::inst().getRenderWindow().getSize().y)));
