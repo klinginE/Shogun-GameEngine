@@ -9,6 +9,8 @@ SOURCES= \
 ./src/$(MANAG_DIR)/GameState.cpp \
 ./src/$(MANAG_DIR)/GameWindow.cpp \
 ./src/$(MANAG_DIR)/GameWorld.cpp \
+./src/$(MANAG_DIR)/Layer.cpp \
+./src/$(MANAG_DIR)/Quadtree.cpp \
 ./src/$(MANAG_DIR)/InputManager.cpp \
 ./src/$(MANAG_DIR)/StateManager.cpp \
 ./src/$(ELEM_DIR)/AnimatedSprite.cpp \

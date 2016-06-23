@@ -1,3 +1,5 @@
+#include <limits>
+
 #include <Shogun/Management/GameWorld.hpp>
 #include <Shogun/Elements/Entity.hpp>
 #include <Shogun/Management/GameLoop.hpp>
@@ -9,41 +11,69 @@ namespace sg {
     // CONSTRUCTORS
     GameWorld::GameWorld() {
 
-        scanlineType = scanline_t::HORIZONTAL;
-        collisionActive = true;
+        this->scanlineType = scanline_t::HORIZONTAL;
+        this->collisionActive = true;
+        this->worldBounds.left = std::numeric_limits<long>::min();
+        this->worldBounds.top = std::numeric_limits<long>::min();
+        this->worldBounds.width = std::numeric_limits<long>::max();
+        this->worldBounds.height = std::numeric_limits<long>::max();
 
     }
 
-    GameWorld::GameWorld(std::map<uint32_t, std::vector<Entity *>> entities) {
+    GameWorld::GameWorld(std::map<uint32_t, Layer *> ls) {
 
-        this->entities = entities;
+        this->layers = ls;
         this->scanlineType = scanline_t::HORIZONTAL;
         this->collisionActive = true;
-        sortEntities();
+        this->worldBounds.left = std::numeric_limits<long>::min();
+        this->worldBounds.top = std::numeric_limits<long>::min();
+        this->worldBounds.width = std::numeric_limits<long>::max();
+        this->worldBounds.height = std::numeric_limits<long>::max();
+        for (auto it = layers.begin(); it != layers.end(); ++it)
+            sortEntities(it->first);
 
     }
 
     void GameWorld::update(const sf::Time &tslu) {
 
+        timespec ts0;
+        timespec ts1;
+        clock_gettime(CLOCK_REALTIME, &ts0);
         // delete entities that should be removed
         auto shouldBeRemoved = [](Entity *s) {
-
-            if (s->getDeletionStatus())
-                return true;
-            else
-                return false;
-
+            return s->getDeletionStatus();
         };
-        for (auto it = entities.begin(); it != entities.end(); ++it)
-            it->second.erase(std::remove_if(it->second.begin(), it->second.end(), shouldBeRemoved), it->second.end());
+        for (auto it = layers.begin(); it != layers.end(); ++it) {
+            std::cout << " layer: " << it->first << " deletions status: " << it->second->deletionStatus << " ";
+            if (it->second->deletionStatus) {
 
+                auto el = it->second->getEntityList();
+                el.erase(std::remove_if(el.begin(), el.end(), shouldBeRemoved), el.end());
+                auto rl = it->second->getEntityList();
+                rl.erase(std::remove_if(rl.begin(), rl.end(), shouldBeRemoved), rl.end());
+                it->second->deletionStatus = false;
+
+            }
+        }
+        std::cout << std::endl;
+        clock_gettime(CLOCK_REALTIME, &ts1);
+        std::cout << "WUD: " << (ts1.tv_nsec - ts0.tv_nsec) << std::endl;
+
+        clock_gettime(CLOCK_REALTIME, &ts0);
         // update all entities
-        for (auto it = entities.begin(); it != entities.end(); ++it)
-            for (Entity *e : it->second)
-                e->update(tslu);
+        for (auto it = layers.begin(); it != layers.end(); ++it)
+            if (it->second->updateStatus)
+                for (Entity *e : it->second->getEntityList())
+                    e->update(tslu);
+        clock_gettime(CLOCK_REALTIME, &ts1);
+        std::cout << "WUU: " << (ts1.tv_nsec - ts0.tv_nsec) << std::endl;
+
+        clock_gettime(CLOCK_REALTIME, &ts0);
         // Detect and resolve collisions between entities
         if (collisionActive)
             scanline();
+        clock_gettime(CLOCK_REALTIME, &ts1);
+        std::cout << "WUC: " << (ts1.tv_nsec - ts0.tv_nsec) << std::endl;
 
     }
 
@@ -68,41 +98,59 @@ namespace sg {
 
     void GameWorld::scanline() {
 
-        // sort all entities before scanline
-        sortEntities();
-
         // scanline
-        for (auto it = entities.begin(); it != entities.end(); ++it) {
+        for (auto it = layers.begin(); it != layers.end(); ++it) {
 
-            for (uint32_t i = 0; i < it->second.size(); ++i) {
+            std::cout << " layer: " << it->first << " collision status: " << it->second->collisionStatus << " ";
+            if (!it->second->collisionStatus)
+                continue;
 
-                if (!it->second[i]->getIsCollidable())
+            // sort all entities before scanline
+            sortEntities(it->first);
+            //get entities
+            auto entities = it->second->getEntityList();
+            for (uint32_t i = 0; i < entities.size(); ++i) {
+
+                if (!entities[i]->getIsCollidable())
                     continue;
 
-                for (uint32_t j = i + 1; j < it->second.size() && scanMin(it->second[j]) <= scanMax(it->second[i]); ++j) {
+                for (uint32_t j = i + 1; j < entities.size() && scanMin(entities[j]) <= scanMax(entities[i]); ++j) {
 
-                    if (!it->second[j]->getIsCollidable())
+                    if (!entities[j]->getIsCollidable())
                         continue;
 
-                    it->second[i]->collides(*it->second[j]);
+                    entities[i]->collides(*entities[j]);
 
                 }
 
             }
 
        }
+       std::cout << std::endl;
 
     }
 
-    void GameWorld::addEntity(uint32_t level, Entity &entity) {
+    void GameWorld::addLayer(uint32_t level, Layer &l) {
 
-        entities[level].push_back(&entity);
+        layers[level] = &l;
 
     }
 
-    const std::map<uint32_t, std::vector<Entity *>> &GameWorld::getEntities() const {
+    void GameWorld::removeLayer(uint32_t level) {
 
-        return entities;
+        layers.erase(level);
+
+    }
+
+    const Layer *GameWorld::getLayer(uint32_t level) const {
+
+        return layers.at(level);
+
+    }
+
+    const std::map<uint32_t, Layer *> &GameWorld::getLayers() const {
+
+        return layers;
 
     }
 
@@ -142,7 +190,7 @@ namespace sg {
 
     }
 
-    bool verticalComparitor(Entity *e1, Entity *e2) {
+    bool verticalComparitor(const Entity *e1, const Entity *e2) {
 
         if (e1->getSurfaceBounds().top < e2->getSurfaceBounds().top)
             return true;
@@ -151,7 +199,7 @@ namespace sg {
 
     }
 
-    bool horizontalComparitor(Entity *e1, Entity *e2) {
+    bool horizontalComparitor(const Entity *e1, const Entity *e2) {
 
         if (e1->getSurfaceBounds().left < e2->getSurfaceBounds().left)
             return true;
@@ -160,17 +208,21 @@ namespace sg {
 
     }
 
-    void GameWorld::sortEntities() {
+    void GameWorld::sortEntities(uint32_t level) {
 
         //TODO:[RB]->Add deleted entities function to class
         //TODO:[EK]->Deleting here may be redudant. I would make sure you really want to do this before proceding.
         //removeDeletedEntities();
 
-        for (auto it = entities.begin(); it != entities.end(); ++it)
+        std::cout << " layer: " << level << " sort status: " << layers[level]->sortStatus << std::endl;
+        if (layers[level]->sortStatus) {
+
             if (scanlineType == scanline_t::VERTICAL)
-                std::sort(it->second.begin(), it->second.end(), verticalComparitor);
+                layers[level]->sortEntityList(verticalComparitor);
             else
-                std::sort(it->second.begin(), it->second.end(), horizontalComparitor);
+                layers[level]->sortEntityList(horizontalComparitor);
+
+        }
 
     }
 

@@ -37,11 +37,16 @@ namespace sg {
 
     };
 
+    class Layer;
+
     class Entity: public sf::Transformable {
+
+        friend class Layer;
 
         private:
             //Private member variables
             bool deletion;
+            Layer *layer;
             //Private member functions
             void expandSurfaceBounds(sf::FloatRect &, sf::FloatRect) const;
 
@@ -52,7 +57,7 @@ namespace sg {
             Entity *owner;
             bool isCollidable;
             //Protected member functions
-            virtual void handleCollision(const Entity &e, const std::vector<sf::Vector2f> &collisionVectors) {}
+            virtual void handleCollision(const Entity &, const std::vector<sf::Vector2f> &);
 
         public:
             Entity();
@@ -82,6 +87,18 @@ namespace sg {
             void setGlobalScale(const sf::Vector2f &);
             void scaleGlobally(float, float);
             void scaleGlobally(const sf::Vector2f &);
+            void setPosition(float, float);
+            void setPosition(const sf::Vector2f &);
+            void setRotation(float angle);
+            void setScale(float, float);
+            void setScale(const sf::Vector2f &);
+            void setOrigin(float, float);
+            void setOrigin(const sf::Vector2f &);
+            void move(float, float);
+            void move(const sf::Vector2f &);
+            void rotate(float);
+            void scale(float, float);
+            void scale(const sf::Vector2f &);
             void setOriginComponent(uint32_t, const sf::Vector2f &);
             void setPositionComponent(uint32_t, const sf::Vector2f &);
             void moveComponent(uint32_t, const sf::Vector2f &);

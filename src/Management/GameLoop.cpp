@@ -1,5 +1,6 @@
 #include <stack>
 #include <functional>
+#include <sys/time.h>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
@@ -25,6 +26,10 @@ namespace sg {
     
         while (getRenderWindow().isOpen()) {
 
+            timespec ts0;
+            timespec ts1;
+
+            clock_gettime(CLOCK_REALTIME, &ts0);
             // elapsed time
             sf::Time elapsed = clock.restart();
 
@@ -51,11 +56,20 @@ namespace sg {
                     getRenderWindow().close();
 
             }
+            clock_gettime(CLOCK_REALTIME, &ts1);
+            std::cout << "ELT: " << (ts1.tv_nsec - ts0.tv_nsec) << std::endl;
 
             if (!this->paused) {
 
+                clock_gettime(CLOCK_REALTIME, &ts0);
                 topState->update(elapsed);
+                clock_gettime(CLOCK_REALTIME, &ts1);
+                std::cout << " UT: " << (ts1.tv_nsec - ts0.tv_nsec) << std::endl;
+
+                clock_gettime(CLOCK_REALTIME, &ts0);
                 topState->render();
+                clock_gettime(CLOCK_REALTIME, &ts1);
+                std::cout << " RT: " << (ts1.tv_nsec - ts0.tv_nsec) << std::endl << std::endl;
 
             }
 

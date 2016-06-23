@@ -2,13 +2,12 @@
 
 //C++ Includes
 #include <map>
-#include <vector>
-#include <functional>
 
 //SFML Includes
 #include <SFML/Graphics.hpp>
 
 //Shogun Includes
+#include <Shogun/Management/Layer.hpp>
 #include <Shogun/Elements/Entity.hpp>
 
 namespace sg {
@@ -17,24 +16,26 @@ namespace sg {
         VERTICAL,
         HORIZONTAL
     };
-    
+
     class GameWorld {
 
         protected:
-            std::map<uint32_t, std::vector<Entity *>> entities;
+            std::map<uint32_t, Layer *> layers;
             scanline_t scanlineType;
             bool collisionActive;
+            sf::Rect<long> worldBounds;
 
         public:
             GameWorld();
-            GameWorld(std::map<uint32_t, std::vector<Entity *>>);
+            GameWorld(std::map<uint32_t, Layer *>);
             virtual ~GameWorld() {}
 
             virtual void update(const sf::Time &);
 
-            void addEntity(uint32_t, Entity &entity);
-            void removeEntity(Entity &entity);
-            const std::map<uint32_t, std::vector<Entity *>> &getEntities() const;
+            void addLayer(uint32_t, Layer &);
+            void removeLayer(uint32_t);
+            const Layer *getLayer(uint32_t) const;
+            const std::map<uint32_t, Layer *> &getLayers() const;
 
             void activateCollisions();
             void deactivateCollisions();
@@ -45,9 +46,9 @@ namespace sg {
             scanline_t getScanlineStatus() const;
 
         protected:
-            bool horizontalSort(Entity *e1, Entity *e2);
-            bool verticalSort(Entity *e1, Entity *e2);
-            void sortEntities();
+            bool horizontalSort(const Entity *e1, const Entity *e2);
+            bool verticalSort(const Entity *e1, const Entity *e2);
+            void sortEntities(uint32_t);
             void removeDeletedEntities();
             void scanline();
             float scanMin(Entity *e);
