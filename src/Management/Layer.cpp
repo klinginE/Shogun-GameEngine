@@ -1,19 +1,52 @@
-#include <Shogun/Management/Layer.hpp>
-#include <Shogun/Elements/Entity.hpp>
-
 #include <algorithm>
+#include <limits>
+#include <math.h>
+#include <iostream>
+
+#include <Shogun/Management/Layer.hpp>
 
 namespace sg {
 
-    const std::vector<Entity *> &Layer::getEntityList() const {
+    Layer::Layer() {
 
-        return this->entityList;
+        this->globalArea = sf::Rect<long>(static_cast<long>(ceil(static_cast<double>(std::numeric_limits<long>::min()) / 2.0)), 
+                                          static_cast<long>(ceil(static_cast<double>(std::numeric_limits<long>::min()) / 2.0)),
+                                          std::numeric_limits<long>::max(),
+                                          std::numeric_limits<long>::max());
+
+        this->updateArea.left = this->globalArea.left;
+        this->updateArea.top = this->globalArea.top;
+        this->updateArea.width = this->globalArea.width;
+        this->updateArea.height = this->globalArea.height;
+
+        this->renderArea.left = this->globalArea.left;
+        this->renderArea.top = this->globalArea.top;
+        this->renderArea.width = this->globalArea.width;
+        this->renderArea.height = this->globalArea.height;
+
+        this->dynamicEntities.init(1l, std::numeric_limits<uint64_t>::max(), 0, this->globalArea);
+        this->staticEntities.init(1l, std::numeric_limits<uint64_t>::max(), 0, this->globalArea);
+
+        this->renderOrder = [=](const Entity *e0, const Entity *e1)->bool {return false;};
+
+        this->scanlineDir = scanline_t::HORIZONTAL;
+
+        this->updateStatus = true;
+        this->collisionStatus = true;
+        this->renderStatus = true;
+        this->renderSortStatus = true;
 
     }
 
-    const std::vector<Entity *> &Layer::getRenderList() const {
+    const Quadtree<Entity *> &Layer::getDynamicEntities() const {
 
-        return this->renderList;
+        return this->dynamicEntities;
+
+    }
+
+    const Quadtree<Entity *> &Layer::getStaticEntities() const {
+
+        return this->staticEntities;
 
     }
 
@@ -23,57 +56,200 @@ namespace sg {
 
     }
 
-    void Layer::addEntity(Entity &newE) {
+    void Layer::addDynamicEntity(Entity &newE) {
 
-        newE.layer = this;
-        this->entityList.push_back(&newE);
-        this->renderList.push_back(&newE);
-        this->sortStatus = true;
+        this->dynamicEntities.insert(this->convertBounds(newE.getTotalBounds(true)), &newE);
+
+    }
+
+    void Layer::addStaticEntity(Entity &newE) {
+
+        this->staticEntities.insert(this->convertBounds(newE.getTotalBounds(true)), &newE);
 
     }
 
     void Layer::removeEntity(Entity &re) {
 
-        int index0 = -1;
-        int index1 = -1;
-        for (uint32_t i = 0; i < this->entityList.size(); ++i) {
+        sf::Rect<long> eb = this->convertBounds(re.getTotalBounds(true));
+        if (!this->dynamicEntities.remove(eb, &re))
+            this->staticEntities.remove(eb, &re);
 
-            if (index0 >= 0 && index1 >= 0)
-                break;
-            if (dynamic_cast<const void *>(this->entityList[i]) == dynamic_cast<const void *>(&re))
-                index0 = i;
-            if (dynamic_cast<const void *>(this->renderList[i]) == dynamic_cast<const void *>(&re))
-                index1 = i;
+    }
 
-        }
+    void Layer::removeDynamicEntity(Entity &re) {
 
-        if (index0 >= 0 && index0 < static_cast<int>(this->entityList.size()) && index1 >= 0 && index1 < static_cast<int>(this->renderList.size())) {
+        this->dynamicEntities.remove(this->convertBounds(re.getTotalBounds(true)), &re);
 
-            this->entityList.erase(this->entityList.begin() + index0);
-            this->renderList.erase(this->renderList.begin() + index1);
-            re.layer = NULL;
-	    this->sortStatus = true;
+    }
 
-        }
+    void Layer::removeStaticEntity(Entity &re) {
+
+        this->staticEntities.remove(this->convertBounds(re.getTotalBounds(true)), &re);
+
+    }
+
+    sf::Rect<long> Layer::convertBounds(const sf::FloatRect &fb) {
+
+        sf::Rect<long> lb;
+        lb.left = static_cast<long>(ceil(fb.left));
+        lb.top = static_cast<long>(ceil(fb.top));
+        lb.width = static_cast<long>(ceil(fb.width));
+        lb.height = static_cast<long>(ceil(fb.height));
+
+        return lb;
 
     }
 
     void Layer::setRenderOrder(std::function<bool(const Entity *, const Entity *)> newRO) {
 
         this->renderOrder = newRO;
-        this->sortStatus = true;
 
     }
 
-    void Layer::sortEntityList(std::function<bool(const Entity *, const Entity *)> cmp) {
+    void Layer::update(const sf::Time &tslu) {
 
-        std::sort(this->entityList.begin(), this->entityList.end(), cmp);
+        if (!this->updateStatus)
+            return;
+
+        std::vector<Entity *> entities;
+
+        //update dynamic
+        std::vector<Entity *> d_entities;
+        this->dynamicEntities.retrieve(d_entities, this->globalArea);
+        this->dynamicEntities.clear();
+        for (Entity *e : d_entities)
+            if (!e->getDeletionStatus()) {
+
+                sf::Rect<long> eBounds = this->convertBounds(e->getTotalBounds(true));
+                this->dynamicEntities.insert(eBounds, e);
+
+                if ((eBounds.left <= (updateArea.left + updateArea.width)) &&
+                    (eBounds.top <= (updateArea.top + updateArea.height)) &&
+                    ((eBounds.left + eBounds.width) >= updateArea.left) &&
+                    ((eBounds.top + eBounds.height) >= updateArea.top)) {
+
+                    e->update(tslu);
+                    entities.push_back(e);
+
+                }
+
+            }
+
+        //update static
+        std::vector<Entity *> s_entities;
+        this->staticEntities.retrieve(s_entities, this->updateArea);
+        for (Entity *e : s_entities)
+            if (!e->getDeletionStatus()) {
+
+                e->update(tslu);
+                entities.push_back(e);
+
+            }
+            else
+                staticEntities.remove(this->convertBounds(e->getTotalBounds(true)), e);
+
+        if (this->collisionStatus)
+            this->scanline(entities);
 
     }
 
-    void Layer::sortRenderList(std::function<bool(const Entity *, const Entity *)> cmp) {
+    void Layer::render() {
 
-        std::sort(this->renderList.begin(), this->renderList.end(), cmp);
+        if (!this->renderStatus)
+            return;
+
+        //gather entities
+        std::vector<Entity *> entities;
+        this->dynamicEntities.retrieve(entities, this->renderArea);
+        this->staticEntities.retrieve(entities, this->renderArea);
+
+        //sort based on render order and draw
+        if (!this->renderSortStatus)
+            std::sort(entities.begin(), entities.end(), this->renderOrder);
+        for (Entity *e : entities)
+            e->draw();
+
+    }
+
+    void Layer::setVerticalScanline() {
+
+        this->scanlineDir = scanline_t::VERTICAL;
+
+    }
+
+    void Layer::setHorizontalScanline() {
+
+        this->scanlineDir = scanline_t::HORIZONTAL;
+
+    }
+
+    scanline_t Layer::getScanlineStatus() const {
+
+        return this->scanlineDir;
+
+    }
+
+    bool verticalComparitor(const Entity *e1, const Entity *e2) {
+
+        if (e1->getSurfaceBounds(true).top < e2->getSurfaceBounds(true).top)
+            return true;
+
+        return false;
+
+    }
+
+    bool horizontalComparitor(const Entity *e1, const Entity *e2) {
+
+        if (e1->getSurfaceBounds(true).left < e2->getSurfaceBounds(true).left)
+            return true;
+
+        return false;
+
+    }
+
+    float Layer::scanMin(const Entity *e) const {
+
+        if (this->scanlineDir == scanline_t::HORIZONTAL)
+            return e->getSurfaceBounds(true).left;
+
+        return e->getSurfaceBounds(true).top;
+
+    }
+
+    float Layer::scanMax(const Entity *e) const {
+
+        sf::FloatRect bounds = e->getSurfaceBounds(true);
+        if (scanlineDir == scanline_t::HORIZONTAL)
+            return bounds.left + bounds.width;
+
+        return bounds.top + bounds.height;
+
+    }
+
+    void Layer::scanline(std::vector<Entity *> &entities) const {
+
+        //sort
+        if (this->scanlineDir == scanline_t::HORIZONTAL)
+            std::sort(entities.begin(), entities.end(), horizontalComparitor);
+        else
+            std::sort(entities.begin(), entities.end(), verticalComparitor);
+
+        // scanline
+        for (uint32_t i = 0; i < entities.size(); ++i) {
+
+            if (!entities[i]->getIsCollidable())
+                continue;
+
+            for (uint32_t j = i + 1; j < entities.size() && scanMin(entities[j]) <= scanMax(entities[i]); ++j) {
+
+                if (!entities[j]->getIsCollidable())
+                    continue;
+
+                entities[i]->collides(*entities[j]);
+
+            }
+
+        }
 
     }
 

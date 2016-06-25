@@ -1,7 +1,6 @@
 #pragma once
 
 #include <stdlib.h>
-//#include <functional>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
@@ -19,7 +18,6 @@ namespace sg {
         float rotationInWorld;
         const GameWorld *world = NULL;
         sf::View view;
-        //std::function<bool(const Entity &, const Entity &)> renderOrder;
 
         public:
             GameWindow();
@@ -69,10 +67,7 @@ namespace sg {
 
             const sf::View * getView() const;
 
-            //void setRenderOrder(std::function<bool(const Entity &, const Entity &)>);
-
         private:
-            
             void updateView();
 
     };

@@ -3,7 +3,6 @@
 
 //SHOGUN includes
 #include <Shogun/Elements/Entity.hpp>
-#include <Shogun/Management/Layer.hpp>
 
 namespace sg {
 
@@ -14,7 +13,6 @@ namespace sg {
         this->owner = NULL;
         this->isCollidable = true;
         this->deletion = false;
-        this->layer = NULL;
 
     }
 
@@ -25,7 +23,6 @@ namespace sg {
         this->owner = NULL;
         this->isCollidable = setCollidable;
         this->deletion = false;
-        this->layer = NULL;
 
     }
 
@@ -209,13 +206,6 @@ namespace sg {
 
     }
 
-    void Entity::handleCollision(const Entity &e, const std::vector<sf::Vector2f> &collisionVectors) {
-
-        if (this->layer)
-            this->layer->sortStatus = true;
-
-    }
-
     bool Entity::getIsCollidable() const {
 
         return this->isCollidable;
@@ -237,8 +227,6 @@ namespace sg {
     void Entity::setDeletionStatus(bool newDeletionStatus) {
 
         this->deletion = newDeletionStatus;
-        if (this->layer)
-            this->layer->deletionStatus = true;
 
     }
 
@@ -359,8 +347,6 @@ namespace sg {
 
     void Entity::setGlobalPosition(const sf::Vector2f &position) {
 
-        if (this->layer)
-            this->layer->sortStatus = true;
         if (this->getOwner()) {
 
             sf::Transform trans = sf::Transform::Identity;
@@ -381,8 +367,6 @@ namespace sg {
 
     void Entity::moveGlobally(const sf::Vector2f &offset, bool withScale, bool withRotation) {
 
-        if (this->layer)
-            this->layer->sortStatus = true;
         if (this->getOwner()) {
 
             sf::Transform trans = sf::Transform::Identity;
@@ -400,8 +384,6 @@ namespace sg {
 
     void Entity::setGlobalRotation(float angle, bool useDeg) {
 
-        if (this->layer)
-            this->layer->sortStatus = true;
         if (!useDeg)
             angle *= (180.0f / M_PI);//If angl is not degs then make it degs
         if (this->getOwner()) {
@@ -417,8 +399,6 @@ namespace sg {
 
     void Entity::rotateGlobally(float angle, bool useDeg) {
 
-        if (this->layer)
-            this->layer->sortStatus = true;
         if (!useDeg)
             angle *= (180.0f / M_PI);//If angl is not degs then make it degs
         this->rotate(angle);
@@ -433,8 +413,6 @@ namespace sg {
 
     void Entity::setGlobalScale(const sf::Vector2f &factor) {
 
-        if (this->layer)
-            this->layer->sortStatus = true;
         if (this->getOwner()) {
 
             sf::Vector2f transScale = this->getOwner()->getGlobalScale();
@@ -448,113 +426,13 @@ namespace sg {
 
     void Entity::scaleGlobally(float factorX, float factorY) {
 
-        if (this->layer)
-            this->layer->sortStatus = true;
         this->scale(factorX, factorY);
 
     }
 
     void Entity::scaleGlobally(const sf::Vector2f &factor) {
 
-        if (this->layer)
-            this->layer->sortStatus = true;
         this->scale(factor);
-
-    }
-
-    void Entity::setPosition(float x, float y) {
-
-        sf::Transformable::setPosition(x, y);
-        if (this->layer)
-            this->layer->sortStatus = true;
-
-    }
-
-    void Entity::setPosition(const sf::Vector2f &position) {
-
-        sf::Transformable::setPosition(position);
-        if (this->layer)
-            this->layer->sortStatus = true;
-
-    }
-
-    void Entity::setRotation(float angle) {
-
-        sf::Transformable::setRotation(angle);
-        if (this->layer)
-            this->layer->sortStatus = true;
-
-    }
-
-    void Entity::setScale(float factorX, float factorY) {
-
-        sf::Transformable::setScale(factorX, factorY);
-        if (this->layer)
-            this->layer->sortStatus = true;
-
-    }
-
-    void Entity::setScale(const sf::Vector2f &factors) {
-
-        sf::Transformable::setScale(factors);
-        if (this->layer)
-            this->layer->sortStatus = true;
-
-    }
-
-    void Entity::setOrigin(float x, float y) {
-
-        sf::Transformable::setOrigin(x, y);
-        if (this->layer)
-            this->layer->sortStatus = true;
-
-    }
-
-    void Entity::setOrigin(const sf::Vector2f &origin) {
-
-        sf::Transformable::setOrigin(origin);
-        if (this->layer)
-            this->layer->sortStatus = true;
-
-    }
-
-    void Entity::move(float offsetX, float offsetY) {
-
-        sf::Transformable::move(offsetX, offsetY);
-        if (this->layer)
-            this->layer->sortStatus = true;
-
-    }
-
-    void Entity::move(const sf::Vector2f &offset) {
-
-        sf::Transformable::move(offset);
-        if (this->layer)
-            this->layer->sortStatus = true;
-
-    }
-
-    void Entity::rotate(float angle) {
-
-        sf::Transformable::rotate(angle);
-        if (this->layer)
-            this->layer->sortStatus = true;
-
-    }
-
-    void Entity::scale(float factorX, float factorY) {
-
-        sf::Transformable::scale(factorX, factorY);
-        if (this->layer)
-            this->layer->sortStatus = true;
-
-    }
-
-    void Entity::scale(const sf::Vector2f &factor) {
-
-        sf::Transformable::scale(factor);
-        if (this->layer)
-            this->layer->sortStatus = true;
 
     }
 
@@ -563,8 +441,6 @@ namespace sg {
         if (idx >= this->getNumOfComponents())
             return;
 
-        if (this->layer)
-            this->layer->sortStatus = true;
         if (sf::Sprite *s = dynamic_cast<sf::Sprite *>(this->components[idx]->d))
             s->setOrigin(origin);
         else if (sf::Shape *sh = dynamic_cast<sf::Shape *>(this->components[idx]->d))
@@ -582,8 +458,6 @@ namespace sg {
         if (idx >= this->getNumOfComponents())
             return;
 
-        if (this->layer)
-            this->layer->sortStatus = true;
         if (sf::Sprite *s = dynamic_cast<sf::Sprite *>(this->components[idx]->d))
             s->setPosition(position);
         else if (sf::Shape *sh = dynamic_cast<sf::Shape *>(this->components[idx]->d))
@@ -600,8 +474,6 @@ namespace sg {
 
         if (idx >= this->getNumOfComponents())
             return;
-        if (this->layer)
-            this->layer->sortStatus = true;
 
         if (sf::Sprite *s = dynamic_cast<sf::Sprite *>(this->components[idx]->d))
             s->move(offset);
@@ -619,8 +491,6 @@ namespace sg {
 
         if (idx >= this->getNumOfComponents())
             return;
-        if (this->layer)
-            this->layer->sortStatus = true;
 
         if (!useDeg)
             angle *= (180.0f / M_PI);//If angl is not degs then make it degs
@@ -641,8 +511,6 @@ namespace sg {
 
         if (idx >= this->getNumOfComponents())
             return;
-        if (this->layer)
-            this->layer->sortStatus = true;
 
         if (!useDeg)
             angle *= (180.0f / M_PI);//If angl is not degs then make it degs
@@ -663,8 +531,6 @@ namespace sg {
 
         if (idx >= this->getNumOfComponents())
             return;
-        if (this->layer)
-            this->layer->sortStatus = true;
 
         if (sf::Sprite *s = dynamic_cast<sf::Sprite *>(this->components[idx]->d))
             s->setScale(factor);
@@ -682,8 +548,6 @@ namespace sg {
 
         if (idx >= this->getNumOfComponents())
             return;
-        if (this->layer)
-            this->layer->sortStatus = true;
 
         if (sf::Sprite *s = dynamic_cast<sf::Sprite *>(this->components[idx]->d))
             s->scale(factor);
@@ -818,6 +682,20 @@ namespace sg {
 
     }
 
+    sf::FloatRect Entity::getTotalBounds(bool useGlobal) const {
+
+        float inf = std::numeric_limits<float>::infinity();
+        sf::FloatRect bounds = sf::FloatRect(inf, inf, -inf, -inf);
+
+        this->expandSurfaceBounds(bounds, this->getSurfaceBounds(useGlobal));
+        this->expandSurfaceBounds(bounds, this->getTextureBounds(useGlobal));
+        bounds.width -= bounds.left;
+        bounds.height -= bounds.top;
+
+        return bounds;
+
+    }
+
     bool Entity::isPointInSurfaceBounds(sf::Vector2f &point, bool useGlobal) const {
 
         sf::FloatRect surfBounds = this->getSurfaceBounds(useGlobal);
@@ -832,14 +710,18 @@ namespace sg {
 
     }
 
+    bool Entity::isPointInTotalBounds(sf::Vector2f &point, bool useGlobal) const {
+
+        return (this->isPointInSurfaceBounds(point, useGlobal) || this->isPointInTextureBounds(point, useGlobal));
+
+    }
+
     std::vector<Component *>::size_type Entity::addDrawable(sf::Drawable &newDrawable, bool makeTransformable) {
 
         sf::Transformable *t = NULL;
         if (makeTransformable && (t = dynamic_cast<sf::Transformable *>(&newDrawable)))
             return this->addComponent(newDrawable, *t);
 
-        if (this->layer)
-            this->layer->sortStatus = true;
         Component *c = new Component();
         c->d = &newDrawable;
         c->t = t;
@@ -857,8 +739,6 @@ namespace sg {
         if (dynamic_cast<Entity *>(&newTransformable))
             throw std::invalid_argument("Component\'s sf::Transfromable cannot be an Entity");
 
-        if (this->layer)
-            this->layer->sortStatus = true;
         Component *c = new Component();
         c->d = d;
         c->t = &newTransformable;
@@ -869,8 +749,6 @@ namespace sg {
 
     std::vector<Component *>::size_type Entity::addComponent(sf::Drawable &newDrawable, sf::Transformable &newTransformable) {
 
-        if (this->layer)
-            this->layer->sortStatus = true;
         if (dynamic_cast<Entity *>(&newTransformable))
             throw std::invalid_argument("Component\'s sf::Transfromable cannot be an Entity");
 
@@ -884,8 +762,6 @@ namespace sg {
         if (idx >= this->getNumOfComponents())
             return std::pair<sf::Drawable *, sf::Transformable *>(NULL, NULL);
 
-        if (this->layer)
-            this->layer->sortStatus = true;
         Component *r = this->components[idx];
         sf::Drawable *d = r->d;
         sf::Transformable *t = r->t;

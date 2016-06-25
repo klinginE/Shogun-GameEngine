@@ -1,8 +1,4 @@
-#include <queue>
-
-#include <Shogun/Elements/Entity.hpp>
 #include <Shogun/Management/GameLoop.hpp>
-
 #include <Shogun/Management/GameWindow.hpp>
 
 namespace sg {
@@ -23,8 +19,6 @@ namespace sg {
 
         this->updateView();
 
-        //this->renderOrder = [=](const Entity &e1, const Entity &e2)->bool {return false;};
-
     }
 
     GameWindow::GameWindow(const GameWorld &world) {
@@ -42,8 +36,6 @@ namespace sg {
         this->rotationInWorld = 0;
 
         this->updateView();
-
-        //this->renderOrder = [=](const Entity &e1, const Entity &e2)->bool {return false;};
 
     }
 
@@ -64,8 +56,6 @@ namespace sg {
 
         this->updateView();
 
-        //this->renderOrder = [=](const Entity &e1, const Entity &e2)->bool {return false;};
-
     }
 
     GameWindow::GameWindow(const GameWorld &world,
@@ -83,8 +73,6 @@ namespace sg {
         this->rotationInWorld = 0;
 
         this->updateView();
-
-        //this->renderOrder = [=](const Entity &e1, const Entity &e2)->bool {return false;};
 
     }
 
@@ -105,8 +93,6 @@ namespace sg {
 
         this->updateView();
 
-        //this->renderOrder = [=](const Entity &e1, const Entity &e2)->bool {return false;};
-
     }
     
     GameWindow::GameWindow(const GameWorld &world,
@@ -123,8 +109,6 @@ namespace sg {
 
         this->updateView();
 
-        //this->renderOrder = [=](const Entity &e1, const Entity &e2)->bool {return false;};
-
     }
 
     void GameWindow::render() {
@@ -135,16 +119,21 @@ namespace sg {
         updateView();
         const sf::View v = GameLoop::inst().getRenderWindow().getView();
         GameLoop::inst().getRenderWindow().setView(this->view);
-        //GameLoop::inst().getRenderWindow().clear(sf::Color::Black);
+
+        sf::Rect<long> winBounds(static_cast<long>(this->getPosInWorld().x - this->getSizeInWorld().x / 2.0f), //left
+                                 static_cast<long>(this->getPosInWorld().y - this->getSizeInWorld().y / 2.0f), //top
+                                 static_cast<long>(this->getSizeInWorld().x),                                  //width
+                                 static_cast<long>(this->getSizeInWorld().y));                                 //height
 
         auto layers = world->getLayers();
+        for (auto it = layers.begin(); it != layers.end(); ++it) {
 
-        //auto comp = [=](Entity *e1, Entity *e2)->bool{return renderOrder(*e1, *e2);};
+            it->second->renderArea = winBounds;
+            it->second->render();
 
-        //std::priority_queue<Entity *, std::vector<Entity *>, decltype(comp)> renderQueue(comp);
+        }
 
-
-        sf::FloatRect winBounds(this->getPosInWorld().x - this->getSizeInWorld().x / 2.0f, //left
+        /*sf::FloatRect winBounds(this->getPosInWorld().x - this->getSizeInWorld().x / 2.0f, //left
                                 this->getPosInWorld().y - this->getSizeInWorld().y / 2.0f, //top
                                 this->getSizeInWorld().x,                                  //width
                                 this->getSizeInWorld().y);                                 //height
@@ -190,9 +179,8 @@ namespace sg {
 
             }
 
-        }
+        }*/
 
-        //GameLoop::inst().getRenderWindow().display();
         GameLoop::inst().getRenderWindow().setView(v);
 
     }
@@ -200,9 +188,6 @@ namespace sg {
     void GameWindow::setWorld(const GameWorld &newWorld) {
 
         this->world = &newWorld;
-        auto layers = world->getLayers();
-        for (auto it = layers.begin(); it != layers.end(); ++it)
-            it->second->sortStatus = true;
 
     }
 
@@ -214,19 +199,7 @@ namespace sg {
 
     void GameWindow::setPosInScreen(const sf::Vector2f &positionInScreen) {
 
-        if (positionInScreen.x != this->positionInScreen.x ||
-            positionInScreen.y != this->positionInScreen.y) {
-
-            this->positionInScreen = positionInScreen;
-            if (this->world) {
-
-                auto layers = world->getLayers();
-                for (auto it = layers.begin(); it != layers.end(); ++it)
-                    it->second->sortStatus = true;
-
-            }
-
-        }
+        this->positionInScreen = positionInScreen;
 
     }
 
@@ -238,19 +211,7 @@ namespace sg {
 
     void GameWindow::setSizeInScreen(const sf::Vector2f &sizeInScreen) {
 
-        if (sizeInScreen.x != this->sizeInScreen.x ||
-            sizeInScreen.y != this->sizeInScreen.y) {
-
-            this->sizeInScreen = sizeInScreen;
-            if (this->world) {
-
-                auto layers = world->getLayers();
-                for (auto it = layers.begin(); it != layers.end(); ++it)
-                    it->second->sortStatus = true;
-
-            }
-
-        }
+        this->sizeInScreen = sizeInScreen;
 
     }
 
@@ -262,19 +223,7 @@ namespace sg {
 
     void GameWindow::setPosInWorld(const sf::Vector2f &positionInWorld) {
 
-        if (positionInWorld.x != this->positionInWorld.x ||
-            positionInWorld.y != this->positionInWorld.y) {
-
-            this->positionInWorld = positionInWorld;
-            if (this->world) {
-
-                auto layers = world->getLayers();
-                for (auto it = layers.begin(); it != layers.end(); ++it)
-                    it->second->sortStatus = true;
-
-            }
-
-        }
+        this->positionInWorld = positionInWorld;
 
     }
 
@@ -286,19 +235,7 @@ namespace sg {
 
     void GameWindow::setSizeInWorld(const sf::Vector2f &sizeInWorld) {
 
-        if (sizeInWorld.x != this->sizeInWorld.x ||
-            sizeInWorld.y != this->sizeInWorld.y) {
-
-            this->sizeInWorld = sizeInWorld;
-            if (this->world) {
-
-                auto layers = world->getLayers();
-                for (auto it = layers.begin(); it != layers.end(); ++it)
-                    it->second->sortStatus = true;
-
-            }
-
-        }
+        this->sizeInWorld = sizeInWorld;
 
     }
 
@@ -310,18 +247,7 @@ namespace sg {
 
     void GameWindow::setRotInWorld(float rotationInWorld) {
 
-        if (rotationInWorld != this->rotationInWorld) {
-
-            this->rotationInWorld = rotationInWorld;
-            if (this->world) {
-
-                auto layers = world->getLayers();
-                for (auto it = layers.begin(); it != layers.end(); ++it)
-                    it->second->sortStatus = true;
-
-            }
-
-        }
+        this->rotationInWorld = rotationInWorld;
 
     }
 
@@ -330,12 +256,6 @@ namespace sg {
         return this->rotationInWorld;
 
     }
-
-    /*void GameWindow::setRenderOrder(std::function<bool(const Entity &, const Entity &)> newRenderOrder) {
-
-        renderOrder = newRenderOrder;
-
-    }*/
 
     sf::Vector2f GameWindow::worldCoordToScreenCoord(sf::Vector2f worldCoord) const {
 
