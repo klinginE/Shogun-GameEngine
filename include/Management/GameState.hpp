@@ -12,8 +12,8 @@ namespace sg {
     class GameState {
 
         private: 
-            std::vector<GameWorld*> gameWorlds;
-            std::vector<GameWindow*> gameWindows;
+            std::vector<GameWorld *> gameWorlds;
+            std::vector<GameWindow *> gameWindows;
             const InputManager *inputManager = NULL;
             std::function<bool(const GameWindow &, const GameWindow &)>
                     renderOrder;
@@ -32,18 +32,18 @@ namespace sg {
             void addWindow(GameWindow &);
             void addWorld(GameWorld &);
 
-            const GameWindow * getWindow(uint32_t) const;
-            const GameWorld * getWorld(uint32_t) const;
+            const GameWindow *getWindow(uint32_t) const;
+            const GameWorld *getWorld(uint32_t) const;
 
-            const GameWindow * removeWindow(uint32_t);
-            const GameWorld * removeWorld(uint32_t);
+            const GameWindow *removeWindow(uint32_t);
+            const GameWorld *removeWorld(uint32_t);
 
-            std::size_t getNumWindows() const;
-            std::size_t getNumWorlds() const;
+            std::vector<GameWindow *>::size_type getNumWindows() const;
+            std::vector<GameWorld *>::size_type getNumWorlds() const;
 
             void setInputManager(const InputManager &);
-            const InputManager * removeInputManager();
-            const InputManager * getInputManager() const;
+            const InputManager *removeInputManager();
+            const InputManager *getInputManager() const;
 
     };
 

@@ -177,9 +177,6 @@ namespace sg {
     void AnimatedSprite::setOrigin(const sf::Vector2f &origin) {
 
         sf::Sprite::setOrigin(origin);
-        #ifdef PARALLEL_ENABLED
-        #pragma omp parallel for
-        #endif
         for (uint32_t i = 0; i < surfaces.size(); ++i)
             this->surfaces[i]->setOrigin(origin);
 
@@ -194,9 +191,6 @@ namespace sg {
     void AnimatedSprite::setPosition(const sf::Vector2f &position) {
 
         sf::Sprite::setPosition(position);
-        #ifdef PARALLEL_ENABLED
-        #pragma omp parallel for
-        #endif
         for (uint32_t i = 0; i < surfaces.size(); ++i)
             this->surfaces[i]->setPosition(position);
 
@@ -211,9 +205,6 @@ namespace sg {
     void AnimatedSprite::move(const sf::Vector2f &offset) {
 
         sf::Sprite::move(offset);
-        #ifdef PARALLEL_ENABLED
-        #pragma omp parallel for
-        #endif
         for (uint32_t i = 0; i < surfaces.size(); ++i)
             this->surfaces[i]->move(offset);
 
@@ -223,9 +214,6 @@ namespace sg {
     void AnimatedSprite::setRotation(float angle) {
 
         sf::Sprite::setRotation(angle);
-        #ifdef PARALLEL_ENABLED
-        #pragma omp parallel for
-        #endif
         for (uint32_t i = 0; i < surfaces.size(); ++i)
             this->surfaces[i]->setRotation(angle);
 
@@ -234,9 +222,6 @@ namespace sg {
     void AnimatedSprite::rotate(float angle) {
 
         sf::Sprite::rotate(angle);
-        #ifdef PARALLEL_ENABLED
-        #pragma omp parallel for
-        #endif
         for (uint32_t i = 0; i < surfaces.size(); ++i)
             this->surfaces[i]->rotate(angle);
 
@@ -251,9 +236,6 @@ namespace sg {
     void AnimatedSprite::setScale(const sf::Vector2f &factor) {
 
         sf::Sprite::setScale(factor);
-        #ifdef PARALLEL_ENABLED
-        #pragma omp parallel for
-        #endif
         for (uint32_t i = 0; i < surfaces.size(); ++i)
             this->surfaces[i]->setScale(factor);
 
@@ -268,9 +250,6 @@ namespace sg {
     void AnimatedSprite::scale(const sf::Vector2f &factor) {
 
         sf::Sprite::scale(factor);
-        #ifdef PARALLEL_ENABLED
-        #pragma omp parallel for
-        #endif
         for (uint32_t i = 0; i < surfaces.size(); ++i)
             this->surfaces[i]->scale(factor);
 

@@ -68,23 +68,24 @@ namespace sg {
 
     }
 
-    void Layer::removeEntity(Entity &re) {
+    bool Layer::removeEntity(Entity &re) {
 
-        sf::Rect<long> eb = this->convertBounds(re.getTotalBounds(true));
-        if (!this->dynamicEntities.remove(eb, &re))
-            this->staticEntities.remove(eb, &re);
+        if (!this->removeDynamicEntity(re))
+            return this->removeStaticEntity(re);
 
-    }
-
-    void Layer::removeDynamicEntity(Entity &re) {
-
-        this->dynamicEntities.remove(this->convertBounds(re.getTotalBounds(true)), &re);
+        return true;
 
     }
 
-    void Layer::removeStaticEntity(Entity &re) {
+    bool Layer::removeDynamicEntity(Entity &re) {
 
-        this->staticEntities.remove(this->convertBounds(re.getTotalBounds(true)), &re);
+        return this->dynamicEntities.remove(this->convertBounds(re.getTotalBounds(true)), &re);
+
+    }
+
+    bool Layer::removeStaticEntity(Entity &re) {
+
+        return this->staticEntities.remove(this->convertBounds(re.getTotalBounds(true)), &re);
 
     }
 
@@ -116,24 +117,22 @@ namespace sg {
         //update dynamic
         std::vector<Entity *> d_entities;
         this->dynamicEntities.retrieve(d_entities, this->globalArea);
-        this->dynamicEntities.clear();
+        //this->dynamicEntities.clear();
         for (Entity *e : d_entities)
             if (!e->getDeletionStatus()) {
 
-                sf::Rect<long> eBounds = this->convertBounds(e->getTotalBounds(true));
-                this->dynamicEntities.insert(eBounds, e);
-
-                if ((eBounds.left <= (updateArea.left + updateArea.width)) &&
-                    (eBounds.top <= (updateArea.top + updateArea.height)) &&
-                    ((eBounds.left + eBounds.width) >= updateArea.left) &&
-                    ((eBounds.top + eBounds.height) >= updateArea.top)) {
-
-                    e->update(tslu);
-                    entities.push_back(e);
-
-                }
+                sf::Rect<long> eb = this->convertBounds(e->getTotalBounds(true));
+                e->update(tslu);
+                this->dynamicEntities.update(eb,
+                                             [this](const Entity *ent)->sf::Rect<long>
+                                             {
+                                                 return this->convertBounds(ent->getTotalBounds(true));
+                                             });
+                entities.push_back(e);
 
             }
+            else
+                this->dynamicEntities.remove(this->convertBounds(e->getTotalBounds(true)), e);
 
         //update static
         std::vector<Entity *> s_entities;
@@ -146,7 +145,7 @@ namespace sg {
 
             }
             else
-                staticEntities.remove(this->convertBounds(e->getTotalBounds(true)), e);
+                this->staticEntities.remove(this->convertBounds(e->getTotalBounds(true)), e);
 
         if (this->collisionStatus)
             this->scanline(entities);
@@ -158,16 +157,20 @@ namespace sg {
         if (!this->renderStatus)
             return;
 
+        sf::Clock gc;
         //gather entities
         std::vector<Entity *> entities;
         this->dynamicEntities.retrieve(entities, this->renderArea);
         this->staticEntities.retrieve(entities, this->renderArea);
+        sf::Time gt = gc.restart();
 
+        sf::Clock dc;
         //sort based on render order and draw
         if (!this->renderSortStatus)
             std::sort(entities.begin(), entities.end(), this->renderOrder);
         for (Entity *e : entities)
             e->draw();
+        sf::Time dt = dc.restart();
 
     }
 

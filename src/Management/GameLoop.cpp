@@ -11,21 +11,38 @@
 #include <Shogun/Management/InputManager.hpp>
 
 namespace sg {
-    
-    GameLoop & GameLoop::inst() {
-    
+
+    GameLoop &GameLoop::inst() {
+
         static GameLoop instance;
-        
+
         return instance;
-    
+
     }
-    
+
     void GameLoop::start() {
 
         sf::Clock clock;
 
+        sf::Clock fpsClock;
+        sf::Time currTime = sf::Time::Zero;
+        uint32_t count = 0;
+
+        sf::Clock uc;
+        sf::Clock rc;
+        sf::Clock ec;
+        uint64_t totalTime = 0;
         while (getRenderWindow().isOpen()) {
 
+            totalTime = 0;
+            if ((count++ % 10) == 0) {
+
+                currTime = fpsClock.restart();
+                float fps = 10.0f / currTime.asSeconds();
+                //std::cout << "FPS: " << fps << std::endl;
+                fpsClock.restart();
+
+            }
             // elapsed time
             sf::Time elapsed = clock.restart();
 
@@ -39,11 +56,11 @@ namespace sg {
             }
 
             // handle window events
+            ec.restart();
             sf::Event event;
             while (getRenderWindow().pollEvent(event)) {
 
                 const InputManager *topIM = NULL;
-                const std::vector<std::function<void(const sf::Time, const sf::Event)>> actions;
                 if ((topIM = topState->getInputManager()))
                     for (const auto &a : topIM->getAction(event.type))
                         a(elapsed, event);
@@ -52,12 +69,27 @@ namespace sg {
                     getRenderWindow().close();
 
             }
+            sf::Time et = ec.restart();
+            totalTime += et.asMicroseconds();
+            //std::cout << "Total event time:       " << et.asMicroseconds() << std::endl;
+
             if (!this->paused) {
 
+                uc.restart();
                 topState->update(elapsed);
+                sf::Time ut = uc.restart();
+                totalTime += ut.asMicroseconds();
+                //std::cout << "Total update time:      " << ut.asMicroseconds() << std::endl;
+
+                rc.restart();
                 topState->render();
+                sf::Time rt = rc.restart();
+                totalTime += rt.asMicroseconds();
+                //std::cout << "Total render time:      " << rt.asMicroseconds() << std::endl;
 
             }
+            //std::cout << "Total time:             " << totalTime << std::endl;
+            //std::cout << "estimate number of fps: " << (1.0 / (static_cast<double>(1e-6) * static_cast<double>(totalTime))) << std::endl << std::endl;
 
         }
 
@@ -67,12 +99,12 @@ namespace sg {
                         const sf::String &windowName,
                         uint32_t style,
                         const sf::ContextSettings &settings) {
-    
+
         // Configure
         sf::VideoMode setWindowDimensions(
                 windowDimensions.x,
                 windowDimensions.y);
-    
+
         sf::Vector2i windowPosition(
                 static_cast<int>(
                     sf::VideoMode::getDesktopMode().width / 2.0f -
@@ -82,19 +114,20 @@ namespace sg {
                     setWindowDimensions.height / 2.0f));
 
         // Setup
-        getRenderWindow().create(setWindowDimensions,
+        getRenderWindow().create(
+                setWindowDimensions,
                 windowName, style, settings);
         getRenderWindow().setPosition(windowPosition);
         getRenderWindow().setSize(windowDimensions);
         getRenderWindow().setVerticalSyncEnabled(true);
-        getRenderWindow().setFramerateLimit(60);
+        getRenderWindow().setFramerateLimit(0);
 
     }
-    
-    sf::RenderWindow & GameLoop::getRenderWindow() {
-    
+
+    sf::RenderWindow &GameLoop::getRenderWindow() {
+
         return window;
-    
+
     }
 
     void GameLoop::pause() {

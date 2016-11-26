@@ -148,7 +148,7 @@ namespace sg {
         uint32_t n = static_cast<uint32_t>(ceil(std::min(gb.width, gb.height))) + 30;
         sf::ConvexShape approxCircle(n);
         float mult = 2.0f * M_PI / n - M_PI / 2.0f;
-        for (uint32_t i = 0; i < n; i++) {
+        for (uint32_t i = 0; i < n; ++i) {
 
             float angle = i * mult;
             sf::Vector2f v(std::cos(angle) * circle.getRadius(),
@@ -216,15 +216,9 @@ namespace sg {
         uint32_t normalsLen = poly1.getPointCount() + poly2.getPointCount();
         sf::Vector2f *unitNormals = new sf::Vector2f[normalsLen];
 
-        #ifdef PARALLEL_ENABLED
-        #pragma omp parallel for
-        #endif
         for (uint32_t i = 0; i < poly1.getPointCount(); i++)
             unitNormals[i] = calculateUnitNormal(poly1, i, globalTrans1);
 
-        #ifdef PARALLEL_ENABLED
-        #pragma omp parallel for
-        #endif
         for (uint32_t i = 0; i < poly2.getPointCount(); i++)
             unitNormals[i + poly1.getPointCount()] = calculateUnitNormal(poly2, i, globalTrans2);
 
@@ -234,71 +228,25 @@ namespace sg {
  
             float minPoint1 = inf;
             float maxPoint1 = -inf;
-            #ifdef PARALLEL_ENABLED
-            #pragma omp parallel for
-            #endif
             for (uint32_t k = 0; k < poly1.getPointCount(); k++) {
 
                 float point = projectPoint(poly1, unitNormal, k, globalTrans1);
-                #ifdef PARALLEL_ENABLED
-                #pragma omp flush(minPoint1)
-                #endif
-                if (point < minPoint1) {
-
-                    #ifdef PARALLEL_ENABLED
-                    #pragma omp critical
-                    if (point < minPoint1)
-                    #endif
+                if (point < minPoint1)
                     minPoint1 = point;
-
-                }
-                #ifdef PARALLEL_ENABLED
-                #pragma omp flush(maxPoint1)
-                #endif
-                if (point > maxPoint1) {
-
-                    #ifdef PARALLEL_ENABLED
-                    #pragma omp critical
-                    if (point > maxPoint1)
-                    #endif
+                if (point > maxPoint1)
                     maxPoint1 = point;
-
-                }
 
             }
 
             float minPoint2 = inf;
             float maxPoint2 = -inf;
-            #ifdef PARALLEL_ENABLED
-            #pragma omp parallel for
-            #endif
             for (uint32_t k = 0; k < poly2.getPointCount(); k++) {
 
                 float point = projectPoint(poly2, unitNormal, k, globalTrans2);
-                #ifdef PARALLEL_ENABLED
-                #pragma omp flush(minPoint2)
-                #endif
-                if (point < minPoint2) {
-
-                    #ifdef PARALLEL_ENABLED
-                    #pragma omp critical
-                    if (point < minPoint2)
-                    #endif
+                if (point < minPoint2)
                     minPoint2 = point;
-
-                }
-                #ifdef PARALLEL_ENABLED
-                #pragma omp flush(maxPoint2)
-                #endif
-                if (point > maxPoint2) {
-
-                    #ifdef PARALLEL_ENABLED
-                    #pragma omp critical
-                    if (point > maxPoint2)
-                    #endif
+                if (point > maxPoint2)
                     maxPoint2 = point;
-
-                }
 
             }
 
@@ -377,19 +325,12 @@ namespace sg {
         std::size_t normalsLen = poly2.getPointCount() + 1;
         sf::Vector2f *unitNormals = new sf::Vector2f[normalsLen];
 
-        #ifdef PARALLEL_ENABLED
-        #pragma omp parallel for
-        #endif
         for (uint32_t i = 0; i < poly2.getPointCount(); i++) {
 
             sf::Vector2f currentVertex = globalTrans2.transformPoint(poly2.getTransform().transformPoint(poly2.getPoint(i)));
             float xDiff = (currentVertex.x - center.x);
             float yDiff = (currentVertex.y - center.y);
             float distance = xDiff * xDiff + yDiff * yDiff;
-            #ifdef PARALLEL_ENABLED
-            #pragma omp critical
-            {
-            #endif
             if (distance < minDist) {
 
                 minDist = distance;
@@ -400,9 +341,6 @@ namespace sg {
                 circleNormal.y /= mag;
 
             }
-            #ifdef PARALLEL_ENABLED
-            }
-            #endif
 
             unitNormals[i] = calculateUnitNormal(poly2, i, globalTrans2);
 
@@ -426,36 +364,13 @@ namespace sg {
 
             float minPoint2 = inf;
             float maxPoint2 = -inf;
-            #ifdef PARALLEL_ENABLED
-            #pragma omp parallel for
-            #endif
             for (uint32_t k = 0; k < poly2.getPointCount(); k++) {
 
                 float point = projectPoint(poly2, unitNormal, k, globalTrans2);
-                #ifdef PARALLEL_ENABLED
-                #pragma omp flush(minPoint2)
-                #endif
-                if (point < minPoint2) {
-
-                    #ifdef PARALLEL_ENABLED
-                    #pragma omp critical
-                    if (point < minPoint2)
-                    #endif
+                if (point < minPoint2)
                     minPoint2 = point;
-
-                }
-                #ifdef PARALLEL_ENABLED
-                #pragma omp flush(maxPoint2)
-                #endif
-                if (point > maxPoint2) {
-
-                    #ifdef PARALLEL_ENABLED
-                    #pragma omp critical
-                    if (point > maxPoint2)
-                    #endif
+                if (point > maxPoint2)
                     maxPoint2 = point;
-
-                }
 
             }
 
@@ -630,7 +545,7 @@ namespace sg {
                     if (this->collides_ctp(*s0, *s1, collisionVectors, combinedGlobalTrans1, combinedGlobalTrans2))
                         isCollide = true;
 
-                 }
+                }
                 //polygon to circle
                 else if (!(dynamic_cast<const sf::CircleShape *>(s0)) &&
                          (dynamic_cast<const sf::CircleShape *>(s1))) {

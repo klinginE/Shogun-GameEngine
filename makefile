@@ -1,7 +1,6 @@
 CC=g++
-DEFINES=-DPARALLEL_ENABLED
-CFLAGS=-shared -fPIC -fopenmp -g -Wall -pedantic -std=c++11 -o
-SFML_FLAGS=-lsfml-graphics -lsfml-window -lsfml-system
+CFLAGS=-shared -fPIC -g -Wall -pedantic -std=c++11 -o
+SFML_FLAGS=-lsfml-audio -lsfml-graphics -lsfml-network -lsfml-system -lsfml-window
 MANAG_DIR=Management
 ELEM_DIR=Elements
 SOURCES= \
@@ -21,8 +20,6 @@ LIBRARY=shogun-all
 
 all: copy_headers compile_library
 
-no_parallel: copy_headers compile_library_no_parallel
-
 make_dir:
 	if [ ! -d "$(INCLUDE_DIR)" ]; then mkdir $(INCLUDE_DIR); fi
 	if [ ! -d "$(INCLUDE_DIR)$(MANAG_DIR)" ]; then mkdir $(INCLUDE_DIR)$(MANAG_DIR); fi
@@ -33,9 +30,6 @@ copy_headers: make_dir
 	cp ./include/$(ELEM_DIR)/*.hpp $(INCLUDE_DIR)$(ELEM_DIR)/
 
 compile_library:
-	$(CC) $(DEFINES) $(CFLAGS) $(LIBRARY_DIR)lib$(LIBRARY).so $(SOURCES) $(SFML_FLAGS)
-
-compile_library_no_parallel:
 	$(CC) $(CFLAGS) $(LIBRARY_DIR)lib$(LIBRARY).so $(SOURCES) $(SFML_FLAGS)
 
 uninstall:

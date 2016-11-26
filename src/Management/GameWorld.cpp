@@ -11,8 +11,8 @@ namespace sg {
 
     void GameWorld::update(const sf::Time &tslu) {
 
-        for (auto it = layers.begin(); it != layers.end(); ++it)
-            it->second->update(tslu);
+        for (auto &l : layers)
+            l.second->update(tslu);
 
     }
 
