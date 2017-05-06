@@ -29,9 +29,10 @@ namespace sg {
             float scanMin(const Entity *e) const;
             float scanMax(const Entity *e) const;
             void scanline(std::vector<Entity *> &) const;
+            void thread_processCollision(std::pair<std::pair<Entity *, Entity *>, std::map<std::pair<uint64_t, uint64_t>, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f>>> p) const;
 
         protected:
-            virtual void processCollistions(std::map<std::pair<Entity *, Entity *>, std::map<std::pair<uint64_t, uint64_t>, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f>>> &) const;
+            virtual void processCollisions(std::map<std::pair<Entity *, Entity *>, std::map<std::pair<uint64_t, uint64_t>, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f>>> &) const;
 
         public:
             bool updateStatus;

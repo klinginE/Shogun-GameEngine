@@ -2,6 +2,8 @@
 #include <limits>
 #include <math.h>
 #include <iostream>
+#include <thread>
+#include <queue>
 
 #include <Shogun/Management/Layer.hpp>
 
@@ -122,21 +124,13 @@ namespace sg {
         for (Entity *e : d_entities)
             if (!e->getDeletionStatus()) {
 
-                //sf::Rect<long> eb = this->convertBounds(e->getTotalBounds(true));
                 if (this->dynamicEntities.boundsOverlap(this->convertBounds(e->getTotalBounds(true)),
                                                         this->updateArea))
                     e->update(tslu);
-                //this->dynamicEntities.update(eb,
-                //                             [this](const Entity *ent)->sf::Rect<long>
-                //                             {
-                //                                 return this->convertBounds(ent->getTotalBounds(true));
-                //                             });
                 entities.push_back(e);
                 this->addDynamicEntity(*e);
 
             }
-            //else
-            //    this->dynamicEntities.remove(this->convertBounds(e->getTotalBounds(true)), e);
 
         //update static
         std::vector<Entity *> s_entities;
@@ -151,13 +145,13 @@ namespace sg {
             else
                 this->staticEntities.remove(this->convertBounds(e->getTotalBounds(true)), e);
         sf::Time timePreColl = gc_preColl.restart();
-        std::cout << "Pre collides time:  " << timePreColl.asMicroseconds() << std::endl;
+        //std::cout << "Pre collides time:  " << timePreColl.asMicroseconds() << std::endl;
 
         sf::Clock gc_coll;
         if (this->collisionStatus)
             this->scanline(entities);
         sf::Time timePosColl = gc_coll.restart();
-        std::cout << "Post collides time: " << timePosColl.asMicroseconds() << std::endl;
+        //std::cout << "Post collides time: " << timePosColl.asMicroseconds() << std::endl;
 
     }
 
@@ -238,34 +232,67 @@ namespace sg {
 
     }
 
-    void Layer::processCollistions(std::map<std::pair<Entity *, Entity *>, std::map<std::pair<uint64_t, uint64_t>, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f>>> &collisionPairs) const {
+    void Layer::thread_processCollision(std::pair<std::pair<Entity *, Entity *>, std::map<std::pair<uint64_t, uint64_t>, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f>>> p) const {
+
+        Entity *e0 = p.first.first;
+        Entity *e1 = p.first.second;
+        std::map<std::pair<uint64_t, uint64_t>, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f>> collisionMap0 = p.second;
+
+        std::map<std::pair<uint64_t, uint64_t>, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f>> collisionMap1;
+        for (std::pair<std::pair<uint64_t, uint64_t>, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f>> obj0 : collisionMap0) {
+
+            std::pair<uint64_t, uint64_t> mp = obj0.first;
+            std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f> vectors = obj0.second;
+            std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f> collisionVectors1;
+            for (std::pair<std::pair<uint64_t, uint64_t>, sf::Vector2f> obj1 : vectors) {
+
+                std::pair<uint64_t, uint64_t> vp = obj1.first;
+                sf::Vector2f v = obj1.second;
+                collisionVectors1[std::make_pair(vp.second, vp.first)] = -v;
+
+            }
+            collisionMap1[std::make_pair(mp.second, mp.first)] = collisionVectors1;
+
+        }
+        e0->handleCollision(*e1, collisionMap0);
+        e1->handleCollision(*e0, collisionMap1);
+
+    }
+
+    void Layer::processCollisions(std::map<std::pair<Entity *, Entity *>, std::map<std::pair<uint64_t, uint64_t>, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f>>> &collisionPairs) const {
+
+        uint64_t poolSize = std::thread::hardware_concurrency();
+        std::thread *pool = new std::thread[poolSize];
+        std::queue<uint64_t> running;
+        std::queue<uint64_t> pooled;
+        for (uint64_t i = 0; i < poolSize; ++i)
+            pooled.push(i);
 
         for (std::pair<std::pair<Entity *, Entity *>, std::map<std::pair<uint64_t, uint64_t>, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f>>> p : collisionPairs) {
 
-            Entity *e0 = p.first.first;
-            Entity *e1 = p.first.second;
-            std::map<std::pair<uint64_t, uint64_t>, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f>> collisionMap0 = p.second;
+            if (pooled.empty()) {
 
-            std::map<std::pair<uint64_t, uint64_t>, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f>> collisionMap1;
-            for (std::pair<std::pair<uint64_t, uint64_t>, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f>> obj0 : collisionMap0) {
-
-                std::pair<uint64_t, uint64_t> mp = obj0.first;
-                std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f> vectors = obj0.second;
-                std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f> collisionVectors1;
-                for (std::pair<std::pair<uint64_t, uint64_t>, sf::Vector2f> obj1 : vectors) {
-
-                    std::pair<uint64_t, uint64_t> vp = obj1.first;
-                    sf::Vector2f v = obj1.second;
-                    collisionVectors1[std::make_pair(vp.second, vp.first)] = -v;
-
-                }
-                collisionMap1[std::make_pair(mp.second, mp.first)] = collisionVectors1;
+                uint64_t index = running.front();
+                running.pop();
+                pool[index].join();
+                pooled.push(index);
 
             }
-            e0->handleCollision(*e1, collisionMap0);
-            e1->handleCollision(*e0, collisionMap1);
+
+            uint64_t index = pooled.front();
+            pooled.pop();
+            running.push(index);
+            pool[index] = std::thread(&Layer::thread_processCollision, this, p);
 
         }
+        while (running.empty() == false) {
+
+            uint64_t i = running.front();
+            running.pop();
+            pool[i].join();
+
+        }
+        delete[] pool;
 
     }
 
@@ -302,29 +329,7 @@ namespace sg {
 
             }
 
-        this->processCollistions(collisionPairs);
-        ////sort
-        //if (this->scanlineDir == scanline_t::HORIZONTAL)
-        //    std::sort(entities.begin(), entities.end(), horizontalComparitor);
-        //else
-        //    std::sort(entities.begin(), entities.end(), verticalComparitor);
-
-        //// scanline
-        //for (uint32_t i = 0; i < entities.size(); ++i) {
-
-        //    if (!entities[i]->getIsCollidable())
-        //        continue;
-
-        //    for (uint32_t j = i + 1; j < entities.size() && scanMin(entities[j]) <= scanMax(entities[i]); ++j) {
-
-        //        if (!entities[j]->getIsCollidable())
-        //            continue;
-
-        //        entities[i]->collides(*entities[j]);
-
-        //    }
-
-        //}
+        this->processCollisions(collisionPairs);
 
     }
 
