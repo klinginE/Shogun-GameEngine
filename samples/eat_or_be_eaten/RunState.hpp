@@ -9,6 +9,7 @@
 // Shougun includes
 #include <Shogun/Management/GameState.hpp>
 #include <Shogun/Management/GameWorld.hpp>
+#include <Shogun/Management/Layer.hpp>
 #include <Shogun/Management/GameWindow.hpp>
 #include <Shogun/Management/InputManager.hpp>
 #include <Shogun/Elements/Entity.hpp>
@@ -29,6 +30,8 @@ class RunState : public sg::GameState {
 
     sg::GameWindow splitBarWindow;
     sg::GameWorld splitBarWorld;
+    sg::Layer layer;
+    sg::Layer splitBarLayer;
     sg::Entity splitBar;
     sf::RectangleShape splitBarRect;
 
@@ -78,16 +81,15 @@ class RunState : public sg::GameState {
 
             p1.setColor(sf::Color::Red);
             p2.setColor(sf::Color::Blue);
-            world.addEntity(0, p1);
-            world.addEntity(0, p2);
+            layer.addDynamicEntity(p1);
+            layer.addDynamicEntity(p2);
             for (int i = 0; i < NUM_ENEMIES; i++) {
                 enemies[i].setMass(enemies[i].getMass()/2);
                 enemies[i].setPosition(std::rand() % WORLD_WIDTH - WORLD_WIDTH/2,
                                        std::rand() % WORLD_HEIGHT - WORLD_HEIGHT/2);
                 enemies[i].setColor(sf::Color::Green);
-                world.addEntity(0, enemies[i]);
+                layer.addStaticEntity(enemies[i]);
             }
-            world.activateCollisions();
 
             // Create edge bounds and add to world
             edge.setSize(sf::Vector2f(WORLD_WIDTH+20,
@@ -99,7 +101,8 @@ class RunState : public sg::GameState {
             edge.setOutlineThickness(10.0f);
             edgeEntity.addDrawable(edge, false);
             edgeEntity.setIsCollidable(false);
-            world.addEntity(0, edgeEntity);
+            layer.addStaticEntity(edgeEntity);
+            world.addLayer(0, layer);
 
             // Create split bar down middle of screen
             splitBarWindow.setWorld(splitBarWorld);
@@ -109,7 +112,8 @@ class RunState : public sg::GameState {
                                                       splitBarWindow.getSizeInWorld().y/2));
             splitBarRect.setSize(splitBarWindow.getSizeInWorld());
             splitBar.addDrawable(splitBarRect);
-            splitBarWorld.addEntity(0, splitBar);
+            splitBarLayer.addStaticEntity(splitBar);
+	    splitBarWorld.addLayer(0, splitBarLayer);
 
             // Add game world, windows, and input manager
             addWorld(world);

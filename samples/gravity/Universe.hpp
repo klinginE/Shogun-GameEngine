@@ -8,10 +8,11 @@
 
 // Shogun includes
 #include <Shogun/Management/GameWorld.hpp>
+#include <Shogun/Management/Layer.hpp>
 
 #define GRAV_CONST 1.0f
-#define STARS_WIDTH 81
-#define STARS_HEIGHT 81
+#define STARS_WIDTH 50
+#define STARS_HEIGHT 50
 #define NUM_STARS STARS_WIDTH*STARS_HEIGHT
 
 #define TIME_MULTIPLIER 0.01f
@@ -40,12 +41,14 @@ class Universe : public sg::GameWorld {
     
     Star stars[NUM_STARS];
     float min_disp_radius;
+    sg::Layer l;
 
     public:
         Universe() {
 
-            deactivateCollisions();
-            
+            l.collisionStatus = true;
+            l.updateStatus = true;
+
             sf::Vector2f centerPos(0, 0);
 
             for (int i = 0; i < STARS_WIDTH; i++) {
@@ -55,13 +58,15 @@ class Universe : public sg::GameWorld {
 
                     stars[j + i*STARS_HEIGHT].move(pos);
 
-                    addEntity(0, stars[i*STARS_HEIGHT+j]);
+                    l.addDynamicEntity(stars[i*STARS_HEIGHT+j]);
                 }
             }
+            this->addLayer(0, l);
 
             min_disp_radius = 1.0f;
             
             update(sf::seconds(1));
+
         };
 
         void update(const sf::Time &tslu) {

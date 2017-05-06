@@ -5,6 +5,8 @@
 #include<Shogun/Elements/Entity.hpp>
 #include<Shogun/Management/GameWorld.hpp>
 #include<Shogun/Management/GameWindow.hpp>
+#include<Shogun/Management/Layer.hpp>
+#include<Shogun/Management/StateManager.hpp>
 
 class TestAnimationState : public sg::GameState {
 
@@ -13,6 +15,7 @@ class TestAnimationState : public sg::GameState {
         sg::Entity player = sg::Entity();
         sg::AnimatedSprite as = sg::AnimatedSprite();
         sf::ConvexShape rs;
+        sg::Layer l;
         sg::GameWorld world0;
         sg::GameWindow window0;
         sg::InputManager myInputManger;
@@ -54,7 +57,8 @@ class TestAnimationState : public sg::GameState {
             player.scale(4.0f, 4.0f);
             player.addDrawable(as);
 
-            world0.addEntity(0, player);
+            l.addDynamicEntity(player);
+            world0.addLayer(0, l);
 
             window0.setSizeInWorld(sf::Vector2f(static_cast<float>(sg::GameLoop::inst().getRenderWindow().getSize().x),
                                                 static_cast<float>(sg::GameLoop::inst().getRenderWindow().getSize().y)));

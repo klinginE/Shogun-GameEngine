@@ -18,7 +18,6 @@ namespace sg {
             void pause();
             void resume();
             bool isPaused();
-            ~GameLoop() {}
 
         private:
             sf::RenderWindow window;

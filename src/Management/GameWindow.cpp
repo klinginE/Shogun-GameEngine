@@ -1,5 +1,8 @@
 #include <Shogun/Management/GameLoop.hpp>
 #include <Shogun/Management/GameWindow.hpp>
+#include <Shogun/Management/Layer.hpp>
+
+#include <map>
 
 namespace sg {
 
@@ -89,7 +92,7 @@ namespace sg {
         this->sizeInScreen.y = 1;
         this->positionInWorld = positionInWorld;
         this->sizeInWorld = sizeInWorld;
-        this->rotationInWorld = 0;
+        this->rotationInWorld = rotationInWorld;
 
         this->updateView();
 
@@ -125,11 +128,15 @@ namespace sg {
                                  static_cast<long>(this->getSizeInWorld().x),                                  //width
                                  static_cast<long>(this->getSizeInWorld().y));                                 //height
 
-        auto layers = world->getLayers();
-        for (auto &it : layers) {
+        const std::map<uint32_t, Layer *> layers = world->getLayers();
+        for (const std::pair<uint32_t, Layer *> &p : layers) {
 
-            it.second->renderArea = winBounds;
-            it.second->render();
+            Layer *l = p.second;
+            l->renderArea = /*sf::Rect<long>(static_cast<long>(ceil(static_cast<double>(std::numeric_limits<long>::min()) / 2.0)),
+                                           static_cast<long>(ceil(static_cast<double>(std::numeric_limits<long>::min()) / 2.0)),
+                                           std::numeric_limits<long>::max(),
+                                           std::numeric_limits<long>::max());*/winBounds;
+            l->render();
 
         }
 

@@ -7,6 +7,7 @@
 #include <Shogun/Elements/Entity.hpp>
 #include <Shogun/Management/GameLoop.hpp>
 #include <Shogun/Elements/BoundingShape.hpp>
+#include <Shogun/Management/GameWindow.hpp>
 
 // standard includes
 #include <cstdlib>
@@ -30,9 +31,9 @@ class Ball : public sg::Entity {
 
         }
 
-        void handleCollision(const Entity &other, const std::vector<sf::Vector2f> &_) {
+        void handleCollision(Entity &other, const std::map<std::pair<uint64_t, uint64_t>, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f>> &_) {
 
-            const Ball *otherBall = dynamic_cast<const Ball *>(&other);
+            Ball *otherBall = dynamic_cast<Ball *>(&other);
             if (otherBall) {
 
                 if (this->getMass() > otherBall->getMass()) {

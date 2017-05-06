@@ -32,6 +32,8 @@ namespace sg {
         public:
             Quadtree();
             Quadtree(uint64_t, uint64_t, uint64_t, const sf::Rect<long> &);
+            Quadtree(const Quadtree &);
+            void operator= (const Quadtree &);
             ~Quadtree();
             void size(uint64_t &) const;
             void init(uint64_t, uint64_t, uint64_t, const sf::Rect<long> &);
@@ -40,7 +42,7 @@ namespace sg {
             bool boundsOverlap(const sf::Rect<long> &, const sf::Rect<long> &) const;
             void insert(const sf::Rect<long> &, T);
             bool remove(const sf::Rect<long> &, T, std::function<bool(const T obj0, const T obj1)> comp=[](const T obj0, const T obj1)->bool{return obj0 == obj1;});
-            void update(const sf::Rect<long> &, std::function<sf::Rect<long>(const T obj)>);
+            //void update(const sf::Rect<long> &, std::function<sf::Rect<long>(const T obj)>);
             void retrieve(std::vector<T> &, const sf::Rect<long> &) const;
 
     };

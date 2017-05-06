@@ -11,9 +11,8 @@ class TestBox : public sg::Entity {
         sf::RectangleShape r2;
         sf::CircleShape r3;
         sg::BoundingShape bs;
-        void handleCollision(const sg::Entity &otherE, const std::vector<sf::Vector2f> &collisionVs) {
+        void handleCollision(Entity &otherE, const std::map<std::pair<uint64_t, uint64_t>, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f>> &collisionMap) {
 
-            sg::Entity::handleCollision(otherE, collisionVs);
             const sf::Color &c = this->getFill();
             if (c == sf::Color::White)
                 this->fill(sf::Color::Yellow);

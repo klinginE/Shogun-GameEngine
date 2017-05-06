@@ -13,6 +13,8 @@
 #include <math.h>
 #include <stdio.h>
 
+#include "Universe.hpp"
+
 class Star : public sg::Entity {
     
     sf::Sprite sprite;
@@ -29,13 +31,13 @@ class Star : public sg::Entity {
             setIsCollidable(true);
 
             circleShape.setRadius(getRadius());
-            circleShape.setFillColor(sf::Color(150, 150, 150, (int) 255 * ALPHA));
+            circleShape.setFillColor(sf::Color::Yellow);
             circleShape.setOrigin(getRadius(), getRadius());
             this->addDrawable(circleShape);
 
         };
 
-        float getMass() {
+        float getMass() const {
             return mass;
         };
         void setMass(float newMass) {
@@ -50,7 +52,7 @@ class Star : public sg::Entity {
         void setVel(sf::Vector2f newVel) {
             vel = newVel;
         };
-        sf::Vector2f getVel() {
+        sf::Vector2f getVel() const {
             return vel;
         };
         void changeVel(sf::Vector2f deltaVel) {
@@ -82,26 +84,41 @@ class Star : public sg::Entity {
 
         }
         
-        void handleCollision(Entity &e, const std::vector<sf::Vector2f> &colInfo) {
+        void handleCollision(Entity &e, const std::map<std::pair<uint64_t, uint64_t>, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f>> &colInfo) {
 
+            return;
             if (getDeletionStatus())
                 return;
 
             Star *other = dynamic_cast<Star *>(&e);
-            sf::Vector2f thisVel = this->getVel();
-            float thisMass = this->getMass();
-            sf::Vector2f otherVel = other->getVel();
-            float otherMass = other->getMass();
-            sf::Vector2f avgVel = (thisVel*thisMass + otherVel*otherMass)/(thisMass + otherMass);
-            this->setVel(avgVel);
-            
-            sf::Vector2f avgPos = (this->getPosition()*thisMass + other->getPosition()*otherMass)/(thisMass + otherMass);
-            this->move(avgPos);
+            if (other && other->getMass() <= this->getMass()) {
 
-            this->setMass(thisMass + otherMass);
+                sf::Vector2f thisVel = this->getVel();
+                float thisMass = this->getMass();
+                sf::Vector2f otherVel = other->getVel();
+                float otherMass = other->getMass();
+                sf::Vector2f avgVel = (thisVel*thisMass + otherVel*otherMass)/(thisMass + otherMass);
+                this->setVel(avgVel);
+                sf::Vector2f avgPos = (this->getPosition()*thisMass + other->getPosition()*otherMass)/(thisMass + otherMass);
+                this->setPosition(avgPos);
+                this->setMass(thisMass + otherMass);
+                other->setDeletionStatus(true);
 
-            //other->setMass(0.0f);
-            other->setDeletionStatus(true);
+            }
+            else if (other && other->getMass() > this->getMass()) {
+
+                sf::Vector2f thisVel = this->getVel();
+                float thisMass = this->getMass();
+                sf::Vector2f otherVel = other->getVel();
+                float otherMass = other->getMass();
+                sf::Vector2f avgVel = (thisVel*thisMass + otherVel*otherMass)/(thisMass + otherMass);
+                other->setVel(avgVel);
+                sf::Vector2f avgPos = (this->getPosition()*thisMass + other->getPosition()*otherMass)/(thisMass + otherMass);
+                other->setPosition(avgPos);
+                other->setMass(thisMass + otherMass);
+                this->setDeletionStatus(true);
+
+            }
 
         };
 

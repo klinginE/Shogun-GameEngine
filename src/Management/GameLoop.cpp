@@ -39,7 +39,7 @@ namespace sg {
 
                 currTime = fpsClock.restart();
                 float fps = 10.0f / currTime.asSeconds();
-                //std::cout << "FPS: " << fps << std::endl;
+                std::cout << std::endl << "FPS: " << fps << std::endl;
                 fpsClock.restart();
 
             }
@@ -71,7 +71,8 @@ namespace sg {
             }
             sf::Time et = ec.restart();
             totalTime += et.asMicroseconds();
-            //std::cout << "Total event time:       " << et.asMicroseconds() << std::endl;
+            if ((count % 10) == 0)
+                std::cout << "Total event time:       " << et.asMicroseconds() << std::endl;
 
             if (!this->paused) {
 
@@ -79,13 +80,15 @@ namespace sg {
                 topState->update(elapsed);
                 sf::Time ut = uc.restart();
                 totalTime += ut.asMicroseconds();
-                //std::cout << "Total update time:      " << ut.asMicroseconds() << std::endl;
+                if ((count % 10) == 0)
+                    std::cout << "Total update time:      " << ut.asMicroseconds() << std::endl;
 
                 rc.restart();
                 topState->render();
                 sf::Time rt = rc.restart();
                 totalTime += rt.asMicroseconds();
-                //std::cout << "Total render time:      " << rt.asMicroseconds() << std::endl;
+                if ((count % 10) == 0)
+                    std::cout << "Total render time:      " << rt.asMicroseconds() << std::endl;
 
             }
             //std::cout << "Total time:             " << totalTime << std::endl;
@@ -121,6 +124,13 @@ namespace sg {
         getRenderWindow().setSize(windowDimensions);
         getRenderWindow().setVerticalSyncEnabled(true);
         getRenderWindow().setFramerateLimit(0);
+
+        /*sf::Image icon;
+        std::string path = "../resources/images/icon/Sol.png";
+        icon.loadFromFile(path);
+        std::cout << path << " x: " << icon.getSize().x << " y: " << icon.getSize().y << std::endl;
+        std::cout << "ptr: " << (void *)icon.getPixelsPtr() << std::endl << std::endl;
+        getRenderWindow().setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());*/
 
     }
 

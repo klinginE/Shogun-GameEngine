@@ -28,6 +28,7 @@ namespace sg {
                 this->t = NULL;
 
             }
+
             Component(sf::Drawable &d, sf::Transformable &t) {
 
                 this->d = &d;
@@ -52,14 +53,15 @@ namespace sg {
             std::vector<Entity *> possessions;
             Entity *owner;
             bool isCollidable;
-            //Protected member functions
-            virtual void handleCollision(const Entity &, const std::vector<sf::Vector2f> &) {}
 
         public:
             Entity();
             Entity(bool);
+            Entity(const Entity &);
+            void operator= (const Entity &);
             virtual ~Entity();
-            bool collides(Entity &);// calls handleCollision
+            bool collides(Entity &, std::map<std::pair<uint64_t, uint64_t>, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f>> &);
+            virtual void handleCollision(Entity &, const std::map<std::pair<uint64_t, uint64_t>, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f>> &) {}
             bool getIsCollidable() const;
             void setIsCollidable(bool);
             bool getDeletionStatus() const;

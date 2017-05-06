@@ -103,9 +103,8 @@ namespace sg {
 
         float inf = std::numeric_limits<float>::infinity();
         sf::FloatRect bounds(inf, inf, -inf, -inf);
-        for (const auto &it : this->shapes) {
+        for (const sf::Shape *s : this->shapes) {
 
-            sf::Shape *s = it;
             sf::FloatRect br;
             if (useLocal)
                 br = s->getLocalBounds();
@@ -193,7 +192,7 @@ namespace sg {
 
     }
 
-    bool BoundingShape::collides_ptp(const sf::Shape &poly1, const sf::Shape &poly2, std::vector<sf::Vector2f> &collisionVectors, const sf::Transform &globalTrans1, const sf::Transform &globalTrans2) const {
+    bool BoundingShape::collides_ptp(const sf::Shape &poly1, const sf::Shape &poly2, sf::Vector2f &collisionVector, const sf::Transform &globalTrans1, const sf::Transform &globalTrans2) const {
 
         if (dynamic_cast<const sf::CircleShape *>(&poly1)) {
 
@@ -274,14 +273,15 @@ namespace sg {
 
         }
 
-        collisionVectors.push_back(least);
+        collisionVector.x = least.x;
+        collisionVector.y = least.y;
         delete [] unitNormals;
 
         return true;
 
     }
 
-    bool BoundingShape::collides_ctp(const sf::Shape &poly1, const sf::Shape &poly2, std::vector<sf::Vector2f> &collisionVectors, const sf::Transform &globalTrans1, const sf::Transform &globalTrans2) const {
+    bool BoundingShape::collides_ctp(const sf::Shape &poly1, const sf::Shape &poly2, sf::Vector2f &collisionVector, const sf::Transform &globalTrans1, const sf::Transform &globalTrans2) const {
 
         if (!(dynamic_cast<const sf::CircleShape *>(&poly1))) {
 
@@ -305,7 +305,7 @@ namespace sg {
         float transRadius0 = std::round(std::sqrt(p0.x * p0.x + p0.y * p0.y));
         float transRadius1 = std::round(std::sqrt(p1.x * p1.x + p1.y * p1.y));
         if (transRadius0 <  transRadius1 || transRadius0 > transRadius1)
-            return this->collides_ptp(this->approximateCircle(circle, globalTrans1), poly2, collisionVectors, globalTrans1, globalTrans2);
+            return this->collides_ptp(this->approximateCircle(circle, globalTrans1), poly2, collisionVector, globalTrans1, globalTrans2);
 
         float inf = std::numeric_limits<float>::infinity();
         float minDist = inf;
@@ -398,14 +398,15 @@ namespace sg {
 
         }
 
-        collisionVectors.push_back(least);
+        collisionVector.x = least.x;
+        collisionVector.y = least.y;
         delete [] unitNormals;
 
         return true;
 
     }
 
-    bool BoundingShape::collides_ctc(const sf::Shape &poly1, const sf::Shape &poly2, std::vector<sf::Vector2f> &collisionVectors, const sf::Transform &globalTrans1, const sf::Transform &globalTrans2) const {
+    bool BoundingShape::collides_ctc(const sf::Shape &poly1, const sf::Shape &poly2, sf::Vector2f &collisionVector, const sf::Transform &globalTrans1, const sf::Transform &globalTrans2) const {
 
         if (!(dynamic_cast<const sf::CircleShape *>(&poly1))) {
 
@@ -436,19 +437,18 @@ namespace sg {
         p1_2 -= center2;
         float transRadius0_2 = std::round(std::sqrt(p0_2.x * p0_2.x + p0_2.y * p0_2.y));
         float transRadius1_2 = std::round(std::sqrt(p1_2.x * p1_2.x + p1_2.y * p1_2.y));
-        std::vector<sf::Vector2f> temp;
         if ((transRadius0_1 < transRadius1_1 || transRadius0_1 > transRadius1_1) &&
             (transRadius0_2 < transRadius1_2 || transRadius0_2 > transRadius1_2))
-            return this->collides_ptp(this->approximateCircle(circle1, globalTrans1), this->approximateCircle(circle2, globalTrans2), collisionVectors, globalTrans1, globalTrans2);
+            return this->collides_ptp(this->approximateCircle(circle1, globalTrans1), this->approximateCircle(circle2, globalTrans2), collisionVector, globalTrans1, globalTrans2);
         else if (!(transRadius0_1 < transRadius1_1 || transRadius0_1 > transRadius1_1) &&
                   (transRadius0_2 < transRadius1_2 || transRadius0_2 > transRadius1_2))
-            return this->collides_ctp(poly1, this->approximateCircle(circle2, globalTrans2), collisionVectors, globalTrans1, globalTrans2);
+            return this->collides_ctp(poly1, this->approximateCircle(circle2, globalTrans2), collisionVector, globalTrans1, globalTrans2);
         else if ((transRadius0_1 < transRadius1_1 || transRadius0_1 > transRadius1_1) &&
                  !(transRadius0_2 < transRadius1_2 || transRadius0_2 > transRadius1_2)) {
 
-            bool r = this->collides_ctp(poly2, this->approximateCircle(circle1, globalTrans1), temp, globalTrans2, globalTrans1);
-            for (auto &itt : temp)
-                collisionVectors.push_back(-itt);
+            bool r = this->collides_ctp(poly2, this->approximateCircle(circle1, globalTrans1), collisionVector, globalTrans2, globalTrans1);
+            collisionVector.x *= -1.0f;
+            collisionVector.y *= -1.0f;
 
             return r;
 
@@ -490,7 +490,7 @@ namespace sg {
                                       (centerVect1.y / centerVectMag1 * globalR1) + center1.y);
             sf::Vector2f circlePoint2((centerVect2.x / centerVectMag2 * globalR2) + center2.x,
                                       (centerVect2.y / centerVectMag2 * globalR2) + center2.y);
-            collisionVectors.push_back(circlePoint2 - circlePoint1);
+            collisionVector = (circlePoint2 - circlePoint1);
 
             return true;
 
@@ -500,7 +500,7 @@ namespace sg {
 
     }
 
-    bool BoundingShape::collides(const BoundingShape &bs, std::vector<sf::Vector2f> &collisionVectors, const sf::Transform &globalTrans1, const sf::Transform &globalTrans2) const {
+    bool BoundingShape::collides(const BoundingShape &bs, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f> &collisionVectors, const sf::Transform &globalTrans1, const sf::Transform &globalTrans2) const {
 
         bool isCollide = false;
         sf::Transform combinedGlobalTrans1 = sf::Transform::Identity;
@@ -509,10 +509,11 @@ namespace sg {
         sf::Transform combinedGlobalTrans2 = sf::Transform::Identity;
         combinedGlobalTrans2 = combinedGlobalTrans2.combine(globalTrans2);
         combinedGlobalTrans2 = combinedGlobalTrans2.combine(bs.getTransform());
-        for (const auto &it : this->shapes)
+        for (uint32_t j = 0; j < this->getNumOfShapes(); ++j) {
+
+            const sf::Shape *s0 = this->getShape(j);
             for (uint32_t i = 0; i < bs.getNumOfShapes(); i++) {
 
-                sf::Shape *s0 = it;
                 const sf::Shape *s1 = bs.getShape(i);
                 sf::FloatRect bounds0 = s0->getGlobalBounds();
                 bounds0 = combinedGlobalTrans1.transformRect(bounds0);
@@ -529,12 +530,12 @@ namespace sg {
                       bounds0.height >= bounds1.top))
                     continue;
 
-                std::vector<sf::Vector2f> temps;
+                sf::Vector2f collisionVector;
                 //Circle to Circle
                 if ((dynamic_cast<const sf::CircleShape *>(s0)) &&
                     (dynamic_cast<const sf::CircleShape *>(s1))) {
 
-                    if (this->collides_ctc(*s0, *s1, collisionVectors, combinedGlobalTrans1, combinedGlobalTrans2))
+                    if (this->collides_ctc(*s0, *s1, collisionVector, combinedGlobalTrans1, combinedGlobalTrans2))
                         isCollide = true;
 
                 }
@@ -542,7 +543,7 @@ namespace sg {
                 else if ((dynamic_cast<const sf::CircleShape *>(s0)) &&
                          !(dynamic_cast<const sf::CircleShape *>(s1))) {
 
-                    if (this->collides_ctp(*s0, *s1, collisionVectors, combinedGlobalTrans1, combinedGlobalTrans2))
+                    if (this->collides_ctp(*s0, *s1, collisionVector, combinedGlobalTrans1, combinedGlobalTrans2))
                         isCollide = true;
 
                 }
@@ -550,10 +551,10 @@ namespace sg {
                 else if (!(dynamic_cast<const sf::CircleShape *>(s0)) &&
                          (dynamic_cast<const sf::CircleShape *>(s1))) {
 
-                    if (this->collides_ctp(*s1, *s0, temps, combinedGlobalTrans2, combinedGlobalTrans1)) {
+                    if (this->collides_ctp(*s1, *s0, collisionVector, combinedGlobalTrans2, combinedGlobalTrans1)) {
 
-                        for (auto &itt : temps)
-                            collisionVectors.push_back(-itt);
+                        collisionVector.x *= -1.0f;
+                        collisionVector.y *= -1.0f;
                         isCollide = true;
 
                     }
@@ -562,12 +563,16 @@ namespace sg {
                 //polygon to polygon
                 else {
 
-                    if (this->collides_ptp(*s0, *s1, collisionVectors, combinedGlobalTrans1, combinedGlobalTrans2))
+                    if (this->collides_ptp(*s0, *s1, collisionVector, combinedGlobalTrans1, combinedGlobalTrans2))
                         isCollide = true;
 
                 }
 
+                collisionVectors[std::make_pair(j, i)] = collisionVector;
+
             }
+
+        }
 
         return isCollide;
 

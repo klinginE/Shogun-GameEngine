@@ -47,6 +47,44 @@ namespace sg {
     }
 
     template<class T>
+    Quadtree<T>::Quadtree(const Quadtree &another) :
+    MAX_OBJECTS(another.MAX_OBJECTS),
+    MAX_LEVEL(another.MAX_LEVEL),
+    OBJECTS_OFFSET(another.OBJECTS_OFFSET),
+    LEVEL_OFFSET(another.LEVEL_OFFSET),
+    level(another.level),
+    bounds(another.bounds)
+    {
+
+        this->clear();
+        this->parent = another.parent;
+        for (uint32_t i = 0; i < 4; ++i)
+            if (another.nodes[i])
+                this->nodes[i] = new Quadtree(*(another.nodes[i]));
+        this->objects = another.objects;
+
+    }
+
+    template<class T>
+    void Quadtree<T>::operator= (const Quadtree &another) {
+
+        this->MAX_OBJECTS = another.MAX_OBJECTS;
+        this->MAX_LEVEL = another.MAX_LEVEL;
+        this->OBJECTS_OFFSET = another.OBJECTS_OFFSET;
+        this->LEVEL_OFFSET = another.LEVEL_OFFSET;
+        this->level = another.level;
+        this->bounds = another.bounds;
+
+        this->clear();
+        this->parent = another.parent;
+        for (uint32_t i = 0; i < 4; ++i)
+            if (another.nodes[i])
+                this->nodes[i] = new Quadtree(*(another.nodes[i]));
+        this->objects = another.objects;
+
+    }
+
+    template<class T>
     Quadtree<T>::~Quadtree() {
 
         this->clear();
@@ -74,6 +112,7 @@ namespace sg {
                 this->nodes[i] = NULL;
 
             }
+        this->parent = NULL;
 
     }
 
@@ -221,7 +260,6 @@ namespace sg {
         if (this->parent && !this->containedWithin(pRect, this->bounds)) {
 
             //Parent exists and pRect does not go into us, so send obj up the tree
-            std::cout << "INSERT: parent" << std::endl;
             this->parent->insert(pRect, obj);
             return;
 
@@ -229,10 +267,7 @@ namespace sg {
 
         //pRect is somewhere other than here so we have to ignore it
         if (!this->containedWithin(pRect, this->bounds))
-        {
-            std::cout << "INSERT: droping on floor" << std::endl;
             return;
-        }
 
         //Does the object belong to one of my children?
         if (this->nodes[0]) {
@@ -296,35 +331,6 @@ namespace sg {
             }
 
         return false;
-
-    }
-    
-    template<class T>
-    void Quadtree<T>::update(const sf::Rect<long> &pRect, std::function<sf::Rect<long>(const T obj)> getBounds) {
-
-        //std::cout << "UPDATING" << std::endl;
-        if (!this->containedWithin(pRect, this->bounds)) {
-            std::cout << "UPDATING: bounds don't overlap" << std::endl;
-            return;
-        }
-
-        //std::cout << "BOUNDS a"
-        if (this->nodes[0]) {
-
-            long index = this->getIndex(pRect);
-            if (index != -1)
-                this->nodes[index]->update(pRect, getBounds);
-            else
-                for (uint32_t i = 0; i < 4; ++i)
-                    this->nodes[i]->update(pRect, getBounds);
-
-        }
-
-        std::list<std::pair<const sf::Rect<long>, T>> objectsCpy;
-        objectsCpy.insert(objectsCpy.end(), this->objects.begin(), this->objects.end());
-        this->objects.clear();
-        for (auto &p : objectsCpy)
-            this->insert(getBounds(p.second), p.second);
 
     }
 

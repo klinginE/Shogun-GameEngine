@@ -1,5 +1,6 @@
 //C++ includes
 #include <stdexcept>
+#include <vector>
 
 //SHOGUN includes
 #include <Shogun/Elements/Entity.hpp>
@@ -26,29 +27,53 @@ namespace sg {
 
     }
 
-    Entity::~Entity() {
+    Entity::Entity(const Entity &another) {
 
-        for (const auto &it : this->components)
-            delete it;
+        this->deletion = another.deletion;
+        this->possessions = another.possessions;
+        this->owner = another.owner;
+        this->isCollidable = another.isCollidable;
+        for (Component *com : another.components)
+            this->components.push_back(new Component(*(com->d), *(com->t)));
 
     }
 
-    bool Entity::collides(sg::Entity &e) {
+    void Entity::operator= (const Entity &another) {
+
+        this->deletion = another.deletion;
+        this->possessions = another.possessions;
+        this->owner = another.owner;
+        this->isCollidable = another.isCollidable;
+        for (Component *com : this->components)
+            delete com;
+        for (Component *com : another.components)
+            this->components.push_back(new Component(*(com->d), *(com->t)));
+
+    }
+
+    Entity::~Entity() {
+
+        for (Component *com : this->components)
+            delete com;
+
+    }
+
+    bool Entity::collides(Entity &e, std::map<std::pair<uint64_t, uint64_t>, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f>> &collisionMap) {
 
         if (!this->isCollidable || !e.getIsCollidable())
             return false;
 
         bool isCollides = false;
-        std::vector<sf::Vector2f> collisionVectors0;
-        std::vector<sf::Vector2f> collisionVectors1;
         sf::Transform trans0 = sf::Transform::Identity;
         sf::Transform trans1 = sf::Transform::Identity;
         this->getGlobalTransform(trans0);
         e.getGlobalTransform(trans1);
-        for (const auto &it : this->components)
-            for (uint32_t i = 0; i < e.getNumOfComponents(); i++) {
+        for (uint64_t j = 0; j < this->getNumOfComponents(); ++j) {
 
-                const sf::Transformable *t0 = it->t;
+            for (uint64_t i = 0; i < e.getNumOfComponents(); ++i) {
+
+                std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f> collisionVectors;
+                const sf::Transformable *t0 = this->getComponent(j).second;
                 if (!t0)
                     continue;
                 if (const AnimatedSprite *as = dynamic_cast<const AnimatedSprite *>(t0))
@@ -186,19 +211,16 @@ namespace sg {
                         bounds0.width >= bounds1.left &&
                         bounds0.top <= bounds1.height &&
                         bounds0.height >= bounds1.top &&
-                        s0->collides((*s1), collisionVectors0, trans0, trans1))
+                        s0->collides((*s1), collisionVectors, trans0, trans1)) {
+
+                        collisionMap[std::make_pair(j, i)] = collisionVectors;
                         isCollides = true;
+
+                    }
 
                 }
 
             }
-
-        if (isCollides) {
-
-            for (auto &itt : collisionVectors0)
-                collisionVectors1.push_back(-itt);
-            this->handleCollision(e, collisionVectors0);
-            e.handleCollision(*this, collisionVectors1);
 
         }
 

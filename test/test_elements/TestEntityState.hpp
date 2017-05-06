@@ -4,6 +4,7 @@
 #include<Shogun/Management/GameState.hpp>
 #include<Shogun/Elements/Entity.hpp>
 #include<Shogun/Management/GameWorld.hpp>
+#include<Shogun/Management/Layer.hpp>
 #include<Shogun/Management/GameWindow.hpp>
 #include"TestBox.hpp"
 
@@ -17,6 +18,7 @@ class TestEntityState : public sg::GameState {
         TestBox e0 = TestBox();
         TestBox e1 = TestBox();
         TestBox e2 = TestBox();
+        sg::Layer l;
         sg::GameWorld world0;
         sg::GameWindow window0;
         sg::InputManager myInputManager;
@@ -41,15 +43,16 @@ class TestEntityState : public sg::GameState {
             e2.setPosition(300.0f, 500.0f);
             e2.setScale(0.5f, 0.5f);
 
-            world0.addEntity(0, e0);
-            world0.addEntity(0, e1);
-            world0.addEntity(0, e2);
+            l.addDynamicEntity(e0);
+            l.addDynamicEntity(e1);
+            l.addDynamicEntity(e2);
+            world0.addLayer(0, l);
 
             window0.setSizeInWorld(sf::Vector2f(static_cast<float>(sg::GameLoop::inst().getRenderWindow().getSize().x),
                                                 static_cast<float>(sg::GameLoop::inst().getRenderWindow().getSize().y)));
             window0.setPosInWorld(window0.getSizeInWorld() / 2.0f);
             window0.setWorld(world0);
-            window0.setRenderOrder([=](const sg::Entity &e1, const sg::Entity &e2)->bool{return e1.getPosition().y > e2.getPosition().y;});
+            //window0.setRenderOrder([=](const sg::Entity &e1, const sg::Entity &e2)->bool{return e1.getPosition().y > e2.getPosition().y;});
 
             this->addWindow(window0);
             this->addWorld(world0);
