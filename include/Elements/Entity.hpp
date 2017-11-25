@@ -15,32 +15,28 @@
 #include <Shogun/Elements/BoundingShape.hpp>
 #include <Shogun/Management/GameLoop.hpp>
 
-namespace sg {
-
-    class Component {
-
+namespace sg
+{
+    class Component
+    {
         public:
             sf::Drawable *d;
             sf::Transformable *t;
-            Component() {
-
+            Component()
+            {
                 this->d = NULL;
                 this->t = NULL;
-
             }
 
-            Component(sf::Drawable &d, sf::Transformable &t) {
-
+            Component(sf::Drawable &d, sf::Transformable &t)
+            {
                 this->d = &d;
                 this->t = &t;
-
             }
-
     };
 
-
-    class Entity: public sf::Transformable {
-
+    class Entity: public sf::Transformable
+    {
         private:
             //Private member variables
             bool deletion;
@@ -60,8 +56,16 @@ namespace sg {
             Entity(const Entity &);
             void operator= (const Entity &);
             virtual ~Entity();
-            bool collides(Entity &, std::map<std::pair<uint64_t, uint64_t>, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f>> &);
-            virtual void handleCollision(Entity &, const std::map<std::pair<uint64_t, uint64_t>, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f>> &) {}
+            bool collides(Entity &,
+                          std::map<std::pair<uint64_t, uint64_t>,
+                          std::map<std::pair<uint64_t, uint64_t>,
+                          sf::Vector2f>> &);
+            virtual void handleCollision(Entity &,
+                                         const std::map<std::pair<uint64_t, uint64_t>,
+                                         std::map<std::pair<uint64_t, uint64_t>,
+                                         sf::Vector2f>> &)
+            {
+            }
             bool getIsCollidable() const;
             void setIsCollidable(bool);
             bool getDeletionStatus() const;
@@ -105,26 +109,31 @@ namespace sg {
             std::vector<Entity *>::size_type addPossession(Entity &, bool=true);
             Entity *removePossession(uint32_t, bool=true);
             int removePossession(Entity &, bool=true);
-            virtual void update(sf::Time tslu) {
-
+            virtual void update(sf::Time tslu)
+            {
                 for (auto &it : this->components)
+                {
                     if (AnimatedSprite *s = dynamic_cast<AnimatedSprite *>(it->t))
+                    {
                         s->update(tslu);
-
+                    }
+                }
             }
-            virtual void draw(sf::RenderStates states=sf::RenderStates::Default) {
-
+            virtual void draw(sf::RenderStates states=sf::RenderStates::Default)
+            {
                 sf::Transform globalTransform;
                 this->getGlobalTransform(globalTransform);
                 states.transform *= globalTransform;
 
                 // render sprites
                 for (const auto &it : this->components)
+                {
                     if(it->d)
+                    {
                         GameLoop::inst().getRenderWindow().draw(*(it->d), states);
-
+                    }
+                }
             }
-
     };
 
 }

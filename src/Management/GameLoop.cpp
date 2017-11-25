@@ -20,80 +20,82 @@ namespace sg {
 
     }
 
-    void GameLoop::start() {
-
+    void GameLoop::start()
+    {
         sf::Clock clock;
 
-        sf::Clock fpsClock;
-        sf::Time currTime = sf::Time::Zero;
-        uint32_t count = 0;
+        //sf::Clock fpsClock;
+        //sf::Time currTime = sf::Time::Zero;
+        //uint32_t count = 0;
 
-        sf::Clock uc;
-        sf::Clock rc;
-        sf::Clock ec;
-        uint64_t totalTime = 0;
-        while (getRenderWindow().isOpen()) {
+        //sf::Clock uc;
+        //sf::Clock rc;
+        //sf::Clock ec;
+        //uint64_t totalTime = 0;
+        while (getRenderWindow().isOpen())
+        {
+            //totalTime = 0;
+            //if ((count++ % 10) == 0) {
 
-            totalTime = 0;
-            if ((count++ % 10) == 0) {
+            //    currTime = fpsClock.restart();
+            //    float fps = 10.0f / currTime.asSeconds();
+            //    std::cout << std::endl << "FPS: " << fps << std::endl;
+            //    fpsClock.restart();
 
-                currTime = fpsClock.restart();
-                float fps = 10.0f / currTime.asSeconds();
-                std::cout << std::endl << "FPS: " << fps << std::endl;
-                fpsClock.restart();
-
-            }
+            //}
             // elapsed time
             sf::Time elapsed = clock.restart();
 
             // check if there is a current state
             GameState *topState;
-            if ((topState = StateManager::inst().peekState()) == NULL) {
-
+            if ((topState = StateManager::inst().peekState()) == NULL)
+            {
                 getRenderWindow().close();
                 break;
-
             }
 
             // handle window events
-            ec.restart();
+            //ec.restart();
             sf::Event event;
-            while (getRenderWindow().pollEvent(event)) {
-
+            while (getRenderWindow().pollEvent(event))
+            {
                 const InputManager *topIM = NULL;
                 if ((topIM = topState->getInputManager()))
+                {
                     for (const auto &a : topIM->getAction(event.type))
+                    {
                         a(elapsed, event);
+                    }
+                }
 
                 if (event.type == sf::Event::Closed)
+                {
                     getRenderWindow().close();
-
+                }
             }
-            sf::Time et = ec.restart();
-            totalTime += et.asMicroseconds();
-            if ((count % 10) == 0)
-                std::cout << "Total event time:       " << et.asMicroseconds() << std::endl;
+            //sf::Time et = ec.restart();
+            //totalTime += et.asMicroseconds();
+            //if ((count % 10) == 0)
+            //    std::cout << "Total event time:       " << et.asMicroseconds() << std::endl;
 
-            if (!this->paused) {
-
-                uc.restart();
+            if (!this->paused)
+            {
+                //uc.restart();
                 topState->update(elapsed);
-                sf::Time ut = uc.restart();
-                totalTime += ut.asMicroseconds();
-                if ((count % 10) == 0)
-                    std::cout << "Total update time:      " << ut.asMicroseconds() << std::endl;
+                //sf::Time ut = uc.restart();
+                //totalTime += ut.asMicroseconds();
+                //if ((count % 10) == 0)
+                //    std::cout << "Total update time:      " << ut.asMicroseconds() << std::endl;
 
-                rc.restart();
+                //rc.restart();
                 topState->render();
-                sf::Time rt = rc.restart();
-                totalTime += rt.asMicroseconds();
-                if ((count % 10) == 0)
-                    std::cout << "Total render time:      " << rt.asMicroseconds() << std::endl;
-
+                //sf::Time rt = rc.restart();
+                //totalTime += rt.asMicroseconds();
+                //if ((count % 10) == 0)
+                //    std::cout << "Total render time:      " << rt.asMicroseconds() << std::endl;
             }
             //std::cout << "Total time:             " << totalTime << std::endl;
             //std::cout << "estimate number of fps: " << (1.0 / (static_cast<double>(1e-6) * static_cast<double>(totalTime))) << std::endl << std::endl;
-
         }
 
     }

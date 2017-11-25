@@ -46,7 +46,7 @@ class Universe : public sg::GameWorld {
     public:
         Universe() {
 
-            l.collisionStatus = true;
+            l.collisionStatus = false;
             l.updateStatus = true;
 
             sf::Vector2f centerPos(0, 0);

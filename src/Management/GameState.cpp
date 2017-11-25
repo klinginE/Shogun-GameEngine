@@ -14,15 +14,15 @@ namespace sg {
 
     void GameState::render() {
 
-        sf::Clock cc;
+        //sf::Clock cc;
         GameLoop::inst().getRenderWindow().clear(sf::Color::Black);
-        sf::Time ct = cc.restart();
+        //sf::Time ct = cc.restart();
         //std::cout << "Clear window time:      " << ct.asMicroseconds() << std::endl;
 
-        sf::Clock sc;
+        //sf::Clock sc;
         auto comp = [=](GameWindow *w1, GameWindow *w2)->bool {return this->renderOrder(*w1, *w2);};
         std::sort(gameWindows.begin(), gameWindows.end(), comp);
-        sf::Time st = sc.restart();
+        //sf::Time st = sc.restart();
         //std::cout << "sort windows time:      " << st.asMicroseconds() << std::endl;
 
         for (GameWindow *gameWindow : this->gameWindows)
