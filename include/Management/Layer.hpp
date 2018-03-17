@@ -32,7 +32,7 @@ namespace sg {
             void scanline(std::vector<Entity *> &) const;
 
         protected:
-            virtual void processCollisions(std::map<std::pair<Entity *, Entity *>, std::map<std::pair<uint64_t, uint64_t>, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f>>> &) const;
+            virtual void processCollisions(std::map<std::pair<Entity *, Entity *>, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f>> &) const;
 
         public:
             bool updateStatus;

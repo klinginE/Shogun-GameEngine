@@ -18,10 +18,25 @@ namespace sg {
             sf::FloatRect getBounds(bool) const;
             const sf::ConvexShape approximateCircle(const sf::CircleShape &, const sf::Transform &) const;
             sf::Vector2f calculateUnitNormal(const sf::Shape &, uint32_t, const sf::Transform &) const;
-            float projectPoint(const sf::Shape &, const sf::Vector2f &, uint32_t, const sf::Transform &) const;
-            bool collides_ptp(const sf::Shape &, const sf::Shape &, sf::Vector2f &, const sf::Transform &, const sf::Transform &) const;
-            bool collides_ctp(const sf::Shape &, const sf::Shape &, sf::Vector2f &, const sf::Transform &, const sf::Transform &) const;
-            bool collides_ctc(const sf::Shape &, const sf::Shape &, sf::Vector2f &, const sf::Transform &, const sf::Transform &) const;
+            float projectPoint(const sf::Shape &,
+                               const sf::Vector2f &,
+                               uint32_t,
+                               const sf::Transform &) const;
+            bool collides_ptp(const sf::Shape &,
+                              const sf::Shape &,
+                              sf::Vector2f &,
+                              const sf::Transform &,
+                              const sf::Transform &) const;
+            bool collides_ctp(const sf::Shape &,
+                              const sf::Shape &,
+                              sf::Vector2f &,
+                              const sf::Transform &,
+                              const sf::Transform &) const;
+            bool collides_ctc(const sf::Shape &,
+                              const sf::Shape &,
+                              const sf::Transform &,
+                              const sf::Transform &,
+                              sf::Vector2f &) const;
 
         public:
             //Public member functions
@@ -38,7 +53,11 @@ namespace sg {
             void scaleShape(uint32_t, const sf::Vector2f &);
             sf::FloatRect getLocalBounds() const;
             sf::FloatRect getGlobalBounds() const;
-            bool collides(const BoundingShape &, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f> &, const sf::Transform &, const sf::Transform &) const;
+            bool collides(const sf::Shape &,
+                          const sf::Shape &,
+                          const sf::Transform &,
+                          const sf::Transform &,
+                          sf::Vector2f &) const;
 
     };
 

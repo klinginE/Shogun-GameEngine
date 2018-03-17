@@ -84,7 +84,7 @@ class Star : public sg::Entity {
 
         }
         
-        void handleCollision(Entity &e, const std::map<std::pair<uint64_t, uint64_t>, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f>> &colInfo) {
+        void handleCollision(Entity &e, const std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f> &colInfo) {
 
             return;
             if (getDeletionStatus())

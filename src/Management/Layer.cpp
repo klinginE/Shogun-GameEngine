@@ -235,27 +235,20 @@ namespace sg
         return bounds.top + bounds.height;
     }
 
-    void Layer::processCollisions(std::map<std::pair<Entity *, Entity *>, std::map<std::pair<uint64_t, uint64_t>, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f>>> &collisionPairs) const
+    void Layer::processCollisions(std::map<std::pair<Entity *, Entity *>, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f>> &collisionPairs) const
     {
-        for (std::pair<std::pair<Entity *, Entity *>, std::map<std::pair<uint64_t, uint64_t>, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f>>> p : collisionPairs)
+        for (std::pair<std::pair<Entity *, Entity *>, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f>> p : collisionPairs)
         {
             Entity *e0 = p.first.first;
             Entity *e1 = p.first.second;
-            std::map<std::pair<uint64_t, uint64_t>, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f>> collisionMap0 = p.second;
+            std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f> collisionMap0 = p.second;
 
-            std::map<std::pair<uint64_t, uint64_t>, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f>> collisionMap1;
-            for (std::pair<std::pair<uint64_t, uint64_t>, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f>> obj0 : collisionMap0)
+            std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f> collisionMap1;
+            for (std::pair<std::pair<uint64_t, uint64_t>, sf::Vector2f> obj0 : collisionMap0)
             {
                 std::pair<uint64_t, uint64_t> mp = obj0.first;
-                std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f> vectors = obj0.second;
-                std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f> collisionVectors1;
-                for (std::pair<std::pair<uint64_t, uint64_t>, sf::Vector2f> obj1 : vectors)
-                {
-                    std::pair<uint64_t, uint64_t> vp = obj1.first;
-                    sf::Vector2f v = obj1.second;
-                    collisionVectors1[std::make_pair(vp.second, vp.first)] = -v;
-                }
-                collisionMap1[std::make_pair(mp.second, mp.first)] = collisionVectors1;
+                sf::Vector2f vector = obj0.second;
+                collisionMap1[std::make_pair(mp.second, mp.first)] = -vector;
             }
 
             e0->handleCollision(*e1, collisionMap0);
@@ -265,7 +258,7 @@ namespace sg
 
     void Layer::scanline(std::vector<Entity *> &entities) const
     {
-        std::map<std::pair<Entity *, Entity *>, std::map<std::pair<uint64_t, uint64_t>, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f>>> collisionPairs;
+        std::map<std::pair<Entity *, Entity *>, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f>> collisionPairs;
         std::map<std::pair<Entity *, Entity *>, bool> reservations;
 
         for (Entity *e0 : entities)
@@ -299,7 +292,7 @@ namespace sg
                             reservations[std::make_pair(e0, e1)] = true;
                             reservations[std::make_pair(e1, e0)] = true;
 
-                            std::map<std::pair<uint64_t, uint64_t>, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f>> collisionMap;
+                            std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f> collisionMap;
                             bool collides = e0->collides(*e1, collisionMap);
                             if (collides)
                             {
