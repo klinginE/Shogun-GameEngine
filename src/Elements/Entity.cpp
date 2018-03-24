@@ -1,12 +1,14 @@
 //C++ includes
 #include <stdexcept>
 #include <vector>
+#include <iostream>
 
 //SHOGUN includes
 #include <Shogun/Elements/Entity.hpp>
+#include <Shogun/Management/CollisionUtility.hpp>
 
-namespace sg {
-
+namespace sg
+{
     Entity::Entity() :
     sf::Transformable()
     {
@@ -62,6 +64,7 @@ namespace sg {
 
     bool Entity::collides(Entity &e, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f> &collisionMap)
     {
+        // std::cout << "HI MOM, checking for collision now!" << std::endl;
         if (!this->isCollidable || !e.getIsCollidable())
         {
             return false;
@@ -76,6 +79,8 @@ namespace sg {
         {
             for (uint64_t i = 0; i < e.getNumOfComponents(); ++i)
             {
+                // std::cout << std::endl << std::endl;
+                // std::cout << "component self: " << j << " component e: " << i << std::endl;
                 sf::Vector2f collisionVector;
                 const sf::Transformable *t0 = this->getComponent(j).second;
                 if (!t0)
@@ -221,8 +226,14 @@ namespace sg {
                 //     s1 = &tempShape1;
                 // }
 
-                if (t0 != NULL && t1 != NULL)
+                if (t0 != NULL &&
+                    t1 != NULL &&
+                    CollisionUtility::inst().collides(*t0, *t1, trans0, trans1, collisionVector))
                 {
+                    collisionMap[std::make_pair(j, i)] = collisionVector;
+                    isCollides = true;
+
+                    // std::cout << "WE BE COLLIDING" << std::endl << std::endl;
                     // sf::FloatRect bounds0 = s0->getGlobalBounds();
                     // bounds0 = trans0.transformRect(bounds0);
                     // bounds0.width += bounds0.left;
@@ -705,18 +716,7 @@ namespace sg {
             }
 
             sf::FloatRect currentBounds;
-            if (const BoundingShape *bs = dynamic_cast<const BoundingShape *>(t))
-            {
-                if (useGlobal)
-                {
-                    currentBounds = bs->getGlobalBounds();
-                }
-                else
-                {
-                    currentBounds = bs->getLocalBounds();
-                }
-            }
-            else if (const sf::Sprite *s = dynamic_cast<const sf::Sprite *>(t))
+            if (const sf::Sprite *s = dynamic_cast<const sf::Sprite *>(t))
             {
                 if (useGlobal)
                 {

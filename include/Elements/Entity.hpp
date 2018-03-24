@@ -12,7 +12,6 @@
 
 //Shogun includes
 #include <Shogun/Elements/AnimatedSprite.hpp>
-#include <Shogun/Elements/BoundingShape.hpp>
 #include <Shogun/Management/GameLoop.hpp>
 
 namespace sg
