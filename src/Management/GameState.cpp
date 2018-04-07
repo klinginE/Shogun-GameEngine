@@ -15,7 +15,7 @@ namespace sg {
     void GameState::render() {
 
         //sf::Clock cc;
-        GameLoop::inst().getRenderWindow().clear(sf::Color::Black);
+        GameLoop::inst().getRenderWindow().clear(sf::Color::Transparent);
         //sf::Time ct = cc.restart();
         //std::cout << "Clear window time:      " << ct.asMicroseconds() << std::endl;
 

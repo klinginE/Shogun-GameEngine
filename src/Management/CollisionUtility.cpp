@@ -80,8 +80,11 @@ namespace sg
         {
             sf::FloatRect bounds = tempSprite->getLocalBounds();
 
-            shape = new sf::RectangleShape(sf::Vector2f(bounds.width, bounds.height));
-            // std::cout << "Found Sprite! " << shape << std::endl;
+            shape= new sf::ConvexShape(4);
+            dynamic_cast<sf::ConvexShape *>(shape)->setPoint(0, sf::Vector2f(bounds.left, bounds.top));
+            dynamic_cast<sf::ConvexShape *>(shape)->setPoint(1, sf::Vector2f(bounds.left + bounds.width, bounds.top));
+            dynamic_cast<sf::ConvexShape *>(shape)->setPoint(2, sf::Vector2f(bounds.left + bounds.width, bounds.top + bounds.height));
+            dynamic_cast<sf::ConvexShape *>(shape)->setPoint(3, sf::Vector2f(bounds.left, bounds.top + bounds.height));
             shape->setOrigin(tempSprite->getOrigin());
             shape->setPosition(tempSprite->getPosition());
             shape->setRotation(tempSprite->getRotation());
@@ -91,8 +94,11 @@ namespace sg
         {
             sf::FloatRect bounds = tempText->getLocalBounds();
 
-            shape = new sf::RectangleShape(sf::Vector2f(bounds.width, bounds.height));
-            // std::cout << "Found Text! " << shape << std::endl;
+            shape= new sf::ConvexShape(4);
+            dynamic_cast<sf::ConvexShape *>(shape)->setPoint(0, sf::Vector2f(bounds.left, bounds.top));
+            dynamic_cast<sf::ConvexShape *>(shape)->setPoint(1, sf::Vector2f(bounds.left + bounds.width, bounds.top));
+            dynamic_cast<sf::ConvexShape *>(shape)->setPoint(2, sf::Vector2f(bounds.left + bounds.width, bounds.top + bounds.height));
+            dynamic_cast<sf::ConvexShape *>(shape)->setPoint(3, sf::Vector2f(bounds.left, bounds.top + bounds.height));
             shape->setOrigin(tempText->getOrigin());
             shape->setPosition(tempText->getPosition());
             shape->setRotation(tempText->getRotation());
