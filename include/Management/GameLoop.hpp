@@ -22,6 +22,7 @@ namespace sg {
         private:
             sf::RenderWindow window;
             bool paused = false;
+            sf::Font font;
 
             GameLoop() {}
             GameLoop(GameLoop const&) = delete;

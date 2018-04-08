@@ -259,7 +259,6 @@ namespace sg
     void Layer::scanline(std::vector<Entity *> &entities) const
     {
         std::map<std::pair<Entity *, Entity *>, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f>> collisionPairs;
-        std::map<std::pair<Entity *, Entity *>, bool> reservations;
 
         for (Entity *e0 : entities)
         {
@@ -286,18 +285,11 @@ namespace sg
                     Entity *e1 = possible[i];
                     if (e1->getIsCollidable() && e0 != e1)
                     {
-                        if (reservations.count(std::make_pair(e0, e1)) == 0 &&
-                            reservations.count(std::make_pair(e1, e0)) == 0)
+                        std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f> collisionMap;
+                        bool collides = e0->collides(*e1, collisionMap);
+                        if (collides)
                         {
-                            reservations[std::make_pair(e0, e1)] = true;
-                            reservations[std::make_pair(e1, e0)] = true;
-
-                            std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f> collisionMap;
-                            bool collides = e0->collides(*e1, collisionMap);
-                            if (collides)
-                            {
-                                collisionPairs[std::make_pair(e0, e1)] = collisionMap;
-                            }
+                            collisionPairs[std::make_pair(e0, e1)] = collisionMap;
                         }
                     }
                 }
@@ -307,5 +299,4 @@ namespace sg
         this->processCollisions(collisionPairs);
 
     }
-
 }

@@ -46,10 +46,6 @@ class TestEntityState : public sg::GameState {
             e0.addDrawable(sprite, false);
 
             sf::FloatRect spriteBounds = sprite.getLocalBounds();
-            std::cout << "sprite.left: " << spriteBounds.left
-                      << " sprite.top: " << spriteBounds.top
-                      << " sprite.width: " << spriteBounds.width
-                      << " sprite.height: " << spriteBounds.height << std::endl;
             rectangleShape0.setPointCount(4);
             rectangleShape0.setPoint(0, sf::Vector2f(spriteBounds.left + 3.0f, spriteBounds.top + 2.0f));
             rectangleShape0.setPoint(1, sf::Vector2f(spriteBounds.left + 8.0f, spriteBounds.top + 2.0f));
@@ -77,10 +73,6 @@ class TestEntityState : public sg::GameState {
             e0.addDrawable(text, true);
 
             sf::FloatRect textBounds = text.getLocalBounds();
-            std::cout << "text.left: " << textBounds.left
-                      << " text.top: " << textBounds.top
-                      << " text.width: " << textBounds.width
-                      << " text.height: " << textBounds.height << std::endl;
 
             rectangleShape1.setPointCount(4);
             rectangleShape1.setPoint(0, sf::Vector2f(textBounds.left, textBounds.top));
@@ -92,17 +84,9 @@ class TestEntityState : public sg::GameState {
             rectangleShape1.setRotation(text.getRotation());
             rectangleShape1.setScale(text.getScale());
 
-            sf::FloatRect textRectBounds = rectangleShape1.getLocalBounds();
-            std::cout << "textRect.left: " << textRectBounds.left
-                      << " textRect.top: " << textRectBounds.top
-                      << " textRect.width: " << textRectBounds.width
-                      << " textRect.height: " << textRectBounds.height << std::endl;
-
             rectangleShape1.setFillColor(sf::Color::Transparent);
             rectangleShape1.setOutlineColor(sf::Color::Yellow);
             rectangleShape1.setOutlineThickness(1.0f);
-
-            //e0.addTransformable(rectangleShape1, true);
 
             e0.setPosition(100.0f, 100.0f);
             e0.scale(0.5f, 0.5f);

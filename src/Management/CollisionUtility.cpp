@@ -3,7 +3,6 @@
 #include <typeinfo>
 #include <math.h>
 #include <limits>
-// #include <iostream>
 
 //Shogun includes
 #include <Shogun/Management/CollisionUtility.hpp>
@@ -43,11 +42,9 @@ namespace sg
 
         if (const sf::Shape *tempShape = dynamic_cast<const sf::Shape *>(&transformable))
         {
-            // std::cout << "Found Shape!" << std::endl;
             if (const sf::CircleShape *tempCircleShape = dynamic_cast<const sf::CircleShape *>(tempShape))
             {
                 shape = new sf::CircleShape(tempCircleShape->getRadius(), tempCircleShape->getPointCount());
-                // std::cout << "Found Cricle Shape! " << shape << std::endl;
                 shape->setOrigin(tempCircleShape->getOrigin());
                 shape->setPosition(tempCircleShape->getPosition());
                 shape->setRotation(tempCircleShape->getRotation());
@@ -56,20 +53,18 @@ namespace sg
             else if (const sf::ConvexShape *tempConvexShape = dynamic_cast<const sf::ConvexShape *>(tempShape))
             {
                 shape = new sf::ConvexShape(tempConvexShape->getPointCount());
-                // std::cout << "Found Convex Shape! " << shape << std::endl;
                 shape->setOrigin(tempConvexShape->getOrigin());
                 shape->setPosition(tempConvexShape->getPosition());
                 shape->setRotation(tempConvexShape->getRotation());
                 shape->setScale(tempConvexShape->getScale());
                 for (uint32_t pi = 0; pi < tempConvexShape->getPointCount(); ++pi)
                 {
-                    ((sf::ConvexShape *)shape)->setPoint(pi, tempConvexShape->getPoint(pi));
+                    dynamic_cast<sf::ConvexShape *>(shape)->setPoint(pi, tempConvexShape->getPoint(pi));
                 }
             }
             else if (const sf::RectangleShape *tempRectangleShape = dynamic_cast<const sf::RectangleShape *>(tempShape))
             {
                 shape = new sf::RectangleShape(tempRectangleShape->getSize());
-                // std::cout << "Found RectangleShape Shape! " << shape << std::endl;
                 shape->setOrigin(tempRectangleShape->getOrigin());
                 shape->setPosition(tempRectangleShape->getPosition());
                 shape->setRotation(tempRectangleShape->getRotation());
@@ -167,9 +162,6 @@ namespace sg
                                         const sf::Transform &globalTrans1,
                                         sf::Vector2f &collisionVector) const
     {
-        // std::cout << "Begin ptp" << std::endl;
-        // std::cout << "got poly0: " << poly0 << " got poly1: " << poly1 << std::endl;
-
         if (poly0 != NULL && poly1 != NULL)
         {
             sf::FloatRect bounds0 = poly0->getGlobalBounds();
@@ -179,7 +171,7 @@ namespace sg
 
             sf::FloatRect bounds1 = poly1->getGlobalBounds();
             bounds1 = globalTrans1.transformRect(bounds1);
-            bounds1.width += bounds0.left;
+            bounds1.width += bounds1.left;
             bounds1.height += bounds1.top;
 
             if (bounds0.left <= bounds1.width &&
@@ -187,8 +179,6 @@ namespace sg
                 bounds0.top <= bounds1.height &&
                 bounds0.height >= bounds1.top)
             {
-                // std::cout << "PTP bounds overlap" << std::endl;
-
                 float inf = std::numeric_limits<float>::infinity();
                 sf::Vector2f least;
                 least.x  = inf;
@@ -285,18 +275,6 @@ namespace sg
                                         const sf::Transform &globalTrans1,
                                         sf::Vector2f &collisionVector) const
     {
-        if (this->circleIsElipse(*circle, globalTrans0))
-        {
-            //Circle is elipse, therefore we have to approximate it as a polygon
-            const sf::ConvexShape shape = this->approximateCircle(*circle, globalTrans0);
-            return this->collides_ptp(&shape,
-                                      poly,
-                                      globalTrans0,
-                                      globalTrans1,
-                                      collisionVector);
-        }
-
-        // std::cout << "Begin ctp" << std::endl;
         if (circle != NULL && poly != NULL)
         {
             sf::FloatRect bounds0 = circle->getGlobalBounds();
@@ -306,7 +284,7 @@ namespace sg
 
             sf::FloatRect bounds1 = poly->getGlobalBounds();
             bounds1 = globalTrans1.transformRect(bounds1);
-            bounds1.width += bounds0.left;
+            bounds1.width += bounds1.left;
             bounds1.height += bounds1.top;
 
             if (bounds0.left <= bounds1.width &&
@@ -314,7 +292,16 @@ namespace sg
                 bounds0.top <= bounds1.height &&
                 bounds0.height >= bounds1.top)
             {
-                // std::cout << "CTP bounds overlap" << std::endl;
+                if (this->circleIsElipse(*circle, globalTrans0))
+                {
+                    //Circle is elipse, therefore we have to approximate it as a polygon
+                    const sf::ConvexShape shape = this->approximateCircle(*circle, globalTrans0);
+                    return this->collides_ptp(&shape,
+                                              poly,
+                                              globalTrans0,
+                                              globalTrans1,
+                                              collisionVector);
+                }
 
                 float inf = std::numeric_limits<float>::infinity();
                 float minDist = inf;
@@ -426,46 +413,6 @@ namespace sg
                                         const sf::Transform &globalTrans1,
                                         sf::Vector2f &collisionVector) const
     {
-        if (this->circleIsElipse(*circle0, globalTrans0) &&
-            this->circleIsElipse(*circle1, globalTrans1))
-        {
-            //Both Circles are ellipses
-            const sf::ConvexShape shape0 = this->approximateCircle(*circle0, globalTrans0);
-            const sf::ConvexShape shape1 = this->approximateCircle(*circle1, globalTrans1);
-            return this->collides_ptp(&shape0,
-                                      &shape1,
-                                      globalTrans0,
-                                      globalTrans1,
-                                      collisionVector);
-        }
-        else if (!this->circleIsElipse(*circle0, globalTrans0) &&
-                  this->circleIsElipse(*circle1, globalTrans1))
-        {
-            //The second circle is an ellipse
-            const sf::ConvexShape shape1 = this->approximateCircle(*circle1, globalTrans1);
-            return this->collides_ctp(circle0,
-                                      &shape1,
-                                      globalTrans0,
-                                      globalTrans1,
-                                      collisionVector);
-        }
-        else if ( this->circleIsElipse(*circle0, globalTrans0) &&
-                 !this->circleIsElipse(*circle1, globalTrans1))
-        {
-            //The first circle is an ellipse
-            const sf::ConvexShape shape0 = this->approximateCircle(*circle0, globalTrans0);
-            bool r = this->collides_ctp(circle1,
-                                        &shape0,
-                                        globalTrans1,
-                                        globalTrans0,
-                                        collisionVector);
-            collisionVector.x *= -1.0f;
-            collisionVector.y *= -1.0f;
-
-            return r;
-        }
-
-        // std::cout << "Begin ctc" << std::endl;
         if (circle0 != NULL && circle1 != NULL)
         {
             sf::FloatRect bounds0 = circle0->getGlobalBounds();
@@ -475,7 +422,7 @@ namespace sg
 
             sf::FloatRect bounds1 = circle1->getGlobalBounds();
             bounds1 = globalTrans1.transformRect(bounds1);
-            bounds1.width += bounds0.left;
+            bounds1.width += bounds1.left;
             bounds1.height += bounds1.top;
 
             if (bounds0.left <= bounds1.width &&
@@ -483,7 +430,44 @@ namespace sg
                 bounds0.top <= bounds1.height &&
                 bounds0.height >= bounds1.top)
             {
-                // std::cout << "CTC bounds overlap" << std::endl;
+                if (this->circleIsElipse(*circle0, globalTrans0) &&
+                    this->circleIsElipse(*circle1, globalTrans1))
+                {
+                    //Both Circles are ellipses
+                    const sf::ConvexShape shape0 = this->approximateCircle(*circle0, globalTrans0);
+                    const sf::ConvexShape shape1 = this->approximateCircle(*circle1, globalTrans1);
+                    return this->collides_ptp(&shape0,
+                                              &shape1,
+                                              globalTrans0,
+                                              globalTrans1,
+                                              collisionVector);
+                }
+                else if (!this->circleIsElipse(*circle0, globalTrans0) &&
+                          this->circleIsElipse(*circle1, globalTrans1))
+                {
+                    //The second circle is an ellipse
+                    const sf::ConvexShape shape1 = this->approximateCircle(*circle1, globalTrans1);
+                    return this->collides_ctp(circle0,
+                                              &shape1,
+                                              globalTrans0,
+                                              globalTrans1,
+                                              collisionVector);
+                }
+                else if ( this->circleIsElipse(*circle0, globalTrans0) &&
+                         !this->circleIsElipse(*circle1, globalTrans1))
+                {
+                    //The first circle is an ellipse
+                    const sf::ConvexShape shape0 = this->approximateCircle(*circle0, globalTrans0);
+                    bool r = this->collides_ctp(circle1,
+                                                &shape0,
+                                                globalTrans1,
+                                                globalTrans0,
+                                                collisionVector);
+                    collisionVector.x *= -1.0f;
+                    collisionVector.y *= -1.0f;
+
+                    return r;
+                }
 
                 sf::Vector2f edgePoint;
                 edgePoint.x = 2.0f * circle0->getRadius();
@@ -547,7 +531,6 @@ namespace sg
         //Circle to Circle
         if (circle0 != NULL && circle1 != NULL)
         {
-            // std::cout << "Circle: " << circle0 << " to Circle: " << circle1 << " check" << std::endl;
             if (this->collides_ctc(dynamic_cast<const sf::CircleShape *>(&t0),
                                    dynamic_cast<const sf::CircleShape *>(&t1),
                                    globalTrans0,
@@ -561,7 +544,6 @@ namespace sg
         else if (circle0 != NULL && circle1 == NULL)
         {
             const sf::Shape* poly = this->shapeOfTransformable(t1);
-            // std::cout << "Circle: " << circle0 << " to Polygon " << poly << " check" << std::endl;
             if (this->collides_ctp(circle0,
                                    poly,
                                    globalTrans0,
@@ -579,7 +561,6 @@ namespace sg
         else if (circle0 == NULL && circle1 != NULL)
         {
             const sf::Shape* poly = this->shapeOfTransformable(t0);
-            // std::cout << "Polygon: " << poly << " to Circle: " << circle1 << " check" << std::endl;
             if (this->collides_ctp(circle1,
                                    poly,
                                    globalTrans1,
@@ -600,7 +581,6 @@ namespace sg
         {
             const sf::Shape* poly0 = this->shapeOfTransformable(t0);
             const sf::Shape* poly1 = this->shapeOfTransformable(t1);
-            // std::cout << "Polygon: " << poly0 << " to Polygon: " << poly1 << " check" << std::endl;
             if (this->collides_ptp(poly0,
                                    poly1,
                                    globalTrans0,
@@ -619,7 +599,6 @@ namespace sg
             }
         }
 
-        // std::cout << "isCollide: " << isCollide << std::endl;
         return isCollide;
     }
 }
