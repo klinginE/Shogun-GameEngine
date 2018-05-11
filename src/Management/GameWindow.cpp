@@ -132,10 +132,7 @@ namespace sg {
         for (const std::pair<uint32_t, Layer *> &p : layers) {
 
             Layer *l = p.second;
-            l->renderArea = /*sf::Rect<long>(static_cast<long>(ceil(static_cast<double>(std::numeric_limits<long>::min()) / 2.0)),
-                                           static_cast<long>(ceil(static_cast<double>(std::numeric_limits<long>::min()) / 2.0)),
-                                           std::numeric_limits<long>::max(),
-                                           std::numeric_limits<long>::max());*/winBounds;
+            l->renderArea = winBounds;
             l->render();
 
         }

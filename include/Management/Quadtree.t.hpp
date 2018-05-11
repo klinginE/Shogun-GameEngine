@@ -16,12 +16,25 @@ namespace sg {
         this->OBJECTS_OFFSET = 0;
         this->LEVEL_OFFSET = 0;
         this->level = 0;
-        this->bounds = sf::Rect<long>(static_cast<long>(ceil(static_cast<double>(std::numeric_limits<long>::min()) / 2.0)),
-                                      static_cast<long>(ceil(static_cast<double>(std::numeric_limits<long>::min()) / 2.0)),
-                                      std::numeric_limits<long>::max(),
-                                      std::numeric_limits<long>::max());
+        double longOriginAsDouble = static_cast<double>(std::numeric_limits<long>::min()) / 2.0;
+        if (longOriginAsDouble < 0.0)
+        {
+            longOriginAsDouble = std::floor(longOriginAsDouble);
+        }
+        else
+        {
+            longOriginAsDouble = std::ceil(longOriginAsDouble);
+        }
+        long longOrigin = static_cast<long>(longOriginAsDouble);
+        long longMax = std::numeric_limits<long>::max();
+        this->bounds = sf::Rect<long>(longOrigin,
+                                      longOrigin,
+                                      longMax,
+                                      longMax);
         for (uint32_t i = 0; i < 4; ++i)
+        {
             this->nodes[i] = NULL;
+        }
         this->parent = NULL;
 
     }
@@ -267,7 +280,20 @@ namespace sg {
 
         //pRect is somewhere other than here so we have to ignore it
         if (!this->containedWithin(pRect, this->bounds))
+        {
+            std::cout << "can't add this!" << std::endl;
+            std::cout << pRect.left << std::endl;
+            std::cout << pRect.top << std::endl;
+            std::cout << pRect.width << std::endl;
+            std::cout << pRect.height << std::endl;
+            std::cout << std::endl;
+            std::cout << this->bounds.left << std::endl;
+            std::cout << this->bounds.top << std::endl;
+            std::cout << this->bounds.width << std::endl;
+            std::cout << this->bounds.height << std::endl;
+            std::cout << std::endl;
             return;
+        }
 
         //Does the object belong to one of my children?
         if (this->nodes[0]) {

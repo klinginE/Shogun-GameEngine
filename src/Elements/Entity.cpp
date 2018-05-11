@@ -556,13 +556,21 @@ namespace sg
     void Entity::expandSurfaceBounds(sf::FloatRect &bounds, sf::FloatRect br) const
     {
         if (br.left < bounds.left)
+        {
             bounds.left = br.left;
+        }
         if (br.top < bounds.top)
+        {
             bounds.top = br.top;
+        }
         if ((br.left + br.width) > bounds.width)
+        {
             bounds.width = (br.left + br.width);
+        }
         if ((br.top + br.height) > bounds.height)
+        {
             bounds.height = (br.top + br.height);
+        }
     }
 
     sf::FloatRect Entity::getSurfaceBounds(bool useGlobal) const
@@ -753,6 +761,7 @@ namespace sg
         c->d = &newDrawable;
         c->t = t;
         this->components.push_back(c);
+
         return (this->getNumOfComponents() - 1);
     }
 

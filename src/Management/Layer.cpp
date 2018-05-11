@@ -1,5 +1,4 @@
 #include <limits>
-#include <iostream>
 #include <queue>
 
 #include <Shogun/Management/Layer.hpp>
@@ -8,10 +7,21 @@ namespace sg
 {
     Layer::Layer()
     {
-        this->globalArea = sf::Rect<long>(static_cast<long>(ceil(static_cast<double>(std::numeric_limits<long>::min()) / 2.0)), 
-                                          static_cast<long>(ceil(static_cast<double>(std::numeric_limits<long>::min()) / 2.0)),
-                                          std::numeric_limits<long>::max(),
-                                          std::numeric_limits<long>::max());
+        double longOriginAsDouble = static_cast<double>(std::numeric_limits<long>::min()) / 2.0;
+        if (longOriginAsDouble < 0.0)
+        {
+            longOriginAsDouble = std::floor(longOriginAsDouble);
+        }
+        else
+        {
+            longOriginAsDouble = std::ceil(longOriginAsDouble);
+        }
+        long longOrigin = static_cast<long>(longOriginAsDouble);
+        long longMax = std::numeric_limits<long>::max();
+        this->globalArea = sf::Rect<long>(longOrigin,
+                                          longOrigin,
+                                          longMax,
+                                          longMax);
 
         this->updateArea.left = this->globalArea.left;
         this->updateArea.top = this->globalArea.top;
@@ -84,10 +94,50 @@ namespace sg
     sf::Rect<long> Layer::convertBounds(const sf::FloatRect &fb) const
     {
         sf::Rect<long> lb;
-        lb.left = static_cast<long>(ceil(fb.left));
-        lb.top = static_cast<long>(ceil(fb.top));
-        lb.width = static_cast<long>(ceil(fb.width));
-        lb.height = static_cast<long>(ceil(fb.height));
+
+        double roundedLeft = 0.0;
+        if (fb.left < 0.0)
+        {
+            roundedLeft = std::floor(fb.left);
+        }
+        else
+        {
+            roundedLeft = std::ceil(fb.left);
+        }
+        lb.left = static_cast<long>(roundedLeft);
+
+        double roundedTop = 0.0;
+        if (fb.top < 0.0)
+        {
+            roundedTop = std::floor(fb.top);
+        }
+        else
+        {
+            roundedTop = std::ceil(fb.top);
+        }
+        lb.top = static_cast<long>(roundedTop);
+
+        double roundedWidth = 0.0;
+        if (fb.width < 0.0)
+        {
+            roundedWidth = std::floor(fb.width);
+        }
+        else
+        {
+            roundedWidth = std::ceil(fb.width);
+        }
+        lb.width = static_cast<long>(roundedWidth);
+
+        double roundedHeight = 0.0;
+        if (fb.height < 0.0)
+        {
+            roundedHeight = std::floor(fb.height);
+        }
+        else
+        {
+            roundedHeight = std::ceil(fb.height);
+        }
+        lb.height = static_cast<long>(roundedHeight);
 
         return lb;
     }
