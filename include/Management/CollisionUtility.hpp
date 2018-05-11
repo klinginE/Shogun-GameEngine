@@ -17,9 +17,8 @@ namespace sg
 
         private:
             bool circleIsElipse(const sf::CircleShape &circle, const sf::Transform &globalTrans) const;
+            const sf::ConvexShape approximateCircle(const sf::CircleShape &circle) const;
             const sf::Shape *shapeOfTransformable(const sf::Transformable &transformable) const;
-            const sf::ConvexShape approximateCircle(const sf::CircleShape &,
-                                                    const sf::Transform &) const;
             sf::Vector2f calculateUnitNormal(const sf::Shape &,
                                              uint32_t,
                                              const sf::Transform &) const;

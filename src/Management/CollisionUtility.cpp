@@ -103,21 +103,14 @@ namespace sg
         return shape;
     }
 
-    const sf::ConvexShape CollisionUtility::approximateCircle(const sf::CircleShape &circle,
-                                                              const sf::Transform &globalTrans) const
+    const sf::ConvexShape CollisionUtility::approximateCircle(const sf::CircleShape &circle) const
     {
-        sf::FloatRect gb = globalTrans.transformRect(circle.getGlobalBounds());
-        uint32_t n = static_cast<uint32_t>(ceil(std::min(gb.width, gb.height))) + 30;
-        sf::ConvexShape approxCircle(n);
-        float mult = 2.0f * M_PI / n - M_PI / 2.0f;
-        for (uint32_t i = 0; i < n; ++i)
+        sf::ConvexShape approxCircle(circle.getPointCount());
+        for (uint32_t i = 0; i < circle.getPointCount(); ++i)
         {
-            float angle = i * mult;
-            sf::Vector2f v(std::cos(angle) * circle.getRadius(),
-                           std::sin(angle) * circle.getRadius());
-            v += sf::Vector2f(circle.getRadius(), circle.getRadius());
-            approxCircle.setPoint(i, v);
+            approxCircle.setPoint(i, circle.getPoint(i));
         }
+
         approxCircle.setOrigin(circle.getOrigin());
         approxCircle.setPosition(circle.getPosition());
         approxCircle.setRotation(circle.getRotation());
@@ -295,7 +288,7 @@ namespace sg
                 if (this->circleIsElipse(*circle, globalTrans0))
                 {
                     //Circle is elipse, therefore we have to approximate it as a polygon
-                    const sf::ConvexShape shape = this->approximateCircle(*circle, globalTrans0);
+                    const sf::ConvexShape shape = this->approximateCircle(*circle);
                     return this->collides_ptp(&shape,
                                               poly,
                                               globalTrans0,
@@ -434,8 +427,8 @@ namespace sg
                     this->circleIsElipse(*circle1, globalTrans1))
                 {
                     //Both Circles are ellipses
-                    const sf::ConvexShape shape0 = this->approximateCircle(*circle0, globalTrans0);
-                    const sf::ConvexShape shape1 = this->approximateCircle(*circle1, globalTrans1);
+                    const sf::ConvexShape shape0 = this->approximateCircle(*circle0);
+                    const sf::ConvexShape shape1 = this->approximateCircle(*circle1);
                     return this->collides_ptp(&shape0,
                                               &shape1,
                                               globalTrans0,
@@ -446,7 +439,7 @@ namespace sg
                           this->circleIsElipse(*circle1, globalTrans1))
                 {
                     //The second circle is an ellipse
-                    const sf::ConvexShape shape1 = this->approximateCircle(*circle1, globalTrans1);
+                    const sf::ConvexShape shape1 = this->approximateCircle(*circle1);
                     return this->collides_ctp(circle0,
                                               &shape1,
                                               globalTrans0,
@@ -457,7 +450,7 @@ namespace sg
                          !this->circleIsElipse(*circle1, globalTrans1))
                 {
                     //The first circle is an ellipse
-                    const sf::ConvexShape shape0 = this->approximateCircle(*circle0, globalTrans0);
+                    const sf::ConvexShape shape0 = this->approximateCircle(*circle0);
                     bool r = this->collides_ctp(circle1,
                                                 &shape0,
                                                 globalTrans1,
