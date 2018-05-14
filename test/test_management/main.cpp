@@ -6,20 +6,24 @@
 #include <Shogun/Management/StateManager.hpp>
 #include <Shogun/Management/GameWindow.hpp>
 #include <Shogun/Management/GameWorld.hpp>
+#include <Shogun/Management/Layer.hpp>
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <assert.h>
 
 sg::Entity entities[10];
+sf::RectangleShape rect;
 sg::GameWorld gameWorld;
-void testGameWorld() {
+sg::Layer gameLayer;
 
+void testGameWorld()
+{
     std::cout << std::endl;
     std::cout << "Testing GameWorld" << std::endl;
     std::cout << std::endl;
 
     // Test init
-    assert(gameWorld.getEntities().size() == 0);
+    assert(gameWorld.getLayers().size() == 0);
 
     std::cout << "gameWorld size starts at 0" << std::endl;
 
@@ -27,47 +31,59 @@ void testGameWorld() {
 
     std::cout << "Updating empty gameWorld works." << std::endl;
 
+    gameWorld.addLayer(0, gameLayer);
+
     // Test add entities and getEntities
-    for (std::size_t i = 0; i < 10; i++) {
-        std::size_t old_size = 0; 
-        if (gameWorld.getEntities().size())
-            old_size = gameWorld.getEntities().at(0).size();
-        gameWorld.addEntity(0, entities[i]);
+    for (std::size_t i = 0; i < 10; i++)
+    {
+        std::size_t old_size = 0;
+        gameLayer.getDynamicEntities().size(old_size);
+        sg::Entity e = entities[i];
+        e.setPosition(4.5f, 18.9f);
+        e.setOrigin(-112.0f, 90.2f);
+        e.setScale(8.0f, 4.0f);
+        e.setRotation(-9.0f);
+        rect.setSize(sf::Vector2f(10.0f, 10.0f));
+        e.addTransformable(rect);
+        gameLayer.addDynamicEntity(entities[i]);
+        std::size_t new_size = 0;
+        gameLayer.getDynamicEntities().size(new_size);
         std::cout << "Adding an entity: old size = " << old_size
-                  << ", new size = " << gameWorld.getEntities().at(0).size() << std::endl;
-        assert(gameWorld.getEntities().at(0).size() == i + 1);
+                  << ", new size = " << new_size << std::endl;
+        assert(new_size == (i + 1));
     }
 
     // Test delete entities and getEntities
-    for (std::size_t i = 0; i < 10; i++) {
-        std::size_t old_size = 0; 
-        if (gameWorld.getEntities().size())
-            old_size = gameWorld.getEntities().at(0).size();
+    for (std::size_t i = 0; i < 10; i++)
+    {
+        std::size_t old_size = 0;
+        gameLayer.getDynamicEntities().size(old_size);
         entities[i].setDeletionStatus(true);
         gameWorld.update(sf::Time());
+        std::size_t new_size = 0;
+        gameLayer.getDynamicEntities().size(new_size);
         std::cout << "Removing an entity: old size = " << old_size
-                  << ", new size = " << gameWorld.getEntities().at(0).size() << std::endl;
-        assert(gameWorld.getEntities().at(0).size() == 9 - i);
+                  << ", new size = " << new_size << std::endl;
+        assert(new_size == (9 - i));
     }
 
     // Test activate/deactivate collisions
-    std::cout << "Initial collision status = " << gameWorld.getCollisionStatus() << std::endl;
-    gameWorld.deactivateCollisions();
-    std::cout << "Deactivating collisions: collision status = " << gameWorld.getCollisionStatus() << std::endl;
-    assert(gameWorld.getCollisionStatus() == false);
-    gameWorld.activateCollisions();
-    std::cout << "Activating collisions: collision status = " << gameWorld.getCollisionStatus() << std::endl;
-    assert(gameWorld.getCollisionStatus() == true);
+    std::cout << "Initial collision status = " << gameLayer.collisionStatus << std::endl;
+    gameLayer.collisionStatus = false;
+    std::cout << "Deactivating collisions: collision status = " << gameLayer.collisionStatus << std::endl;
+    assert(gameLayer.collisionStatus == false);
+    gameLayer.collisionStatus = true;
+    std::cout << "Activating collisions: collision status = " << gameLayer.collisionStatus << std::endl;
+    assert(gameLayer.collisionStatus == true);
 
     // Test activate/deactivate scanline
-    std::cout << "Initial scanline status = " << ((gameWorld.getScanlineStatus() == sg::scanline_t::VERTICAL) ? "VERTICAL" : "HORIZONTAL") << std::endl;
-    gameWorld.setVerticalScanline();
-    std::cout << "Setting vertical scanline: scanline status = " << ((gameWorld.getScanlineStatus() == sg::scanline_t::VERTICAL) ? "VERTICAL" : "HORIZONTAL") << std::endl;
-    assert(gameWorld.getScanlineStatus() == sg::scanline_t::VERTICAL);
-    gameWorld.setHorizontalScanline();
-    std::cout << "Setting horizontal scanline: scanline status = " << ((gameWorld.getScanlineStatus() == sg::scanline_t::VERTICAL) ? "VERTICAL" : "HORIZONTAL") << std::endl;
-    assert(gameWorld.getScanlineStatus() == sg::scanline_t::HORIZONTAL);
-
+    std::cout << "Initial scanline status = " << ((gameLayer.getScanlineStatus() == sg::scanline_t::VERTICAL) ? "VERTICAL" : "HORIZONTAL") << std::endl;
+    gameLayer.setVerticalScanline();
+    std::cout << "Setting vertical scanline: scanline status = " << ((gameLayer.getScanlineStatus() == sg::scanline_t::VERTICAL) ? "VERTICAL" : "HORIZONTAL") << std::endl;
+    assert(gameLayer.getScanlineStatus() == sg::scanline_t::VERTICAL);
+    gameLayer.setHorizontalScanline();
+    std::cout << "Setting horizontal scanline: scanline status = " << ((gameLayer.getScanlineStatus() == sg::scanline_t::VERTICAL) ? "VERTICAL" : "HORIZONTAL") << std::endl;
+    assert(gameLayer.getScanlineStatus() == sg::scanline_t::HORIZONTAL);
 }
 
 sg::GameWindow gameWindow;

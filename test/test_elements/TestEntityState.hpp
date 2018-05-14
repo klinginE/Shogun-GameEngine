@@ -87,6 +87,7 @@ class TestEntityState : public sg::GameState {
             rectangleShape1.setFillColor(sf::Color::Transparent);
             rectangleShape1.setOutlineColor(sf::Color::Yellow);
             rectangleShape1.setOutlineThickness(1.0f);
+            // e0.addDrawable(rectangleShape1, false);
 
             e0.setPosition(100.0f, 100.0f);
             e0.scale(0.5f, 0.5f);
