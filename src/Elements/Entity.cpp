@@ -575,6 +575,19 @@ namespace sg
 
     sf::FloatRect Entity::getSurfaceBounds(bool useGlobal) const
     {
+        if (this->components.size() == 0)
+        {
+            sf::FloatRect zeroCompBounds(0.0f, 0.0f, 0.0f, 0.0f);
+            if (useGlobal)
+            {
+                sf::Transform transform = sf::Transform::Identity;
+                this->getGlobalTransform(transform);
+                zeroCompBounds = transform.transformRect(zeroCompBounds);
+            }
+
+            return zeroCompBounds;
+        }
+
         float inf = std::numeric_limits<float>::infinity();
         sf::FloatRect bounds = sf::FloatRect(inf, inf, -inf, -inf);
         for (const auto &it : this->components)
@@ -649,6 +662,19 @@ namespace sg
 
     sf::FloatRect Entity::getTextureBounds(bool useGlobal) const
     {
+        if (this->components.size() == 0)
+        {
+            sf::FloatRect zeroCompBounds(0.0f, 0.0f, 0.0f, 0.0f);
+            if (useGlobal)
+            {
+                sf::Transform transform = sf::Transform::Identity;
+                this->getGlobalTransform(transform);
+                zeroCompBounds = transform.transformRect(zeroCompBounds);
+            }
+
+            return zeroCompBounds;
+        }
+
         float inf = std::numeric_limits<float>::infinity();
         sf::FloatRect bounds(inf, inf, -inf, -inf);
         for (const auto &it : this->components)

@@ -33,8 +33,8 @@ namespace sg
         this->renderArea.width = this->globalArea.width;
         this->renderArea.height = this->globalArea.height;
 
-        this->dynamicEntities.init(1l, std::numeric_limits<uint64_t>::max(), 0, this->globalArea);
-        this->staticEntities.init(1l, std::numeric_limits<uint64_t>::max(), 0, this->globalArea);
+        this->dynamicEntities.init(1, std::numeric_limits<uint64_t>::max(), 0, this->globalArea);
+        this->staticEntities.init(1, std::numeric_limits<uint64_t>::max(), 0, this->globalArea);
 
         this->renderOrder = [=](const Entity *e0, const Entity *e1)->bool {return false;};
 
