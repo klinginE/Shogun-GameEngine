@@ -69,7 +69,7 @@ class TestEntityState : public sg::GameState {
             text.rotate(15.0f);
             text.scale(0.5f, 5.0f);
             text.setStyle(sf::Text::Regular);
-            text.setColor(sf::Color::White);
+            text.setFillColor(sf::Color::White);
             e0.addDrawable(text, true);
 
             sf::FloatRect textBounds = text.getLocalBounds();
