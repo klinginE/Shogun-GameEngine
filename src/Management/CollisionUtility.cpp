@@ -462,14 +462,14 @@ namespace sg
                     return r;
                 }
 
-                sf::Vector2f edgePoint;
+                sf::Vector2f edgePoint(0.0f, 0.0f);
                 edgePoint.x = 2.0f * circle0->getRadius();
                 edgePoint.y = circle0->getRadius();
                 edgePoint = globalTrans0.transformPoint(circle0->getTransform().transformPoint(edgePoint));
                 sf::Vector2f center0 = globalTrans0.transformPoint(circle0->getTransform().transformPoint(sf::Vector2f(circle0->getRadius(), circle0->getRadius())));
                 float xDiff = (edgePoint.x - center0.x);
                 float yDiff = (edgePoint.y - center0.y);
-                float distance = xDiff * xDiff + yDiff * yDiff;
+                float distance = (xDiff * xDiff) + (yDiff * yDiff);
                 float globalR0 = sqrt(distance);
 
                 edgePoint.x = 2.0f * circle1->getRadius();
@@ -478,13 +478,13 @@ namespace sg
                 sf::Vector2f center1 = globalTrans1.transformPoint(circle1->getTransform().transformPoint(sf::Vector2f(circle1->getRadius(), circle1->getRadius())));
                 xDiff = (edgePoint.x - center1.x);
                 yDiff = (edgePoint.y - center1.y);
-                distance = xDiff * xDiff + yDiff * yDiff;
+                distance = (xDiff * xDiff) + (yDiff * yDiff);
                 float globalR1 = sqrt(distance);
 
                 float rSum = globalR0 + globalR1;
                 xDiff = (center1.x - center0.x);
                 yDiff = (center1.y - center0.y);
-                distance = xDiff * xDiff + yDiff * yDiff;
+                distance = (xDiff * xDiff) + (yDiff * yDiff);
                 if (distance <= (rSum * rSum))
                 {
                     //Get both vectors
@@ -496,10 +496,10 @@ namespace sg
                     float centerVectMag1 = sqrt(centerVect1.x * centerVect1.x + centerVect1.y * centerVect1.y);
 
                     //Locate Points on circles
-                    sf::Vector2f circlePoint0((centerVect0.x / centerVectMag0 * globalR0) + center0.x,
-                                              (centerVect0.y / centerVectMag0 * globalR0) + center0.y);
-                    sf::Vector2f circlePoint1((centerVect1.x / centerVectMag1 * globalR1) + center1.x,
-                                              (centerVect1.y / centerVectMag1 * globalR1) + center1.y);
+                    sf::Vector2f circlePoint0(((centerVect0.x / centerVectMag0) * globalR0) + center0.x,
+                                              ((centerVect0.y / centerVectMag0) * globalR0) + center0.y);
+                    sf::Vector2f circlePoint1(((centerVect1.x / centerVectMag1) * globalR1) + center1.x,
+                                              ((centerVect1.y / centerVectMag1) * globalR1) + center1.y);
                     collisionVector = (circlePoint1 - circlePoint0);
 
                     return true;
