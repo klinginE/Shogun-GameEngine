@@ -11,6 +11,7 @@ SOURCES= \
 ./src/$(MANAG_DIR)/Layer.cpp \
 ./src/$(MANAG_DIR)/InputManager.cpp \
 ./src/$(MANAG_DIR)/StateManager.cpp \
+./src/$(MANAG_DIR)/ResourceManager.cpp \
 ./src/$(ELEM_DIR)/AnimatedSprite.cpp \
 ./src/$(ELEM_DIR)/BoundingShape.cpp \
 ./src/$(ELEM_DIR)/Entity.cpp
