@@ -10,15 +10,16 @@
 #include <Shogun/Management/Quadtree.t.hpp>
 #include <Shogun/Elements/Entity.hpp>
 
-namespace sg {
-
-    enum scanline_t : bool {
+namespace sg
+{
+    enum scanline_t : bool
+    {
         VERTICAL,
         HORIZONTAL
     };
 
-    class Layer {
-
+    class Layer
+    {
         private:
             sf::Rect<long> globalArea;
             Quadtree<Entity *> dynamicEntities;
@@ -58,7 +59,5 @@ namespace sg {
             void setVerticalScanline();
             void setHorizontalScanline();
             scanline_t getScanlineStatus() const;
-
     };
-
 }

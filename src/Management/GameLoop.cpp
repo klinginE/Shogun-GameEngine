@@ -46,7 +46,7 @@ namespace sg
             sf::Time elapsed = clock.restart();
 
             // check if there is a current state
-            GameState *topState;
+            GameState *topState = NULL;
             if ((topState = StateManager::inst().peekState()) == NULL)
             {
                 getRenderWindow().close();
