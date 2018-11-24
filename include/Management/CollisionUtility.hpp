@@ -5,9 +5,9 @@
 
 namespace sg
 {
-	class CollisionUtility
-	{
-		public:
+    class CollisionUtility
+	  {
+        public:
             static CollisionUtility &inst();
             bool collides(const sf::Transformable &,
                           const sf::Transformable &,
@@ -45,5 +45,5 @@ namespace sg
             CollisionUtility() {}
             CollisionUtility(CollisionUtility const&) = delete;
             void operator=(CollisionUtility const&) = delete;
-	};
+    };
 }
