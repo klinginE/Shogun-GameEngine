@@ -2,14 +2,21 @@
 #include <Shogun/Management/ResourceManager.hpp>
 
 //C++ includes
-#include <limits.h>
+#include <unistd.h>
+#include <iostream>
+#include <fstream>
 
 namespace sg
 {
     ResourceManager::ResourceManager() :
-    maxSizeOfData(std::numeric_limits<uint64_t>::max()),
     totalSizeOfData(0)
     {
+        uint64_t pages = sysconf(_SC_PHYS_PAGES);
+        uint64_t page_size = sysconf(_SC_PAGESIZE);
+        uint64_t numberOfBytes = (pages * page_size);
+
+        //By deault only allow up to 1/2th the total memory
+        this->maxSizeOfData = (numberOfBytes >> 1);
     }
 
     ResourceManager::ResourceManager(uint64_t inMaxSizeOfData) :
@@ -18,43 +25,96 @@ namespace sg
     {
     }
 
-    void* ResourceManager::getData(std::string key)
+    ResourceManager::~ResourceManager()
     {
-        void* data = NULL;
-        std::map<std::string, std::tuple<void*, uint64_t, uint64_t>>::iterator it = this->dataStore.find(key);
+        for (const std::string* key : this->stringKeyAge)
+        {
+            this->removeData(*key);
+        }
+    }
+
+    const char* ResourceManager::getData(const std::string& key)
+    {
+        const char* data = NULL;
+        std::map<const std::string, std::tuple<const char*, uint64_t, uint64_t>>::iterator it = this->dataStore.find(key);
         if (it != this->dataStore.end())
         {
-            std::tuple<void*, uint64_t, uint64_t> payload = it->second;
+            std::tuple<const char*, uint64_t, uint64_t> payload = it->second;
             data = std::get<0>(payload);
+            uint64_t size = std::get<1>(payload);
+            uint64_t index = std::get<2>(payload);
+
+            if (data && index < this->stringKeyAge.size())
+            {
+                this->removeData(key);
+
+                std::tuple<const char*, uint64_t, uint64_t> new_payload = std::make_tuple(data, size, this->stringKeyAge.size());
+                this->dataStore[key] = new_payload;
+                this->stringKeyAge.push_back(&key);
+                this->totalSizeOfData += size;
+            }
         }
         else
         {
-            //TO DO
+            uint64_t size = 0;
+            data = this->insertData(key, size);
+            if (size == 0)
+            {
+                data = NULL;
+            }
         }
 
         return data;
     }
 
-    uint64_t ResourceManager::getDataSize(std::string key)
+    uint64_t ResourceManager::getDataSize(const std::string& key)
     {
         uint64_t size = 0;
 
-        std::map<std::string, std::tuple<void*, uint64_t, uint64_t>>::iterator it = this->dataStore.find(key);
+        std::map<const std::string, std::tuple<const char*, uint64_t, uint64_t>>::const_iterator it = this->dataStore.find(key);
         if (it != this->dataStore.end())
         {
-            std::tuple<void*, uint64_t, uint64_t> payload = it->second;
+            std::tuple<const char*, uint64_t, uint64_t> payload = it->second;
             size = std::get<1>(payload);
+        }
+        else
+        {
+            const char* data = this->insertData(key, size);
+            if (data == NULL)
+            {
+                size = 0;
+            }
         }
 
         return size;
     }
 
-    bool ResourceManager::removeData(std::string key)
+    const char* ResourceManager::insertData(const std::string& key, uint64_t& size)
     {
-        std::map<std::string, std::tuple<void*, uint64_t, uint64_t>>::iterator it = this->dataStore.find(key);
+        const char* data = this->readDataFromFile(key, size);
+        if (data != NULL && size > 0)
+        {
+            std::tuple<const char*, uint64_t, uint64_t> payload = std::make_tuple(data, size, this->stringKeyAge.size());
+            this->dataStore[key] = payload;
+            this->stringKeyAge.push_back(&key);
+            this->totalSizeOfData += size;
+        }
+        else
+        {
+            data = NULL;
+            size = 0;
+        }
+
+        return data;
+    }
+
+    bool ResourceManager::removeData(const std::string& key)
+    {
+        std::map<const std::string, std::tuple<const char*, uint64_t, uint64_t>>::iterator it = this->dataStore.find(key);
         if (it != this->dataStore.end())
         {
-            std::tuple<void*, uint64_t, uint64_t> payload = it->second;
+            std::tuple<const char*, uint64_t, uint64_t> payload = it->second;
+            const char* data = std::get<0>(payload);
             uint64_t size = std::get<1>(payload);
             uint64_t index = std::get<2>(payload);
 
@@ -63,9 +123,31 @@ namespace sg
             {
                 this->stringKeyAge.erase(this->stringKeyAge.begin() + index);
             }
+            delete[] data;
             this->totalSizeOfData -= size;
         }
 
         return true;
+    }
+
+    const char* ResourceManager::readDataFromFile(const std::string& key, uint64_t& size) const
+    {
+        char* memblock = NULL;
+
+        std::ifstream file(key, std::ios::in|std::ios::binary|std::ios::ate);
+        if (file.is_open())
+        {
+            std::streampos pos = file.tellg();
+            if (pos > 0)
+            {
+                size = static_cast<uint64_t>(pos);
+                memblock = new char[size];
+                file.seekg(0, std::ios::beg);
+                file.read(memblock, size);
+            }
+            file.close();
+        }
+
+        return memblock;
     }
 }

@@ -13,15 +13,18 @@ namespace sg
         private:
             uint64_t maxSizeOfData;
             uint64_t totalSizeOfData;
-            std::map<std::string, std::tuple<void*, uint64_t, uint64_t>> dataStore;
-            std::vector<std::string> stringKeyAge;
+            std::map<const std::string, std::tuple<const char*, uint64_t, uint64_t>> dataStore;
+            std::vector<const std::string*> stringKeyAge;
+
+            const char* insertData(const std::string&, uint64_t&);
+            const char* readDataFromFile(const std::string&, uint64_t&) const;
 
         public:
             virtual ~ResourceManager();
             ResourceManager();
             ResourceManager(uint64_t);
-            void* getData(std::string);
-            uint64_t getDataSize(std::string);
-            bool removeData(std::string);
+            const char* getData(const std::string&);
+            uint64_t getDataSize(const std::string&);
+            bool removeData(const std::string&);
     };
 }
