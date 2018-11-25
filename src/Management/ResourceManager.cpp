@@ -23,6 +23,15 @@ namespace sg
     maxSizeOfData(inMaxSizeOfData),
     totalSizeOfData(0)
     {
+        if (maxSizeOfData == 0)
+        {
+            uint64_t pages = sysconf(_SC_PHYS_PAGES);
+            uint64_t page_size = sysconf(_SC_PAGESIZE);
+            uint64_t numberOfBytes = (pages * page_size);
+    
+            //By deault only allow up to 1/2th the total memory
+            this->maxSizeOfData = (numberOfBytes >> 1);
+        }
     }
 
     ResourceManager::~ResourceManager()
@@ -105,11 +114,33 @@ namespace sg
             size = 0;
         }
 
+        if (data != NULL && size > 0 && this->totalSizeOfData > this->maxSizeOfData)
+        {
+            uint64_t halfMax = (this->maxSizeOfData >> 1);
+
+            std::vector<const std::string*>::iterator it = this->stringKeyAge.begin();
+            while (this->totalSizeOfData > halfMax &&
+                   it != this->stringKeyAge.end())
+            {
+                const std::string* key = (*it);
+                if (this->removeData(*key))
+                {
+                    it = this->stringKeyAge.begin();
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+
         return data;
     }
 
     bool ResourceManager::removeData(const std::string& key)
     {
+        bool didRemove = false;
+
         std::map<const std::string, std::tuple<const char*, uint64_t, uint64_t>>::iterator it = this->dataStore.find(key);
         if (it != this->dataStore.end())
         {
@@ -125,9 +156,10 @@ namespace sg
             }
             delete[] data;
             this->totalSizeOfData -= size;
+            didRemove = true;
         }
 
-        return true;
+        return didRemove;
     }
 
     const char* ResourceManager::readDataFromFile(const std::string& key, uint64_t& size) const
