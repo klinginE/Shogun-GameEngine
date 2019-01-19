@@ -1,18 +1,18 @@
 CC=g++
-CFLAGS=-shared -fPIC -g -Wall -pedantic -std=c++11 -o
+CFLAGS=-shared -fPIC -g -Wall -pedantic -std=c++17 -o
 SFML_FLAGS=-lsfml-audio -lsfml-graphics -lsfml-network -lsfml-system -lsfml-window
 MANAG_DIR=Management
 ELEM_DIR=Elements
 SOURCES= \
+./src/$(MANAG_DIR)/CollisionUtility.cpp \
 ./src/$(MANAG_DIR)/GameLoop.cpp \
 ./src/$(MANAG_DIR)/GameState.cpp \
 ./src/$(MANAG_DIR)/GameWindow.cpp \
 ./src/$(MANAG_DIR)/GameWorld.cpp \
-./src/$(MANAG_DIR)/Layer.cpp \
 ./src/$(MANAG_DIR)/InputManager.cpp \
+./src/$(MANAG_DIR)/Layer.cpp \
 ./src/$(MANAG_DIR)/StateManager.cpp \
 ./src/$(ELEM_DIR)/AnimatedSprite.cpp \
-./src/$(ELEM_DIR)/BoundingShape.cpp \
 ./src/$(ELEM_DIR)/Entity.cpp
 LIBRARY_DIR=/usr/lib/
 INCLUDE_DIR=/usr/include/Shogun/

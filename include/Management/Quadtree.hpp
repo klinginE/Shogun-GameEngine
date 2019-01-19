@@ -6,11 +6,11 @@
 
 #include <SFML/Graphics.hpp>
 
-namespace sg {
-
+namespace sg
+{
     template<class T>
-    class Quadtree {
-
+    class Quadtree
+    {
         private:
             uint64_t MAX_OBJECTS;
             uint64_t MAX_LEVEL;
@@ -44,7 +44,5 @@ namespace sg {
             bool remove(const sf::Rect<long> &, T, std::function<bool(const T obj0, const T obj1)> comp=[](const T obj0, const T obj1)->bool{return obj0 == obj1;});
             //void update(const sf::Rect<long> &, std::function<sf::Rect<long>(const T obj)>);
             void retrieve(std::vector<T> &, const sf::Rect<long> &) const;
-
     };
-
 }

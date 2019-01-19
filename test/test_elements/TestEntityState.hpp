@@ -8,6 +8,8 @@
 #include<Shogun/Management/GameWindow.hpp>
 #include"TestBox.hpp"
 
+#include <iostream>
+
 class TestEntityState : public sg::GameState {
 
     #define VEL 3.0f
@@ -15,9 +17,15 @@ class TestEntityState : public sg::GameState {
     #define FAC 1.025f
 
     private:
+        sf::Font font;
+        sf::Texture t;
         TestBox e0 = TestBox();
         TestBox e1 = TestBox();
         TestBox e2 = TestBox();
+        sf::Sprite sprite = sf::Sprite();
+        sf::ConvexShape rectangleShape0;
+        sf::Text text;
+        sf::ConvexShape rectangleShape1;
         sg::Layer l;
         sg::GameWorld world0;
         sg::GameWindow window0;
@@ -28,21 +36,71 @@ class TestEntityState : public sg::GameState {
         TestEntityState() :
         sg::GameState()
         {
+            t.loadFromFile("villager.png");
+            sprite.setTexture(t);
+            sprite.setTextureRect(sf::IntRect(2, 1, 11, 15));
+            sprite.setOrigin(8.0f, 8.0f);
+            sprite.scale(10.0f, 10.0f);
+            sprite.setPosition(250.0f, 0.0f);
+            sprite.rotate(-45.0f);
+            e0.addDrawable(sprite, false);
 
-            e0.fill(sf::Color::White);
+            sf::FloatRect spriteBounds = sprite.getLocalBounds();
+            rectangleShape0.setPointCount(4);
+            rectangleShape0.setPoint(0, sf::Vector2f(spriteBounds.left + 3.0f, spriteBounds.top + 2.0f));
+            rectangleShape0.setPoint(1, sf::Vector2f(spriteBounds.left + 8.0f, spriteBounds.top + 2.0f));
+            rectangleShape0.setPoint(2, sf::Vector2f(spriteBounds.left + 8.0f, spriteBounds.top + 10.0f));
+            rectangleShape0.setPoint(3, sf::Vector2f(spriteBounds.left + 3.0f, spriteBounds.top + 10.0f));
+            rectangleShape0.setOrigin(sprite.getOrigin());
+            rectangleShape0.setPosition(sprite.getPosition());
+            rectangleShape0.setRotation(sprite.getRotation());
+            rectangleShape0.setScale(sprite.getScale());
+            rectangleShape0.setFillColor(sf::Color::Transparent);
+            rectangleShape0.setOutlineColor(sf::Color::Yellow);
+            rectangleShape0.setOutlineThickness(0.1f);
+
+            e0.addTransformable(rectangleShape0, true);
+
+            font.loadFromFile("arial.ttf");
+            text.setFont(font);
+            text.setString("Hello World!");
+            text.setOrigin(100.0f, 80.0f);
+            text.setPosition(5.0f, 250.0f);
+            text.rotate(15.0f);
+            text.scale(0.5f, 5.0f);
+            text.setStyle(sf::Text::Regular);
+            text.setFillColor(sf::Color::White);
+            e0.addDrawable(text, true);
+
+            sf::FloatRect textBounds = text.getLocalBounds();
+
+            rectangleShape1.setPointCount(4);
+            rectangleShape1.setPoint(0, sf::Vector2f(textBounds.left, textBounds.top));
+            rectangleShape1.setPoint(1, sf::Vector2f(textBounds.left + textBounds.width, textBounds.top));
+            rectangleShape1.setPoint(2, sf::Vector2f(textBounds.left + textBounds.width, textBounds.top + textBounds.height));
+            rectangleShape1.setPoint(3, sf::Vector2f(textBounds.left, textBounds.top + textBounds.height));
+            rectangleShape1.setOrigin(text.getOrigin());
+            rectangleShape1.setPosition(text.getPosition());
+            rectangleShape1.setRotation(text.getRotation());
+            rectangleShape1.setScale(text.getScale());
+
+            rectangleShape1.setFillColor(sf::Color::Transparent);
+            rectangleShape1.setOutlineColor(sf::Color::Yellow);
+            rectangleShape1.setOutlineThickness(1.0f);
+            // e0.addDrawable(rectangleShape1, false);
+
             e0.setPosition(100.0f, 100.0f);
             e0.scale(0.5f, 0.5f);
             e0.setOrigin(10.0, 10.0f);
 
-            e1.fill(sf::Color::Red);
             e1.setPosition(400.0f, 100.0f);
             e1.scale(0.5f, 0.5f);
             e1.setOrigin(25.0, 20.0f);
 
-            e2.fill(sf::Color::White);
             e2.setPosition(300.0f, 500.0f);
             e2.setScale(0.5f, 0.5f);
 
+            
             l.addDynamicEntity(e0);
             l.addDynamicEntity(e1);
             l.addDynamicEntity(e2);
@@ -57,19 +115,25 @@ class TestEntityState : public sg::GameState {
             this->addWindow(window0);
             this->addWorld(world0);
 
-            this->myInputManager.addAction(sf::Event::EventType::KeyReleased, [=](const sf::Time t, const sf::Event e) {
+            this->myInputManager.addAction(sf::Event::EventType::KeyReleased, [=](const sf::Time t, const sf::Event e)
+            {
                 if (e.key.code == sf::Keyboard::C)
+                {
                     changeOwner(t);
+                }
                 if (e.key.code == sf::Keyboard::R)
+                {
                     removeOwner(t);
+                }
                 if (e.key.code == sf::Keyboard::G)
+                {
                     this->moveGlobal = !this->moveGlobal;
+                }
             });
             this->setInputManager(this->myInputManager);
-
         }
-        void update(const sf::Time &tslu) {
-
+        void update(const sf::Time &tslu)
+        {
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
                 moveRight1(tslu);
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
@@ -119,7 +183,6 @@ class TestEntityState : public sg::GameState {
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::M))
                 grow1(tslu);
             sg::GameState::update(tslu);
-
         }
 
     private:

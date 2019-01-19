@@ -4,9 +4,10 @@
 
 //SHOGUN includes
 #include <Shogun/Elements/Entity.hpp>
+#include <Shogun/Management/CollisionUtility.hpp>
 
-namespace sg {
-
+namespace sg
+{
     Entity::Entity() :
     sf::Transformable()
     {
@@ -60,191 +61,65 @@ namespace sg {
         }
     }
 
-    bool Entity::collides(Entity &e, std::map<std::pair<uint64_t, uint64_t>, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f>> &collisionMap)
+    bool Entity::collides(Entity &e, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f> &collisionMap)
     {
-        if (!this->isCollidable || !e.getIsCollidable())
-        {
-            return false;
-        }
-
         bool isCollides = false;
-        sf::Transform trans0 = sf::Transform::Identity;
-        sf::Transform trans1 = sf::Transform::Identity;
-        this->getGlobalTransform(trans0);
-        e.getGlobalTransform(trans1);
-        for (uint64_t j = 0; j < this->getNumOfComponents(); ++j)
+        if (this->isCollidable && e.getIsCollidable())
         {
-            for (uint64_t i = 0; i < e.getNumOfComponents(); ++i)
+            sf::FloatRect bounds0 = this->getSurfaceBounds(true);
+            bounds0.width += bounds0.left;
+            bounds0.height += bounds0.top;
+
+            sf::FloatRect bounds1 = e.getSurfaceBounds(true);
+            bounds1.width += bounds1.left;
+            bounds1.height += bounds1.top;
+
+            if (bounds0.left <= bounds1.width &&
+                bounds0.width >= bounds1.left &&
+                bounds0.top <= bounds1.height &&
+                bounds0.height >= bounds1.top)
             {
-                std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f> collisionVectors;
-                const sf::Transformable *t0 = this->getComponent(j).second;
-                if (!t0)
-                {
-                    continue;
-                }
-                if (const AnimatedSprite *as = dynamic_cast<const AnimatedSprite *>(t0))
-                {
-                    t0 = as->getFrameBound(as->getFrameIndex());
-                }
-                if (!t0)
-                {
-                    continue;
-                }
+                sf::Transform trans0 = sf::Transform::Identity;
+                sf::Transform trans1 = sf::Transform::Identity;
+                this->getGlobalTransform(trans0);
+                e.getGlobalTransform(trans1);
 
-                const sf::Transformable *t1 = e.getComponent(i).second;
-                if (!t1)
+                for (uint64_t i = 0; i < this->getNumOfComponents(); ++i)
                 {
-                    continue;
-                }
-                if (const AnimatedSprite *as = dynamic_cast<const AnimatedSprite *>(t1))
-                {
-                    t1 = as->getFrameBound(as->getFrameIndex());
-                }
-                if (!t1)
-                {
-                    continue;
-                }
-
-                sf::RectangleShape tempRs0;
-                BoundingShape tempShape0;
-                sf::ConvexShape tempConvex0;
-                sf::CircleShape tempCircle0;
-                const BoundingShape *s0 = NULL;
-                if (const BoundingShape *bs = dynamic_cast<const BoundingShape *>(t0))
-                {
-                    s0 = bs;
-                }
-                else if (const sf::Shape *sh = dynamic_cast<const sf::Shape *>(t0))
-                {
-                    if (const sf::CircleShape *cs = dynamic_cast<const sf::CircleShape *>(sh))
+                    for (uint64_t j = 0; j < e.getNumOfComponents(); ++j)
                     {
-                        tempCircle0.setOrigin(cs->getOrigin());
-                        tempCircle0.setPosition(cs->getPosition());
-                        tempCircle0.setRotation(cs->getRotation());
-                        tempCircle0.setScale(cs->getScale());
-                        tempCircle0.setRadius(cs->getRadius());
-                        tempShape0.addShape(tempCircle0);
-                    }
-                    else
-                    {
-                        tempConvex0.setOrigin(sh->getOrigin());
-                        tempConvex0.setPosition(sh->getPosition());
-                        tempConvex0.setRotation(sh->getRotation());
-                        tempConvex0.setScale(sh->getScale());
-                        tempConvex0.setPointCount(sh->getPointCount());
-                        for (uint32_t pi = 0; pi < sh->getPointCount(); ++pi)
+                        const sf::Transformable *t0 = this->getComponent(i).second;
+                        const AnimatedSprite *as0 = dynamic_cast<const AnimatedSprite *>(t0);
+                        if (as0 != NULL)
                         {
-                            tempConvex0.setPoint(pi, sh->getPoint(pi));
+                            t0 = as0->getFrameBound(as0->getFrameIndex());
                         }
-                        tempShape0.addShape(tempConvex0);
-                    }
-                    s0 = &tempShape0;
-                }
-                else
-                {
-                    sf::FloatRect t0Bounds;
-                    if (const sf::Sprite *s = dynamic_cast<const sf::Sprite *>(t0))
-                    {
-                        t0Bounds = s->getLocalBounds();
-                    }
-                    else if (const sf::Text *t = dynamic_cast<const sf::Text *>(t0))
-                    {
-                        t0Bounds = t->getLocalBounds();
-                    }
-                    else
-                    {
-                        continue;
-                    }
-
-                    tempRs0.setSize(sf::Vector2f(t0Bounds.width, t0Bounds.height));
-                    tempRs0.setOrigin(t0->getOrigin());
-                    tempRs0.setPosition(sf::Vector2f(t0->getPosition().x + t0Bounds.left,
-                                                     t0->getPosition().y + t0Bounds.top));
-                    tempRs0.setRotation(t0->getRotation());
-                    tempRs0.setScale(t0->getScale());
-                    tempShape0.addShape(tempRs0);
-                    s0 = &tempShape0;
-                }
-
-                sf::RectangleShape tempRs1;
-                BoundingShape tempShape1;
-                sf::ConvexShape tempConvex1;
-                sf::CircleShape tempCircle1;
-                const BoundingShape *s1 = NULL;
-                if (const BoundingShape *bs = dynamic_cast<const BoundingShape *>(t1))
-                {
-                    s1 = bs;
-                }
-                else if (const sf::Shape *sh = dynamic_cast<const sf::Shape *>(t1))
-                {
-                    if (const sf::CircleShape *cs = dynamic_cast<const sf::CircleShape *>(sh))
-                    {
-                        tempCircle1.setOrigin(cs->getOrigin());
-                        tempCircle1.setPosition(cs->getPosition());
-                        tempCircle1.setRotation(cs->getRotation());
-                        tempCircle1.setScale(cs->getScale());
-                        tempCircle1.setRadius(cs->getRadius());
-                        tempShape1.addShape(tempCircle1);
-                    }
-                    else
-                    {
-                        tempConvex1.setOrigin(sh->getOrigin());
-                        tempConvex1.setPosition(sh->getPosition());
-                        tempConvex1.setRotation(sh->getRotation());
-                        tempConvex1.setScale(sh->getScale());
-                        tempConvex1.setPointCount(sh->getPointCount());
-                        for (uint32_t pi = 0; pi < sh->getPointCount(); ++pi)
+                        if (t0 == NULL)
                         {
-                            tempConvex1.setPoint(pi, sh->getPoint(pi));
+                            continue;
                         }
-                        tempShape1.addShape(tempConvex1);
-                    }
-                    s1 = &tempShape1;
-                }
-                else
-                {
-                    sf::FloatRect t1Bounds;
-                    if (const sf::Sprite *s = dynamic_cast<const sf::Sprite *>(t1))
-                    {
-                        t1Bounds = s->getLocalBounds();
-                    }
-                    else if (const sf::Text *t = dynamic_cast<const sf::Text *>(t1))
-                    {
-                        t1Bounds = t->getLocalBounds();
-                    }
-                    else
-                    {
-                        continue;
-                    }
 
-                    tempRs1.setSize(sf::Vector2f(t1Bounds.width, t1Bounds.height));
-                    tempRs1.setOrigin(t1->getOrigin());
-                    tempRs1.setPosition(sf::Vector2f(t1->getPosition().x + t1Bounds.left,
-                                                     t1->getPosition().y + t1Bounds.top));
-                    tempRs1.setRotation(t1->getRotation());
-                    tempRs1.setScale(t1->getScale());
-                    tempShape1.addShape(tempRs1);
-                    s1 = &tempShape1;
-                }
+                        const sf::Transformable *t1 = e.getComponent(j).second;
+                        const AnimatedSprite *as1 = dynamic_cast<const AnimatedSprite *>(t1);
+                        if (as1 != NULL)
+                        {
+                            t1 = as1->getFrameBound(as1->getFrameIndex());
+                        }
+                        if (t1 == NULL)
+                        {
+                            continue;
+                        }
 
-                if (s0 != NULL && s1 != NULL)
-                {
-                    sf::FloatRect bounds0 = s0->getGlobalBounds();
-                    bounds0 = trans0.transformRect(bounds0);
-                    bounds0.width += bounds0.left;
-                    bounds0.height += bounds0.top;
-                    sf::FloatRect bounds1 = s1->getGlobalBounds();
-                    bounds1 = trans1.transformRect(bounds1);
-                    bounds1.width += bounds0.left;
-                    bounds1.height += bounds1.top;
-                    if (bounds0.left <= bounds1.width &&
-                        bounds0.width >= bounds1.left &&
-                        bounds0.top <= bounds1.height &&
-                        bounds0.height >= bounds1.top &&
-                        s0->collides((*s1), collisionVectors, trans0, trans1))
-                    {
-                        collisionMap[std::make_pair(j, i)] = collisionVectors;
-                        isCollides = true;
+                        if (t0 != NULL && t1 != NULL)
+                        {
+                            sf::Vector2f collisionVector(0.0f, 0.0f);
+                            bool componentCollides = CollisionUtility::inst().collides(*t0, *t1, trans0, trans1, collisionVector);
+                            if (componentCollides)
+                            {
+                                collisionMap[std::make_pair(i, j)] = collisionVector;
+                                isCollides = componentCollides;
+                            }
+                        }
                     }
                 }
             }
@@ -681,17 +556,38 @@ namespace sg {
     void Entity::expandSurfaceBounds(sf::FloatRect &bounds, sf::FloatRect br) const
     {
         if (br.left < bounds.left)
+        {
             bounds.left = br.left;
+        }
         if (br.top < bounds.top)
+        {
             bounds.top = br.top;
+        }
         if ((br.left + br.width) > bounds.width)
+        {
             bounds.width = (br.left + br.width);
+        }
         if ((br.top + br.height) > bounds.height)
+        {
             bounds.height = (br.top + br.height);
+        }
     }
 
     sf::FloatRect Entity::getSurfaceBounds(bool useGlobal) const
     {
+        if (this->components.size() == 0)
+        {
+            sf::FloatRect zeroCompBounds(0.0f, 0.0f, 0.0f, 0.0f);
+            if (useGlobal)
+            {
+                sf::Transform transform = sf::Transform::Identity;
+                this->getGlobalTransform(transform);
+                zeroCompBounds = transform.transformRect(zeroCompBounds);
+            }
+
+            return zeroCompBounds;
+        }
+
         float inf = std::numeric_limits<float>::infinity();
         sf::FloatRect bounds = sf::FloatRect(inf, inf, -inf, -inf);
         for (const auto &it : this->components)
@@ -711,18 +607,7 @@ namespace sg {
             }
 
             sf::FloatRect currentBounds;
-            if (const BoundingShape *bs = dynamic_cast<const BoundingShape *>(t))
-            {
-                if (useGlobal)
-                {
-                    currentBounds = bs->getGlobalBounds();
-                }
-                else
-                {
-                    currentBounds = bs->getLocalBounds();
-                }
-            }
-            else if (const sf::Sprite *s = dynamic_cast<const sf::Sprite *>(t))
+            if (const sf::Sprite *s = dynamic_cast<const sf::Sprite *>(t))
             {
                 if (useGlobal)
                 {
@@ -777,6 +662,19 @@ namespace sg {
 
     sf::FloatRect Entity::getTextureBounds(bool useGlobal) const
     {
+        if (this->components.size() == 0)
+        {
+            sf::FloatRect zeroCompBounds(0.0f, 0.0f, 0.0f, 0.0f);
+            if (useGlobal)
+            {
+                sf::Transform transform = sf::Transform::Identity;
+                this->getGlobalTransform(transform);
+                zeroCompBounds = transform.transformRect(zeroCompBounds);
+            }
+
+            return zeroCompBounds;
+        }
+
         float inf = std::numeric_limits<float>::infinity();
         sf::FloatRect bounds(inf, inf, -inf, -inf);
         for (const auto &it : this->components)
@@ -889,6 +787,7 @@ namespace sg {
         c->d = &newDrawable;
         c->t = t;
         this->components.push_back(c);
+
         return (this->getNumOfComponents() - 1);
     }
 

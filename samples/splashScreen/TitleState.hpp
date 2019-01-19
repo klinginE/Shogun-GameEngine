@@ -16,6 +16,7 @@ class TitleState : public BaseState {
     private:
         sg::GameWindow tWindow;
         sg::GameWorld tWorld;
+        sg::Layer tLayer;
         sf::Font arial;
         sf::Text developed;
         sf::Texture logoTexture;

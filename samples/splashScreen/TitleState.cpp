@@ -20,7 +20,7 @@ BaseState()
 
     this->developed.setCharacterSize(30);
     this->developed.setStyle(sf::Text::Regular);
-    this->developed.setColor(sf::Color(255, 255, 255, this->fadeAlpha));
+    this->developed.setFillColor(sf::Color(255, 255, 255, this->fadeAlpha));
     this->developed.setFont(arial);
     this->developed.setString("Developed Using Shogun Game Engine");
     this->developed.setOrigin(this->developed.getLocalBounds().width /2.0f, this->developed.getLocalBounds().height / 2.0f);
@@ -38,7 +38,8 @@ BaseState()
     this->textEntity.addDrawable(this->logoSprite);
 
     this->textEntity.setPosition(this->tWindow.getSizeInWorld()/2.0f);
-    this->tWorld.addEntity(0, this->textEntity);
+    tLayer.addDynamicEntity(this->textEntity);
+    this->tWorld.addLayer(0, tLayer);
 
 }
 
@@ -65,8 +66,8 @@ void TitleState::update(const sf::Time &tslu) {
             this->fadeIn = true;
 
         }
-        const sf::Color dcolor = this->developed.getColor();
-        this->developed.setColor(sf::Color(dcolor.r, dcolor.g, dcolor.b, this->fadeAlpha));
+        const sf::Color dcolor = this->developed.getFillColor();
+        this->developed.setFillColor(sf::Color(dcolor.r, dcolor.g, dcolor.b, this->fadeAlpha));
         const sf::Color lcolor = this->logoSprite.getColor();
         this->logoSprite.setColor(sf::Color(lcolor.r, lcolor.g, lcolor.b, this->fadeAlpha));
         fadeTimer = 0;

@@ -1,29 +1,40 @@
 #pragma once
 
 #include <limits.h>
-#include <iostream>
+#include <cmath>
 
 #include <Shogun/Management/Quadtree.hpp>
 
-namespace sg {
-
+namespace sg
+{
     template<class T>
     Quadtree<T>::Quadtree() :
     MAX_OBJECTS(1),
     MAX_LEVEL(std::numeric_limits<uint64_t>::max())
     {
-
         this->OBJECTS_OFFSET = 0;
         this->LEVEL_OFFSET = 0;
         this->level = 0;
-        this->bounds = sf::Rect<long>(static_cast<long>(ceil(static_cast<double>(std::numeric_limits<long>::min()) / 2.0)),
-                                      static_cast<long>(ceil(static_cast<double>(std::numeric_limits<long>::min()) / 2.0)),
-                                      std::numeric_limits<long>::max(),
-                                      std::numeric_limits<long>::max());
+        double longOriginAsDouble = static_cast<double>(std::numeric_limits<long>::min()) / 2.0;
+        if (longOriginAsDouble < 0.0)
+        {
+            longOriginAsDouble = std::floor(longOriginAsDouble);
+        }
+        else
+        {
+            longOriginAsDouble = std::ceil(longOriginAsDouble);
+        }
+        long longOrigin = static_cast<long>(longOriginAsDouble);
+        long longMax = std::numeric_limits<long>::max();
+        this->bounds = sf::Rect<long>(longOrigin,
+                                      longOrigin,
+                                      longMax,
+                                      longMax);
         for (uint32_t i = 0; i < 4; ++i)
+        {
             this->nodes[i] = NULL;
+        }
         this->parent = NULL;
-
     }
 
     template<class T>
@@ -31,7 +42,14 @@ namespace sg {
     MAX_OBJECTS(maxObj),
     MAX_LEVEL(maxLevel)
     {
-
+        if (this->MAX_OBJECTS == 0)
+        {
+            this->MAX_OBJECTS = 1;
+        }
+        if (this->MAX_LEVEL == 0)
+        {
+            this->MAX_LEVEL = 1;
+        }
         this->OBJECTS_OFFSET = this->MAX_OBJECTS / std::sqrt<uint64_t>(this->MAX_OBJECTS);
         this->LEVEL_OFFSET = (std::numeric_limits<uint64_t>::max() - this->MAX_LEVEL);
         this->LEVEL_OFFSET = this->LEVEL_OFFSET / std::sqrt<uint64_t>(this->LEVEL_OFFSET);
@@ -41,9 +59,10 @@ namespace sg {
         this->bounds.width = pBounds.width;
         this->bounds.height = pBounds.height;
         for (uint32_t i = 0; i < 4; ++i)
+        {
             this->nodes[i] = NULL;
+        }
         this->parent = NULL;
-
     }
 
     template<class T>
@@ -55,19 +74,29 @@ namespace sg {
     level(another.level),
     bounds(another.bounds)
     {
-
+        if (this->MAX_OBJECTS == 0)
+        {
+            this->MAX_OBJECTS = 1;
+        }
+        if (this->MAX_LEVEL == 0)
+        {
+            this->MAX_LEVEL = 1;
+        }
         this->clear();
         this->parent = another.parent;
         for (uint32_t i = 0; i < 4; ++i)
+        {
             if (another.nodes[i])
+            {
                 this->nodes[i] = new Quadtree(*(another.nodes[i]));
+            }
+        }
         this->objects = another.objects;
-
     }
 
     template<class T>
-    void Quadtree<T>::operator= (const Quadtree &another) {
-
+    void Quadtree<T>::operator= (const Quadtree &another)
+    {
         this->MAX_OBJECTS = another.MAX_OBJECTS;
         this->MAX_LEVEL = another.MAX_LEVEL;
         this->OBJECTS_OFFSET = another.OBJECTS_OFFSET;
@@ -75,53 +104,74 @@ namespace sg {
         this->level = another.level;
         this->bounds = another.bounds;
 
+        if (this->MAX_OBJECTS == 0)
+        {
+            this->MAX_OBJECTS = 1;
+        }
+        if (this->MAX_LEVEL == 0)
+        {
+            this->MAX_LEVEL = 1;
+        }
         this->clear();
         this->parent = another.parent;
         for (uint32_t i = 0; i < 4; ++i)
+        {
             if (another.nodes[i])
+            {
                 this->nodes[i] = new Quadtree(*(another.nodes[i]));
+            }
+        }
         this->objects = another.objects;
-
     }
 
     template<class T>
-    Quadtree<T>::~Quadtree() {
-
+    Quadtree<T>::~Quadtree()
+    {
         this->clear();
-
     }
 
     template<class T>
-    void Quadtree<T>::size(uint64_t &c) const {
-
+    void Quadtree<T>::size(uint64_t &c) const
+    {
         c += this->objects.size();
         for (uint32_t i = 0; i < 4; ++i)
+        {
             if (this->nodes[i])
+            {
                 nodes[i]->size(c);
-
+            }
+        }
     }
 
     template<class T>
-    void Quadtree<T>::clear() {
-
+    void Quadtree<T>::clear()
+    {
         this->objects.clear();
         for (uint32_t i = 0; i < 4; ++i)
-            if (this->nodes[i]) {
-
+        {
+            if (this->nodes[i] != NULL)
+            {
                 delete this->nodes[i];
                 this->nodes[i] = NULL;
-
             }
+        }
         this->parent = NULL;
-
     }
 
     template<class T>
-    void Quadtree<T>::init(uint64_t maxObj, uint64_t maxLevel, uint64_t pLevel, const sf::Rect<long> &pBounds) {
-
+    void Quadtree<T>::init(uint64_t maxObj, uint64_t maxLevel, uint64_t pLevel, const sf::Rect<long> &pBounds)
+    {
         this->clear();
         this->MAX_OBJECTS = maxObj;
         this->MAX_LEVEL = maxLevel;
+        if (this->MAX_OBJECTS == 0)
+        {
+            this->MAX_OBJECTS = 1;
+        }
+        if (this->MAX_LEVEL == 0)
+        {
+            this->MAX_LEVEL = 1;
+        }
         this->OBJECTS_OFFSET = this->MAX_OBJECTS / std::sqrt<uint64_t>(this->MAX_OBJECTS);
         this->LEVEL_OFFSET = (std::numeric_limits<uint64_t>::max() - this->MAX_LEVEL);
         this->LEVEL_OFFSET = this->LEVEL_OFFSET / std::sqrt<uint64_t>(this->LEVEL_OFFSET);
@@ -130,41 +180,42 @@ namespace sg {
         this->bounds.top = pBounds.top;
         this->bounds.width = pBounds.width;
         this->bounds.height = pBounds.height;
-
     }
 
     template<class T>
-    void Quadtree<T>::distributeObjects() {
-
+    void Quadtree<T>::distributeObjects()
+    {
         //Am I too big?
-        if (this->objects.size() > this->MAX_OBJECTS && this->level < this->MAX_LEVEL) {
-
+        if (this->objects.size() > this->MAX_OBJECTS && this->level < this->MAX_LEVEL)
+        {
             //I'm so damn big!
             if (!this->nodes[0])
+            {
                 this->split();
-
-            auto it = this->objects.begin();
-            while (it != this->objects.end()) {
-
-                long index = this->getIndex(it->first);
-                if (index != -1) {
-
-                    this->nodes[index]->insert(it->first, it->second);
-                    it = this->objects.erase(it);
-
-                }
-                else
-                    it++;
-
             }
 
+            auto it = this->objects.begin();
+            while (it != this->objects.end() &&
+                   this->objects.size() > this->MAX_OBJECTS &&
+                   this->level < this->MAX_LEVEL)
+            {
+                long index = this->getIndex(it->first);
+                if (index >= 0l && index < 4l)
+                {
+                    this->nodes[index]->insert(it->first, it->second);
+                    it = this->objects.erase(it);
+                }
+                else
+                {
+                    it++;
+                }
+            }
         }
-
     }
 
     template<class T>
-    void Quadtree<T>::split() {
-
+    void Quadtree<T>::split()
+    {
         long subWidth = static_cast<long>(static_cast<double>(this->bounds.width) / 2.0);
         long subHeight = static_cast<long>(static_cast<double>(this->bounds.height) / 2.0);
         long x = this->bounds.left;
@@ -178,53 +229,50 @@ namespace sg {
         this->nodes[2]->parent = this;
         this->nodes[3] = new Quadtree(this->MAX_OBJECTS, this->MAX_LEVEL, this->level + 1, sf::Rect<long>(x + subWidth, y + subHeight, subWidth, subHeight));
         this->nodes[3]->parent = this;
-
     }
 
     template<class T>
-    void Quadtree<T>::merge() {
-
+    void Quadtree<T>::merge()
+    {
         if (!this->nodes[0])
+        {
             return;
+        }
 
-        for (uint32_t i = 0; i < 4; ++i) {
-
+        for (uint32_t i = 0; i < 4; ++i)
+        {
             this->nodes[i]->merge();
             this->objects.insert(this->objects.end(), this->nodes[i]->objects.begin(), this->nodes[i]->objects.end());
             this->nodes[i]->clear();
             delete this->nodes[i];
             this->nodes[i] = NULL;
-
         }
         //We might have taken on too much so lets see if we need to redistribute our objects
         this->distributeObjects();
-
     }
 
     template<class T>
-    bool Quadtree<T>::containedWithin(const sf::Rect<long> &bound0, const sf::Rect<long> &bound1) const {
-
+    bool Quadtree<T>::containedWithin(const sf::Rect<long> &bound0, const sf::Rect<long> &bound1) const
+    {
         //Is bounds0 contained within or equal to bounds1
         return (bound0.left >= bound1.left) &&
                ((bound0.left + bound0.width) <= (bound1.left + bound1.width)) &&
                (bound0.top >= bound1.top) &&
                ((bound0.top + bound0.height) <= (bound1.top + bound1.height));
-
     }
 
     template<class T>
-    bool Quadtree<T>::boundsOverlap(const sf::Rect<long> &bound0, const sf::Rect<long> &bound1) const {
-
+    bool Quadtree<T>::boundsOverlap(const sf::Rect<long> &bound0, const sf::Rect<long> &bound1) const
+    {
         return (bound0.left <= (bound1.left + bound1.width)) &&
                (bound0.top <= (bound1.top + bound1.height)) &&
                ((bound0.left + bound0.width) >= bound1.left) &&
                ((bound0.top + bound0.height) >= bound1.top);
-
     }
 
     template<class T>
-    long Quadtree<T>::getIndex(const sf::Rect<long> &pRect) const {
-
+    long Quadtree<T>::getIndex(const sf::Rect<long> &pRect) const
+    {
         long index = -1;
         double verticalMidpoint = static_cast<double>(this->bounds.left) + (static_cast<double>(this->bounds.width) / 2.0);
         double horizontalMidpoint = static_cast<double>(this->bounds.top) + (static_cast<double>(this->bounds.height) / 2.0);
@@ -232,129 +280,149 @@ namespace sg {
         bool topQuadrant = (static_cast<double>(pRect.top) <= horizontalMidpoint && static_cast<double>(pRect.top + pRect.height) <= horizontalMidpoint);
         bool bottomQuadrant = (static_cast<double>(pRect.top) > horizontalMidpoint && static_cast<double>(pRect.top + pRect.height) > horizontalMidpoint);
 
-        if (static_cast<double>(pRect.left) <= verticalMidpoint && static_cast<double>(pRect.left + pRect.width) <= verticalMidpoint) {
-
+        if (static_cast<double>(pRect.left) <= verticalMidpoint && static_cast<double>(pRect.left + pRect.width) <= verticalMidpoint)
+        {
             if (topQuadrant)
+            {
                 index = 1;
+            }
             else if (bottomQuadrant)
+            {
                 index = 2;
-
+            }
         }
-        else if (static_cast<double>(pRect.left) > verticalMidpoint && static_cast<double>(pRect.left + pRect.width) > verticalMidpoint) {
-
+        else if (static_cast<double>(pRect.left) > verticalMidpoint && static_cast<double>(pRect.left + pRect.width) > verticalMidpoint)
+        {
             if (topQuadrant)
+            {
                 index = 0;
+            }
             else if (bottomQuadrant)
+            {
                 index = 3;
-
+            }
         }
 
         return index;
-
     }
 
     template<class T>
-    void Quadtree<T>::insert(const sf::Rect<long> &pRect, T obj) {
-
+    void Quadtree<T>::insert(const sf::Rect<long> &pRect, T obj)
+    {
         //Dose the object belong to a sibling or parent?
-        if (this->parent && !this->containedWithin(pRect, this->bounds)) {
-
+        if (this->parent && !this->containedWithin(pRect, this->bounds))
+        {
             //Parent exists and pRect does not go into us, so send obj up the tree
             this->parent->insert(pRect, obj);
-            return;
 
+            return;
         }
 
         //pRect is somewhere other than here so we have to ignore it
         if (!this->containedWithin(pRect, this->bounds))
+        {
             return;
+        }
 
         //Does the object belong to one of my children?
-        if (this->nodes[0]) {
-
+        if (this->nodes[0] != NULL)
+        {
             long index = this->getIndex(pRect);
-            if (index != -1) {
-
+            if (index >= 0l && index < 4l)
+            {
                 //We have children and pRect fits in the one at index send it to them
                 this->nodes[index]->insert(pRect, obj);
+
                 return;
-
             }
-
         }
 
         //Must belong to me!
         this->objects.push_back(std::make_pair(pRect, obj));
         this->distributeObjects();
-
     }
 
     template<class T>
-    bool Quadtree<T>::remove(const sf::Rect<long> &pRect, T obj, std::function<bool(const T obj0, const T obj1)> comp) {
-
+    bool Quadtree<T>::remove(const sf::Rect<long> &pRect, T obj, std::function<bool(const T obj0, const T obj1)> comp)
+    {
         //Its not here if pRect is not overlapping with our bounds
         if (!this->containedWithin(pRect, this->bounds))
+        {
             return false;
+        }
 
-        if (this->nodes[0]) {
-
+        if (this->nodes[0])
+        {
             long index = this->getIndex(pRect);
-            if (index != -1) {
-
-                if (this->nodes[index]->remove(pRect, obj, comp)) {
-
-                    uint64_t numObjs;
+            if (index >= 0l && index < 4l)
+            {
+                if (this->nodes[index]->remove(pRect, obj, comp))
+                {
+                    uint64_t numObjs = 0;
                     this->size(numObjs);
                     //If we are not too out of wak then lets not merge just yet
                     if (numObjs <= (this->MAX_OBJECTS - this->OBJECTS_OFFSET) ||
                         this->level >= (this->MAX_LEVEL + this->LEVEL_OFFSET))
+                    {
                         this->merge();
+                    }
+
                     return true;
                 }
-
             }
-
         }
 
         for (auto it = this->objects.begin(); it != this->objects.end(); ++it)
-            if (comp(it->second, obj)) {
-
+        {
+            if (comp(it->second, obj))
+            {
                 it = this->objects.erase(it);
-                uint64_t numObjs;
+                uint64_t numObjs = 0;
                 this->size(numObjs);
                 //If we are not too out of wak then lets not merge just yet
                 if (numObjs <= (this->MAX_OBJECTS - this->OBJECTS_OFFSET) ||
                     this->level >= (this->MAX_LEVEL + this->LEVEL_OFFSET))
+                {
                     this->merge();
-                return true;
+                }
 
+                return true;
             }
+        }
 
         return false;
-
     }
 
     template<class T>
-    void Quadtree<T>::retrieve(std::vector<T> &returnObjects, const sf::Rect<long> &pRect) const {
-
+    void Quadtree<T>::retrieve(std::vector<T> &returnObjects, const sf::Rect<long> &pRect) const
+    {
         if (!this->boundsOverlap(pRect, this->bounds))
+        {
             return;
+        }
 
-        if (this->nodes[0]) {
-
+        if (this->nodes[0])
+        {
             long index = this->getIndex(pRect);
-            if (index != -1)
+            if (index >= 0l && index < 4l)
+            {
                 this->nodes[index]->retrieve(returnObjects, pRect);
+            }
             else
+            {
                 for (uint32_t i = 0; i < 4; ++i)
+                {
                     this->nodes[i]->retrieve(returnObjects, pRect);
-
+                }
+            }
         }
 
         for (auto &p : this->objects)
+        {
             if (this->boundsOverlap(p.first, pRect))
+            {
                 returnObjects.push_back(p.second);
-
+            }
+        }
     }
-
 }

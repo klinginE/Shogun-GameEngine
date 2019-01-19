@@ -1,7 +1,6 @@
 #pragma once
 
 //C++ includes
-#include <iostream>
 #include <vector>
 #include <math.h>
 #include <stdint.h>
@@ -12,7 +11,6 @@
 
 //Shogun includes
 #include <Shogun/Elements/AnimatedSprite.hpp>
-#include <Shogun/Elements/BoundingShape.hpp>
 #include <Shogun/Management/GameLoop.hpp>
 
 namespace sg
@@ -57,13 +55,9 @@ namespace sg
             void operator= (const Entity &);
             virtual ~Entity();
             bool collides(Entity &,
-                          std::map<std::pair<uint64_t, uint64_t>,
-                          std::map<std::pair<uint64_t, uint64_t>,
-                          sf::Vector2f>> &);
+                          std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f> &);
             virtual void handleCollision(Entity &,
-                                         const std::map<std::pair<uint64_t, uint64_t>,
-                                         std::map<std::pair<uint64_t, uint64_t>,
-                                         sf::Vector2f>> &)
+                                         const std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f> &)
             {
             }
             bool getIsCollidable() const;

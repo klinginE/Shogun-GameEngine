@@ -1,6 +1,6 @@
 #include <limits>
-#include <iostream>
 #include <queue>
+#include <iostream>
 
 #include <Shogun/Management/Layer.hpp>
 
@@ -8,10 +8,21 @@ namespace sg
 {
     Layer::Layer()
     {
-        this->globalArea = sf::Rect<long>(static_cast<long>(ceil(static_cast<double>(std::numeric_limits<long>::min()) / 2.0)), 
-                                          static_cast<long>(ceil(static_cast<double>(std::numeric_limits<long>::min()) / 2.0)),
-                                          std::numeric_limits<long>::max(),
-                                          std::numeric_limits<long>::max());
+        double longOriginAsDouble = static_cast<double>(std::numeric_limits<long>::min()) / 2.0;
+        if (longOriginAsDouble < 0.0)
+        {
+            longOriginAsDouble = std::floor(longOriginAsDouble);
+        }
+        else
+        {
+            longOriginAsDouble = std::ceil(longOriginAsDouble);
+        }
+        long longOrigin = static_cast<long>(longOriginAsDouble);
+        long longMax = std::numeric_limits<long>::max();
+        this->globalArea = sf::Rect<long>(longOrigin,
+                                          longOrigin,
+                                          longMax,
+                                          longMax);
 
         this->updateArea.left = this->globalArea.left;
         this->updateArea.top = this->globalArea.top;
@@ -23,8 +34,8 @@ namespace sg
         this->renderArea.width = this->globalArea.width;
         this->renderArea.height = this->globalArea.height;
 
-        this->dynamicEntities.init(1l, std::numeric_limits<uint64_t>::max(), 0, this->globalArea);
-        this->staticEntities.init(1l, std::numeric_limits<uint64_t>::max(), 0, this->globalArea);
+        this->dynamicEntities.init(20, std::numeric_limits<uint64_t>::max(), 0, this->globalArea);
+        this->staticEntities.init(20, std::numeric_limits<uint64_t>::max(), 0, this->globalArea);
 
         this->renderOrder = [=](const Entity *e0, const Entity *e1)->bool {return false;};
 
@@ -84,10 +95,50 @@ namespace sg
     sf::Rect<long> Layer::convertBounds(const sf::FloatRect &fb) const
     {
         sf::Rect<long> lb;
-        lb.left = static_cast<long>(ceil(fb.left));
-        lb.top = static_cast<long>(ceil(fb.top));
-        lb.width = static_cast<long>(ceil(fb.width));
-        lb.height = static_cast<long>(ceil(fb.height));
+
+        double roundedLeft = 0.0;
+        if (fb.left < 0.0)
+        {
+            roundedLeft = std::floor(fb.left);
+        }
+        else
+        {
+            roundedLeft = std::ceil(fb.left);
+        }
+        lb.left = static_cast<long>(roundedLeft);
+
+        double roundedTop = 0.0;
+        if (fb.top < 0.0)
+        {
+            roundedTop = std::floor(fb.top);
+        }
+        else
+        {
+            roundedTop = std::ceil(fb.top);
+        }
+        lb.top = static_cast<long>(roundedTop);
+
+        double roundedWidth = 0.0;
+        if (fb.width < 0.0)
+        {
+            roundedWidth = std::floor(fb.width);
+        }
+        else
+        {
+            roundedWidth = std::ceil(fb.width);
+        }
+        lb.width = static_cast<long>(roundedWidth);
+
+        double roundedHeight = 0.0;
+        if (fb.height < 0.0)
+        {
+            roundedHeight = std::floor(fb.height);
+        }
+        else
+        {
+            roundedHeight = std::ceil(fb.height);
+        }
+        lb.height = static_cast<long>(roundedHeight);
 
         return lb;
     }
@@ -99,7 +150,7 @@ namespace sg
 
     void Layer::update(const sf::Time &tslu)
     {
-        //sf::Clock gc_preColl;
+        // sf::Clock gc_preColl;
         if (!this->updateStatus)
         {
             return;
@@ -140,16 +191,24 @@ namespace sg
                 this->staticEntities.remove(this->convertBounds(e->getTotalBounds(true)), e);
             }
         }
-        //sf::Time timePreColl = gc_preColl.restart();
-        //std::cout << "Pre collides time:  " << timePreColl.asMicroseconds() << std::endl;
+        // sf::Time timePreColl = gc_preColl.restart();
+        // long microSecs = timePreColl.asMicroseconds();
+        // if (microSecs >= 40000l)
+        // {
+        //     std::cout << "Pre collides time:  " << microSecs << std::endl;
+        // }
 
-        //sf::Clock gc_coll;
+        // sf::Clock gc_coll;
         if (this->collisionStatus)
         {
             this->scanline(entities);
         }
-        //sf::Time timePosColl = gc_coll.restart();
-        //std::cout << "Post collides time: " << timePosColl.asMicroseconds() << std::endl;
+        // sf::Time timePosColl = gc_coll.restart();
+        // microSecs = timePosColl.asMicroseconds();
+        // if (microSecs >= 40000l)
+        // {
+        //     std::cout << "Post collides time: " << microSecs << std::endl;
+        // }
     }
 
     void Layer::render()
@@ -235,27 +294,20 @@ namespace sg
         return bounds.top + bounds.height;
     }
 
-    void Layer::processCollisions(std::map<std::pair<Entity *, Entity *>, std::map<std::pair<uint64_t, uint64_t>, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f>>> &collisionPairs) const
+    void Layer::processCollisions(std::map<std::pair<Entity *, Entity *>, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f>> &collisionPairs) const
     {
-        for (std::pair<std::pair<Entity *, Entity *>, std::map<std::pair<uint64_t, uint64_t>, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f>>> p : collisionPairs)
+        for (std::pair<std::pair<Entity *, Entity *>, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f>> p : collisionPairs)
         {
             Entity *e0 = p.first.first;
             Entity *e1 = p.first.second;
-            std::map<std::pair<uint64_t, uint64_t>, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f>> collisionMap0 = p.second;
+            std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f> collisionMap0 = p.second;
 
-            std::map<std::pair<uint64_t, uint64_t>, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f>> collisionMap1;
-            for (std::pair<std::pair<uint64_t, uint64_t>, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f>> obj0 : collisionMap0)
+            std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f> collisionMap1;
+            for (std::pair<std::pair<uint64_t, uint64_t>, sf::Vector2f> obj0 : collisionMap0)
             {
                 std::pair<uint64_t, uint64_t> mp = obj0.first;
-                std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f> vectors = obj0.second;
-                std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f> collisionVectors1;
-                for (std::pair<std::pair<uint64_t, uint64_t>, sf::Vector2f> obj1 : vectors)
-                {
-                    std::pair<uint64_t, uint64_t> vp = obj1.first;
-                    sf::Vector2f v = obj1.second;
-                    collisionVectors1[std::make_pair(vp.second, vp.first)] = -v;
-                }
-                collisionMap1[std::make_pair(mp.second, mp.first)] = collisionVectors1;
+                sf::Vector2f vector = obj0.second;
+                collisionMap1[std::make_pair(mp.second, mp.first)] = -vector;
             }
 
             e0->handleCollision(*e1, collisionMap0);
@@ -265,17 +317,24 @@ namespace sg
 
     void Layer::scanline(std::vector<Entity *> &entities) const
     {
-        std::map<std::pair<Entity *, Entity *>, std::map<std::pair<uint64_t, uint64_t>, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f>>> collisionPairs;
-        std::map<std::pair<Entity *, Entity *>, bool> reservations;
+        // sf::Clock gc_scanline;
+        std::map<std::pair<Entity *, Entity *>, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f>> collisionPairs;
 
+        // long possibleSum = 0;
         for (Entity *e0 : entities)
         {
             if (e0->getIsCollidable())
             {
+                // sf::Clock gc_retrieve;
+
                 std::vector<Entity *> possible;
                 sf::Rect<long> e0Bounds = this->convertBounds(e0->getTotalBounds(true));
                 this->dynamicEntities.retrieve(possible, e0Bounds);
                 this->staticEntities.retrieve(possible, e0Bounds);
+
+                // sf::Time timeRetrieve = gc_retrieve.restart();
+                // long microSecs = timeRetrieve.asMicroseconds();
+                // std::cout << "Retrieve time: " << microSecs << std::endl;
 
                 //sort
                 if (this->scanlineDir == scanline_t::HORIZONTAL)
@@ -287,32 +346,38 @@ namespace sg
                     std::sort(possible.begin(), possible.end(), verticalComparitor);
                 }
 
+                // possibleSum += possible.size();
+
+                // sf::Clock gc_detectColl;
+
                 float scanMax = this->scanMax(e0);
                 for (uint32_t i = 0; i < possible.size() && scanMin(possible[i]) <= scanMax; ++i)
                 {
                     Entity *e1 = possible[i];
                     if (e1->getIsCollidable() && e0 != e1)
                     {
-                        if (reservations.count(std::make_pair(e0, e1)) == 0 &&
-                            reservations.count(std::make_pair(e1, e0)) == 0)
+                        std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f> collisionMap;
+                        bool collides = e0->collides(*e1, collisionMap);
+                        if (collides)
                         {
-                            reservations[std::make_pair(e0, e1)] = true;
-                            reservations[std::make_pair(e1, e0)] = true;
-
-                            std::map<std::pair<uint64_t, uint64_t>, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f>> collisionMap;
-                            bool collides = e0->collides(*e1, collisionMap);
-                            if (collides)
-                            {
-                                collisionPairs[std::make_pair(e0, e1)] = collisionMap;
-                            }
+                            collisionPairs[std::make_pair(e0, e1)] = collisionMap;
                         }
                     }
                 }
+
+                // sf::Time timeDetectColl = gc_detectColl.restart();
+                // microSecs = timeDetectColl.asMicroseconds();
+                // std::cout << "DetectColl time: " << microSecs << std::endl;
             }
         }
 
+        // sf::Time timeScanline = gc_scanline.restart();
+        // long microSecs = timeScanline.asMicroseconds();
+        // if (microSecs >= 100000l)
+        // {
+        //     std::cout << "Scanline time: " << microSecs << "\tsum: " << possibleSum << "\taverage: " << (double)possibleSum / 2500.0 << std::endl;
+        // }
+
         this->processCollisions(collisionPairs);
-
     }
-
 }

@@ -31,18 +31,19 @@ class Ball : public sg::Entity {
 
         }
 
-        void handleCollision(Entity &other, const std::map<std::pair<uint64_t, uint64_t>, std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f>> &_) {
-
+        void handleCollision(Entity &other, const std::map<std::pair<uint64_t, uint64_t>, sf::Vector2f> &_)
+        {
             Ball *otherBall = dynamic_cast<Ball *>(&other);
-            if (otherBall) {
-
-                if (this->getMass() > otherBall->getMass()) {
+            if (otherBall)
+            {
+                if (this->getMass() > otherBall->getMass())
+                {
                     this->setMass(this->getMass() + otherBall->getMass());
                 }
-                else if (this->getMass() < otherBall->getMass()) {
+                else if (this->getMass() < otherBall->getMass())
+                {
                     this->setDeletionStatus(true);
                 }
-
             }
         }
 
